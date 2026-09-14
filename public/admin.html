@@ -2795,11 +2795,11 @@
         passHelp.textContent = 'Ingresa una contraseña segura o PIN de acceso.';
       }
 
-      modal.removeAttribute('hidden');
+      window.showModal('userModal');
     }
 
     function closeUserModal() {
-      document.getElementById('userModal').setAttribute('hidden', 'true');
+      window.closeModal('userModal');
       editingUserId = null;
     }
 
@@ -3130,9 +3130,9 @@
       }
 
       renderTallasEditor(document.getElementById('fProdCat').value, currentTallas);
-      modal.hidden = false;
+      window.showModal('productModal');
     }
-    function closeProductModal() { document.getElementById('productModal').hidden = true; }
+    function closeProductModal() { window.closeModal('productModal'); }
 
     // Image Upload & Canvas Resizer
     function updateModalImgPreview(src) {
@@ -3333,9 +3333,9 @@
       posCart = [];
       updatePosCartUI();
       renderPosProductCatalog(allProducts);
-      document.getElementById('posModal').hidden = false;
+      window.showModal('posModal');
     }
-    function closePosModal() { document.getElementById('posModal').hidden = true; }
+    function closePosModal() { window.closeModal('posModal'); }
 
     function renderPosProductCatalog(prods) {
       const filter = (document.getElementById('posProdFilter') ? document.getElementById('posProdFilter').value : '').toLowerCase();
@@ -3978,11 +3978,11 @@
       const obs = document.getElementById('receiptModalObsBox');
       obs.innerHTML = `<b>Observaciones del Motor Antifraude:</b><br>${r.observaciones || 'Sin anomalías registradas.'}`;
 
-      document.getElementById('receiptModal').hidden = false;
+      window.showModal('receiptModal');
     }
 
     function closeReceiptModal() {
-      document.getElementById('receiptModal').hidden = true;
+      window.closeModal('receiptModal');
       currentReceiptDetail = null;
     }
 
@@ -4078,11 +4078,11 @@
       document.getElementById('movDescripcion').value = '';
       document.getElementById('movModalTitle').textContent = tipo === 'INGRESO' ? 'Registrar Ingreso de Caja' : 'Registrar Gasto / Egreso';
       updateMovCategories();
-      document.getElementById('movementModal').hidden = false;
+      window.showModal('movementModal');
     }
 
     function closeMovementModal() {
-      document.getElementById('movementModal').hidden = true;
+      window.closeModal('movementModal');
     }
 
     function updateMovCategories() {
@@ -4141,10 +4141,10 @@
       uploadedVoucherBase64 = '';
       document.getElementById('uploadVoucherForm').reset();
       document.getElementById('voucherUploadPreview').style.display = 'none';
-      document.getElementById('uploadVoucherModal').hidden = false;
+      window.showModal('uploadVoucherModal');
     }
     function closeUploadVoucherModal() {
-      document.getElementById('uploadVoucherModal').hidden = true;
+      window.closeModal('uploadVoucherModal');
     }
 
     document.getElementById('voucherFileInp')?.addEventListener('change', (e) => {
@@ -4316,27 +4316,19 @@
 
     // Modal Helpers para WhatsApp
     function openWaQrModal() {
-      const m = document.getElementById('modalWaQr');
-      if (m) {
-        m.removeAttribute('hidden');
-        checkWhatsAppStatusNow();
-      }
+      window.showModal('modalWaQr');
+      checkWhatsAppStatusNow();
     }
     function closeWaQrModal() {
-      const m = document.getElementById('modalWaQr');
-      if (m) m.setAttribute('hidden', '');
+      window.closeModal('modalWaQr');
     }
 
     function openBotRepliesModal() {
-      const m = document.getElementById('modalWaBotReplies');
-      if (m) {
-        m.removeAttribute('hidden');
-        loadBotReplies();
-      }
+      window.showModal('modalWaBotReplies');
+      loadBotReplies();
     }
     function closeBotRepliesModal() {
-      const m = document.getElementById('modalWaBotReplies');
-      if (m) m.setAttribute('hidden', '');
+      window.closeModal('modalWaBotReplies');
     }
 
     async function refreshActiveChatMessages(id) {
@@ -4812,10 +4804,10 @@
     function openCouponModal() {
       document.getElementById('couponForm')?.reset();
       updateCouponValueLabel();
-      document.getElementById('modalCoupon').hidden = false;
+      window.showModal('modalCoupon');
     }
     function closeCouponModal() {
-      document.getElementById('modalCoupon').hidden = true;
+      window.closeModal('modalCoupon');
     }
 
     function updateCouponValueLabel() {
@@ -5108,7 +5100,7 @@
       }
     }
     function closePurchaseModal() {
-      hideModal('modalPurchase');
+      window.closeModal('modalPurchase');
     }
 
     function addPurchaseItemRow() {
@@ -5254,11 +5246,7 @@
 
     async function viewPurchaseDetail(id) {
       console.log('>>> [RS-Store] viewPurchaseDetail triggered for id', id);
-      const m = document.getElementById('modalPurchaseDetail');
-      if (m) {
-        m.removeAttribute('hidden');
-        m.style.display = 'flex';
-      }
+      window.showModal('modalPurchaseDetail');
       try {
         const res = await fetch(`/api/purchases/${id}`);
         const json = await res.json();
@@ -5299,11 +5287,7 @@
       } catch (err) { alert('Error: ' + err.message); }
     }
     function closePurchaseDetailModal() {
-      const m = document.getElementById('modalPurchaseDetail');
-      if (m) {
-        m.setAttribute('hidden', '');
-        m.style.display = 'none';
-      }
+      window.closeModal('modalPurchaseDetail');
     }
 
     // Modal Ajuste de Inventario
@@ -5328,7 +5312,7 @@
       }
     }
     function closeAdjustModal() {
-      hideModal('modalAdjust');
+      window.closeModal('modalAdjust');
     }
 
     function onAdjustProductChange() {
@@ -5477,7 +5461,7 @@
       setTimeout(() => document.getElementById('fSupplierRuc')?.focus(), 100);
     }
     function closeSupplierModal() {
-      hideModal('modalSupplier');
+      window.closeModal('modalSupplier');
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -5662,7 +5646,7 @@
     }
 
     function closeBannerModal() {
-      hideModal('modalBanner');
+      window.closeModal('modalBanner');
     }
 
     async function saveBanner(e) {
