@@ -417,18 +417,18 @@ function initSchema() {
   const countProd = db.prepare(`SELECT COUNT(*) as count FROM productos`).get();
   if (countProd.count === 0) {
     const insertProd = db.prepare(`
-      INSERT INTO productos (name, cat, price, was_price, stock, desc, visible, is_new, badge)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO productos (name, cat, price, was_price, stock, desc, visible, is_new, badge, img)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
     const defaultProds = [
-      ['Aretes Lucía', 'accesorios', 12.90, 16.10, 24, 'Baño de oro de 18k, diseño geométrico y livianos para el uso diario.', 1, 0, 'sale'],
-      ['Bolso Mimosa', 'accesorios', 34.50, null, 12, 'Tote mediano en semicuero texturizado, incluye correa ajustable y forro.', 1, 0, ''],
-      ['Blusa Brisa', 'ropa', 26.00, null, 18, 'Viscosa fresca, escote suave y corte suelto ideal para clima cálido.', 1, 1, 'nuevo'],
-      ['Vestido Aurora', 'ropa', 45.90, 57.40, 8, 'Vestido midi con vuelo, forro interior y textura fluida.', 1, 0, 'sale'],
-      ['Sandalias Nube', 'calzado', 29.90, null, 15, 'Plantilla confort acolchada y tiras suaves en tono arena.', 1, 0, ''],
-      ['Sérum Pétalo', 'belleza', 18.75, null, 30, 'Ácido hialurónico + niacinamida. Fórmula hidratante para piel luminosa.', 1, 1, 'nuevo'],
-      ['Vela Jardín', 'hogar', 14.50, null, 20, 'Cera de soya natural, fragancia a jazmín y flor de naranja. 40h de aroma.', 1, 0, ''],
-      ['Set Regalo Dulce', 'regalos', 39.00, 48.75, 10, 'Set especial que incluye aretes, vela aromática y caja decorativa.', 1, 0, 'sale']
+      ['Aretes Lucía', 'accesorios', 12.90, 16.10, 24, 'Baño de oro de 18k, diseño geométrico y livianos para el uso diario.', 1, 0, 'sale', 'https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&w=800&q=85'],
+      ['Bolso Mimosa', 'accesorios', 34.50, null, 12, 'Tote mediano en semicuero texturizado, incluye correa ajustable y forro.', 1, 0, '', 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=800&q=85'],
+      ['Blusa Brisa', 'ropa', 26.00, null, 18, 'Viscosa fresca, escote suave y corte suelto ideal para clima cálido.', 1, 1, 'nuevo', 'https://images.unsplash.com/photo-1618244972963-dbee1a7edc95?auto=format&fit=crop&w=800&q=85'],
+      ['Vestido Aurora', 'ropa', 45.90, 57.40, 8, 'Vestido midi con vuelo, forro interior y textura fluida.', 1, 0, 'sale', 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=85'],
+      ['Sandalias Nube', 'calzado', 29.90, null, 15, 'Plantilla confort acolchada y tiras suaves en tono arena.', 1, 0, '', 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=800&q=85'],
+      ['Sérum Pétalo', 'belleza', 18.75, null, 30, 'Ácido hialurónico + niacinamida. Fórmula hidratante para piel luminosa.', 1, 1, 'nuevo', 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=800&q=85'],
+      ['Vela Jardín', 'hogar', 14.50, null, 20, 'Cera de soya natural, fragancia a jazmín y flor de naranja. 40h de aroma.', 1, 0, '', 'https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=800&q=85'],
+      ['Set Regalo Dulce', 'regalos', 39.00, 48.75, 10, 'Set especial que incluye aretes, vela aromática y caja decorativa.', 1, 0, 'sale', 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=800&q=85']
     ];
     for (const p of defaultProds) {
       insertProd.run(...p);
