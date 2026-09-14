@@ -15,7 +15,7 @@ const { initWhatsApp, getWhatsAppStatus, sendWhatsAppMessage, disconnectWhatsApp
 const { processAdminQuery } = require('./services/adminQueryService.js');
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
@@ -618,6 +618,54 @@ app.post('/api/settings', (req, res) => {
     res.json({ success: true, message: 'Configuración actualizada exitosamente' });
   } catch (err) {
     db.exec('ROLLBACK;');
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ==========================================
+// 5.0 LOGO DE LA TIENDA & IDENTIDAD VISUAL
+// ==========================================
+app.get('/api/settings/logo', (req, res) => {
+  try {
+    const logoUrl = getConfig('tienda_logo_url', '/rs-store-logo.svg');
+    res.json({ success: true, logo_url: logoUrl });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.post('/api/settings/logo', (req, res) => {
+  try {
+    const { logo_base64, logo_url, file_name } = req.body;
+    let savedUrl = logo_url || '/rs-store-logo.svg';
+
+    if (logo_base64) {
+      let ext = '.png';
+      if (logo_base64.startsWith('data:image/svg+xml')) ext = '.svg';
+      else if (logo_base64.startsWith('data:image/jpeg') || logo_base64.startsWith('data:image/jpg')) ext = '.jpg';
+      else if (logo_base64.startsWith('data:image/webp')) ext = '.webp';
+
+      const uploadsDir = path.join(__dirname, 'public', 'uploads');
+      if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+      }
+
+      const fileName = `store-logo-${Date.now()}${ext}`;
+      const targetPath = path.join(uploadsDir, fileName);
+
+      const base64Data = logo_base64.replace(/^data:image\/\w+;base64,/, '').replace(/^data:image\/svg\+xml;base64,/, '');
+      fs.writeFileSync(targetPath, Buffer.from(base64Data, 'base64'));
+      savedUrl = `/uploads/${fileName}`;
+    }
+
+    const updateStmt = db.prepare(`
+      INSERT INTO configuracion (clave, valor) VALUES ('tienda_logo_url', ?)
+      ON CONFLICT(clave) DO UPDATE SET valor = excluded.valor
+    `);
+    updateStmt.run(savedUrl);
+
+    res.json({ success: true, logo_url: savedUrl, message: 'Logo de la tienda guardado exitosamente' });
+  } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
 });

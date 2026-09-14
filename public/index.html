@@ -458,7 +458,7 @@
   <header class="header">
     <div class="wrap header-row">
       <a class="logo" href="#" aria-label="RS Store Inicio">
-        <img src="rs-store-logo.svg" alt="RS Store">
+        <img src="rs-store-logo.svg" alt="RS Store" class="store-dyn-logo">
         <span class="wm"><b>RS STORE</b><span>ROPA · ESTILO · TÚ</span></span>
       </a>
       <nav class="nav" aria-label="Principal">
@@ -512,7 +512,7 @@
       </div>
       <div class="hero-visual">
         <div class="hero-card">
-          <img src="rs-store-logo.svg" alt="RS Store Boutique">
+          <img src="rs-store-logo.svg" alt="RS Store Boutique" class="store-dyn-logo">
         </div>
         <div class="hero-chip a">
           <span class="ic"><svg viewBox="0 0 24 24"><path d="M3 7h11v9H3zM14 9h4l3 3v4h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></svg></span>
@@ -593,7 +593,7 @@
     <div class="wrap">
       <div class="foot-grid">
         <div class="foot-brand">
-          <img src="rs-store-logo.svg" alt="RS Store">
+          <img src="rs-store-logo.svg" alt="RS Store" class="store-dyn-logo">
           <p>Ropa, accesorios y detalles curados con estilo. Sistema de Facturación Electrónica integrado para Ecuador.</p>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;">
             <a href="https://instagram.com" target="_blank" rel="noopener" class="social-btn" title="Instagram">
@@ -1679,6 +1679,13 @@
           document.querySelectorAll('a[title="TikTok"], .social-tk').forEach(a => a.href = tk);
           document.querySelectorAll('a[title="Facebook"], .social-fb').forEach(a => a.href = fb);
           document.querySelectorAll('a[title="WhatsApp"], .social-wa').forEach(a => a.href = waUrl);
+
+          // 3. Renderizar Logo de la Tienda si está personalizado
+          if (c.tienda_logo_url) {
+            document.querySelectorAll('.store-dyn-logo').forEach(img => {
+              img.src = c.tienda_logo_url;
+            });
+          }
         }
       } catch (e) {
         console.warn('Notice banners/social:', e.message);

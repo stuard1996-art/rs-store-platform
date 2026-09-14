@@ -276,7 +276,8 @@ function getInvoiceDetails(id) {
     email: getConfig('email_contacto', 'ventas@rsstore.ec'),
     tipo_contribuyente: getConfig('tipo_contribuyente', 'REGIMEN_GENERAL'),
     leyenda_contribuyente: getConfig('leyenda_contribuyente', ''),
-    resolucion_contribuyente: getConfig('resolucion_contribuyente', '')
+    resolucion_contribuyente: getConfig('resolucion_contribuyente', ''),
+    tienda_logo_url: getConfig('tienda_logo_url', '/rs-store-logo.svg')
   };
 
   return invoice;
