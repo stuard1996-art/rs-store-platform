@@ -1,0 +1,28 @@
+{
+  "name": "rs-store-platform",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "^7.0.0-rc14",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "node-forge": "^1.4.0",
+    "nodemailer": "^10.0.9",
+    "pino": "^10.3.1",
+    "qrcode": "^1.5.4",
+    "tesseract.js": "^7.0.0"
+  }
+}

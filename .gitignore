@@ -1,0 +1,25 @@
+# Dependencias
+node_modules/
+
+# Sesiones locales de WhatsApp (para que cada entorno cree la suya o no se expongan credenciales)
+.auth/
+auth_info_baileys/
+baileys_auth_info/
+
+# Archivos de entorno y logs
+.env
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Archivos temporales y de pruebas internas
+scripts/
+scratch/
+*.tmp
+*.zip
+*.tar.gz
+
+# Archivos de sistema operativo
+.DS_Store
+Thumbs.db
