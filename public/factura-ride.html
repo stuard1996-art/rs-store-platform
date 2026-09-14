@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Factura Electrónica (RIDE) · RS Store</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Barcode+128&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="jsbarcode.min.js"></script>
+  <style>
+    :root {
+      --ink: #2A1D22;
+      --muted: #6B565D;
+      --border: #D8CCD0;
+      --border-dark: #8F727A;
+      --bg-box: #FAF5F6;
+      --accent: #9E3E60;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+      font-size: 11px;
+      line-height: 1.4;
+      color: var(--ink);
+      background: #ECE5E7;
+      margin: 0;
+      padding: 24px;
+    }
+    .actions-bar {
+      max-width: 820px;
+      margin: 0 auto 20px;
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      align-items: center;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: none;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform .15s ease, background .2s ease;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 4px 14px rgba(158,62,96,0.4); }
+    .btn-primary:hover { background: #822e4c; }
+    .btn-ghost { background: #fff; color: var(--ink); border: 1px solid var(--border-dark); }
+    .btn-ghost:hover { background: #f7eff1; }
+
+    /* RIDE A4 Sheet */
+    .ride-sheet {
+      max-width: 820px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 28px;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    .header-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 14px;
+      align-items: stretch;
+    }
+    .header-grid > * {
+      min-width: 0;
+      box-sizing: border-box;
+    }
+    .box {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+      background: #fff;
+      overflow: hidden;
+    }
+    .box-gray {
+      background: var(--bg-box);
+    }
+    .brand-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-logo img {
+      width: 58px;
+      height: 58px;
+      object-fit: contain;
+    }
+    .brand-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+      margin: 0;
+    }
+    .emisor-info {
+      font-size: 10.5px;
+      color: var(--ink);
+    }
+    .emisor-info b { font-weight: 700; }
+
+    /* SRI Right Box */
+    .sri-box {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+    .sri-box .ruc-row {
+      font-size: 13.5px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+    }
+    .sri-box .fact-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--accent);
+      margin: 2px 0;
+    }
+    .sri-box .num-fact {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .barcode-wrap {
+      margin-top: 6px;
+      text-align: center;
+      min-width: 0;
+    }
+    .barcode-svg {
+      max-width: 100%;
+      height: 42px;
+      display: block;
+      margin: 0 auto;
+    }
+    .clave-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      text-align: center;
+      letter-spacing: 0.05em;
+      word-break: break-all;
+      color: #333;
+      margin-top: 3px;
+    }
+
+    /* Client Box */
+    .client-box {
+      margin-bottom: 14px;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 8px;
+    }
+    .client-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 3px;
+    }
+    .client-row b { min-width: 130px; }
+
+    /* Items Table */
+    table.items-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 14px;
+    }
+    table.items-table th, table.items-table td {
+      border: 1px solid var(--border);
+      padding: 6px 8px;
+      font-size: 10.5px;
+    }
+    table.items-table th {
+      background: var(--bg-box);
+      font-weight: 700;
+      text-align: left;
+    }
+    table.items-table td.num, table.items-table th.num {
+      text-align: right;
+    }
+
+    /* Bottom Summary Grid */
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 16px;
+    }
+    table.totales-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    table.totales-table td {
+      border: 1px solid var(--border);
+      padding: 4px 8px;
+      font-size: 11px;
+    }
+    table.totales-table td:first-child {
+      font-weight: 600;
+      background: var(--bg-box);
+    }
+    table.totales-table td:last-child {
+      text-align: right;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    table.totales-table tr.grand-total td {
+      font-size: 13px;
+      font-weight: 800;
+      background: #F8E2E8;
+      color: var(--accent);
+    }
+
+    .info-adicional {
+      font-size: 10px;
+    }
+    .info-adicional h4 {
+      margin: 0 0 6px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+    }
+    .estado-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      margin-top: 6px;
+    }
+    .estado-badge.EMITIDA { background: #D6EEDB; color: #1E6B2C; }
+    .estado-badge.ANULADA { background: #FCE0E5; color: #AC2840; }
+
+    /* Print styling */
+    @media print {
+      body { background: #fff; padding: 0; }
+      .actions-bar { display: none !important; }
+      .ride-sheet { box-shadow: none; border-radius: 0; padding: 0; max-width: 100%; }
+      @page { margin: 12mm; size: A4 portrait; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="actions-bar">
+    <a href="admin.html" class="btn btn-ghost">← Volver al Panel</a>
+    <button type="button" class="btn btn-ghost" id="btnShareWA">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2z"/></svg>
+      Enviar por WhatsApp
+    </button>
+    <button type="button" class="btn btn-primary" onclick="window.print()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+      Imprimir / PDF
+    </button>
+  </div>
+
+  <main class="ride-sheet" id="rideContent">
+    <div style="text-align:center;padding:40px;color:var(--muted);">Cargando comprobante electrónico...</div>
+  </main>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const invoiceId = urlParams.get('id') || '1';
+
+    async function loadInvoice() {
+      try {
+        const res = await fetch(`/api/invoices/${invoiceId}`);
+        const json = await res.json();
+        if (!json.success || !json.data) {
+          document.getElementById('rideContent').innerHTML = `
+            <div style="text-align:center;padding:40px;">
+              <h2 style="color:var(--accent);">Factura no encontrada</h2>
+              <p>El comprobante solicitado no existe o fue eliminado.</p>
+              <a href="admin.html" class="btn btn-primary">Ir al Panel</a>
+            </div>`;
+          return;
+        }
+
+        renderInvoice(json.data);
+      } catch (err) {
+        document.getElementById('rideContent').innerHTML = `<p style="color:red;padding:20px;">Error al cargar la factura: ${err.message}</p>`;
+      }
+    }
+
+    function money(n) {
+      return '$' + Number(n || 0).toFixed(2);
+    }
+
+    function renderInvoice(inv) {
+      const em = inv.emisor || {};
+      const fecha = new Date(inv.fecha_emision);
+      const fechaStr = fecha.toLocaleDateString('es-EC', { year: 'numeric', month: '2-digit', day: '2-digit' }) + ' ' + fecha.toLocaleTimeString('es-EC', { hour: '2-digit', minute: '2-digit' });
+
+      document.title = `Factura_${inv.secuencial}_${inv.cliente_nombre}.pdf`;
+
+      const rows = inv.items.map(it => `
+        <tr>
+          <td>${it.producto_id || 'ART'}</td>
+          <td class="num">${it.cantidad}</td>
+          <td><b>${it.descripcion}</b></td>
+          <td class="num">${money(it.precio_unitario)}</td>
+          <td class="num">${money(it.descuento)}</td>
+          <td class="num">${money(it.subtotal)}</td>
+        </tr>
+      `).join('');
+
+      document.getElementById('rideContent').innerHTML = `
+        <div class="header-grid">
+          <!-- Columna Izquierda: Emisor -->
+          <div class="box brand-section">
+            <div class="brand-logo">
+              <img src="rs-store-logo.svg" alt="RS Store Logo">
+              <div>
+                <h1 class="brand-title">${em.nombre_tienda || 'RS STORE'}</h1>
+                <div style="font-size:10px;color:var(--muted);font-weight:600;">ROPA · ESTILO · TÚ</div>
+              </div>
+            </div>
+            <div class="emisor-info">
+              <b>Razón Social:</b> ${em.razon_social || 'RS STORE BOUTIQUE S.A.S.'}<br>
+              <b>Matriz:</b> ${em.direccion_matriz || 'Guayaquil, Ecuador'}<br>
+              <b>Teléfono:</b> ${em.telefono || '+593 99 123 4567'}<br>
+              <b>Email:</b> ${em.email || 'ventas@rsstore.ec'}<br>
+              <b>OBLIGADO A LLEVAR CONTABILIDAD:</b> NO<br>
+              <b>RÉGIMEN:</b> ${em.tipo_contribuyente === 'RIMPE_POPULAR' ? 'CONTRIBUYENTE RÉGIMEN RIMPE - NEGOCIO POPULAR' : (em.tipo_contribuyente === 'RIMPE_EMPRENDEDOR' ? 'CONTRIBUYENTE RÉGIMEN RIMPE' : 'RÉGIMEN GENERAL')}<br>
+              ${em.resolucion_contribuyente ? `<b>RESOLUCIÓN No.:</b> ${em.resolucion_contribuyente}<br>` : ''}
+              ${em.leyenda_contribuyente ? `<b>LEYENDA ESPECIAL:</b> ${em.leyenda_contribuyente}<br>` : ''}
+            </div>
+          </div>
+
+          <!-- Columna Derecha: SRI / Autorización -->
+          <div class="box sri-box">
+            <div class="ruc-row">R.U.C.: ${em.ruc || '0992345678001'}</div>
+            <div class="fact-title">FACTURA</div>
+            <div class="num-fact">No. ${inv.secuencial}</div>
+            <div style="font-size:10px;margin-top:2px;">
+              <b>NÚMERO DE AUTORIZACIÓN:</b><br>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:9.5px;">${inv.clave_acceso}</span>
+            </div>
+            <div style="font-size:10px;"><b>FECHA Y HORA DE AUTORIZACIÓN:</b> ${fechaStr}</div>
+            <div style="font-size:10px;"><b>AMBIENTE:</b> PRODUCCIÓN · <b>EMISIÓN:</b> NORMAL</div>
+            <div class="barcode-wrap">
+              <div style="font-weight:700;text-align:left;font-size:10px;margin-bottom:2px;">CLAVE DE ACCESO:</div>
+              <svg id="barcodeSvg" class="barcode-svg"></svg>
+              <div class="clave-text">${inv.clave_acceso}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Datos del Cliente -->
+        <div class="box client-box box-gray">
+          <div>
+            <div class="client-row"><b>Razón Social / Nombres:</b> <span>${inv.cliente_nombre}</span></div>
+            <div class="client-row"><b>Identificación (${inv.cliente_tipo_doc}):</b> <span>${inv.cliente_num_doc}</span></div>
+            <div class="client-row"><b>Dirección:</b> <span>${inv.cliente_direccion || 'Guayaquil, Ecuador'}</span></div>
+          </div>
+          <div>
+            <div class="client-row"><b>Fecha Emisión:</b> <span>${fechaStr.split(' ')[0]}</span></div>
+            <div class="client-row"><b>Teléfono:</b> <span>${inv.cliente_telefono || '—'}</span></div>
+            <div class="client-row"><b>Correo:</b> <span>${inv.cliente_email || '—'}</span></div>
+            <div class="client-row"><b>Estado:</b> <span class="estado-badge ${inv.estado}">${inv.estado}</span></div>
+          </div>
+        </div>
+
+        <!-- Tabla de Productos -->
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th style="width:70px;">Cod.</th>
+              <th class="num" style="width:50px;">Cant.</th>
+              <th>Descripción</th>
+              <th class="num" style="width:90px;">Precio Unit.</th>
+              <th class="num" style="width:70px;">Descuento</th>
+              <th class="num" style="width:90px;">Precio Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows}
+          </tbody>
+        </table>
+
+        <!-- Resumen de Totales y Forma de Pago -->
+        <div class="bottom-grid">
+          <div class="box info-adicional">
+            <h4>Información Adicional</h4>
+            <div><b>Forma de Pago:</b> ${inv.forma_pago}</div>
+            <div style="margin-top:4px;"><b>Régimen:</b> ${em.tipo_contribuyente === 'RIMPE_POPULAR' ? 'Contribuyente Régimen RIMPE - Negocio Popular' : (em.tipo_contribuyente === 'RIMPE_EMPRENDEDOR' ? 'Contribuyente Régimen RIMPE' : 'Régimen General')}</div>
+            <div style="margin-top:4px;"><b>Notas / Observaciones:</b> ${inv.notas || 'Venta de mercadería para entrega inmediata.'}</div>
+            <div style="margin-top:6px;color:var(--muted);font-size:9.5px;line-height:1.35;">
+              Comprobante de venta electrónico emitido según especificaciones del Servicio de Rentas Internas (SRI) del Ecuador.
+              Conservar para efectos tributarios y garantía de producto.
+            </div>
+          </div>
+
+          <div>
+            <table class="totales-table">
+              <tr><td>SUBTOTAL ${Number(inv.porcentaje_iva).toFixed(0)}%</td><td>${money(inv.subtotal_iva)}</td></tr>
+              <tr><td>SUBTOTAL 0% ${inv.subtotal_0 > 0 && em.tipo_contribuyente === 'RIMPE_POPULAR' ? '(RIMPE POPULAR)' : ''}</td><td>${money(inv.subtotal_0)}</td></tr>
+              <tr><td>SUBTOTAL NO OBJETO DE IVA</td><td>$0.00</td></tr>
+              <tr><td>SUBTOTAL EXENTO DE IVA</td><td>$0.00</td></tr>
+              <tr><td>SUBTOTAL SIN IMPUESTOS</td><td>${money(inv.subtotal_iva + inv.subtotal_0)}</td></tr>
+              <tr><td>TOTAL DESCUENTO</td><td>${money(inv.descuento)}</td></tr>
+              <tr><td>IVA ${Number(inv.porcentaje_iva).toFixed(0)}%</td><td>${money(inv.monto_iva)}</td></tr>
+              <tr class="grand-total"><td>VALOR TOTAL</td><td>${money(inv.total)}</td></tr>
+            </table>
+          </div>
+        </div>
+      `;
+
+      // Render Code 128 Barcode
+      try {
+        if (typeof JsBarcode === 'function') {
+          JsBarcode("#barcodeSvg", inv.clave_acceso, {
+            format: "CODE128",
+            width: 1.15,
+            height: 38,
+            displayValue: false,
+            margin: 0
+          });
+        }
+      } catch (e) {
+        console.warn('JsBarcode warning:', e);
+      }
+
+      // WhatsApp sharing button setup
+      document.getElementById('btnShareWA').onclick = () => {
+        const phone = (inv.cliente_telefono || '').replace(/\D/g, '');
+        const text = encodeURIComponent(`Hola ${inv.cliente_nombre}, gracias por tu compra en RS Store. Adjuntamos tu Factura Electrónica No. ${inv.secuencial} por un total de ${money(inv.total)}. ¡Que la disfrutes!`);
+        const url = phone ? `https://wa.me/593${phone.replace(/^0/, '')}?text=${text}` : `https://wa.me/?text=${text}`;
+        window.open(url, '_blank');
+      };
+    }
+
+    loadInvoice();
+  </script>
+</body>
+</html>

@@ -15,7 +15,7 @@ const { initWhatsApp, getWhatsAppStatus, sendWhatsAppMessage, disconnectWhatsApp
 const { processAdminQuery } = require('./services/adminQueryService.js');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
@@ -1759,7 +1759,7 @@ app.delete('/api/banners/:id', (req, res) => {
 });
 
 // Iniciar servidor
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`====================================================`);
   console.log(` RS Store Platform & Facturación está en ejecución!`);
   console.log(` Tienda Pública:    http://localhost:${PORT}`);

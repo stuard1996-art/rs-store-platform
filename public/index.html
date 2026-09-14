@@ -1,0 +1,1444 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RS Store · Ropa, accesorios y estilo</title>
+  <meta name="description" content="RS Store — ropa, accesorios, calzado, belleza y detalles seleccionados. Envíos a todo Ecuador y retiro en tienda." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --canvas:#FBF5F3;
+      --surface:#FFFFFF;
+      --surface-2:#F7EAEC;
+      --ink:#3E2622;
+      --ink-2:#553A35;
+      --muted:#8C6F69;
+      --line:rgba(62,38,34,.10);
+      --line-strong:rgba(62,38,34,.18);
+      --accent:#C94F6D;
+      --accent-deep:#A83A57;
+      --accent-soft:#FBE3EA;
+      --blush:#FADCE4;
+      --rose:#D98CA0;
+      --ok:#3E7A55;
+      --serif:'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+      --sans:'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --mono:'JetBrains Mono', ui-monospace, monospace;
+      --ease:cubic-bezier(0.32,0.72,0,1);
+      --shadow:0 20px 50px -30px rgba(62,38,34,.35);
+    }
+    *{box-sizing:border-box;}
+    html{scroll-behavior:smooth;}
+    html,body{margin:0;padding:0;}
+    body{background:var(--canvas);color:var(--ink);font-family:var(--sans);font-size:15.5px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+    a{color:inherit;}
+    img{display:block;max-width:100%;}
+    :focus-visible{outline:2px solid var(--accent-deep);outline-offset:3px;border-radius:6px;}
+    button{font-family:inherit;}
+    .wrap{max-width:1280px;margin:0 auto;padding:0 30px;}
+    .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);}
+    .eyebrow::before{content:'';width:22px;height:1px;background:var(--rose);}
+
+    /* ANNOUNCEMENT */
+    .announce{background:var(--ink);color:#F9EDEF;font-size:12px;letter-spacing:.04em;text-align:center;padding:9px 16px;display:flex;justify-content:center;align-items:center;gap:12px;}
+    .announce b{color:#F3AFC2;font-weight:600;}
+    .announce a{color:#fff;text-decoration:underline;font-size:11.5px;}
+
+    /* HEADER */
+    .header{position:sticky;top:0;z-index:50;background:rgba(251,245,243,.88);backdrop-filter:saturate(150%) blur(16px);border-bottom:1px solid var(--line);}
+    .header-row{display:flex;align-items:center;gap:20px;padding:12px 0;}
+    .logo{display:flex;align-items:center;gap:12px;text-decoration:none;flex:0 0 auto;}
+    .logo img{height:46px;width:46px;}
+    .logo .wm{display:flex;flex-direction:column;line-height:1;}
+    .logo .wm b{font-size:19px;font-weight:800;letter-spacing:.02em;}
+    .logo .wm span{font-family:var(--mono);font-size:8.5px;letter-spacing:.28em;color:var(--muted);margin-top:3px;}
+    .nav{display:flex;gap:6px;margin-left:8px;}
+    .nav a{padding:8px 12px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;color:var(--ink-2);transition:background .2s ease;}
+    .nav a:hover{background:var(--surface-2);color:var(--ink);}
+    .hspace{flex:1;}
+    
+    .search{position:relative;width:240px;}
+    .search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:15px;height:15px;stroke:var(--muted);fill:none;stroke-width:1.8;}
+    .search input{width:100%;padding:9px 12px 9px 34px;border-radius:999px;border:1px solid var(--line-strong);background:var(--surface);font:400 13.5px/1 var(--sans);color:var(--ink);outline:none;}
+    .search input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+    
+    .icon-btn{width:40px;height:40px;border-radius:999px;border:1px solid var(--line-strong);background:var(--surface);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;position:relative;transition:background .2s ease,transform .2s ease;}
+    .icon-btn:hover{background:var(--surface-2);}
+    .icon-btn:active{transform:scale(.95);}
+    .icon-btn svg{width:18px;height:18px;stroke:var(--ink);fill:none;stroke-width:1.7;}
+    .cart-badge{position:absolute;top:-4px;right:-4px;min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:var(--accent);color:#fff;font:700 10.5px/19px var(--mono);text-align:center;}
+    .cart-badge.bump{animation:bump .4s var(--ease);}
+    @keyframes bump{0%{transform:scale(1);}40%{transform:scale(1.35);}100%{transform:scale(1);}}
+
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:13px 22px;border-radius:999px;border:none;cursor:pointer;font:600 14px/1 var(--sans);text-decoration:none;transition:transform .2s ease,background .2s ease,box-shadow .2s ease;}
+    .btn:active{transform:scale(.98);}
+    .btn-primary{background:var(--accent-deep);color:#fff;box-shadow:0 14px 30px -16px rgba(168,58,87,.75);}
+    .btn-primary:hover{background:#96314C;}
+    .btn-outline{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line-strong);}
+    .btn-outline:hover{background:var(--surface);}
+    .btn-lg{padding:15px 26px;font-size:14.5px;}
+
+    /* HERO */
+    .hero{display:grid;grid-template-columns:1.02fr .98fr;gap:56px;align-items:center;padding:70px 0 76px;}
+    .hero h1{font-family:var(--serif);font-size:clamp(44px,5.6vw,80px);font-weight:600;line-height:.98;letter-spacing:-.015em;margin:20px 0 22px;max-width:14ch;}
+    .hero h1 em{font-style:italic;color:var(--accent-deep);}
+    .hero p{color:var(--muted);font-size:17.5px;max-width:48ch;margin:0 0 30px;line-height:1.6;}
+    .hero-actions{display:flex;gap:12px;flex-wrap:wrap;}
+    .hero-meta{display:flex;gap:30px;margin-top:38px;flex-wrap:wrap;}
+    .hero-meta .m{display:flex;flex-direction:column;}
+    .hero-meta .m b{font-family:var(--serif);font-size:25px;font-weight:600;line-height:1;}
+    .hero-meta .m span{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:5px;}
+
+    .hero-visual{position:relative;}
+    .hero-card{position:relative;border-radius:26px;background:linear-gradient(160deg,#FBE6EC 0%,#F4CFDA 55%,#EFC0D0 100%);aspect-ratio:5/5.2;box-shadow:var(--shadow),inset 0 0 0 1px rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+    .hero-card img{width:55%;height:auto;filter:drop-shadow(0 15px 25px rgba(168,58,87,0.25));}
+    .hero-chip{position:absolute;background:var(--surface);border-radius:16px;box-shadow:0 18px 40px -22px rgba(62,38,34,.5);padding:12px 15px;display:flex;align-items:center;gap:11px;}
+    .hero-chip.a{left:-18px;bottom:60px;}
+    .hero-chip.b{right:-14px;top:56px;}
+    .hero-chip .ic{width:34px;height:34px;border-radius:11px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;}
+    .hero-chip .ic svg{width:18px;height:18px;stroke:var(--accent-deep);fill:none;stroke-width:1.7;}
+    .hero-chip .t{font-size:12.5px;font-weight:700;}
+    .hero-chip .s{font-size:10.5px;color:var(--muted);}
+
+    /* BENEFITS */
+    .benefits{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--surface);}
+    .benefits .grid4{display:grid;grid-template-columns:repeat(4,1fr);}
+    .benefit{display:flex;gap:13px;align-items:center;padding:22px 24px;border-right:1px solid var(--line);}
+    .benefit:last-child{border-right:none;}
+    .benefit svg{width:22px;height:22px;stroke:var(--accent-deep);fill:none;stroke-width:1.6;flex:0 0 auto;}
+    .benefit .t{font-size:13.5px;font-weight:700;}
+    .benefit .s{font-size:11.5px;color:var(--muted);}
+
+    section.block{padding:80px 0;}
+    .sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:36px;flex-wrap:wrap;}
+    .sec-head h2{font-family:var(--serif);font-size:clamp(30px,3.6vw,46px);font-weight:600;letter-spacing:-.015em;line-height:1.02;margin:12px 0 0;}
+    .sec-head p{color:var(--muted);margin:6px 0 0;max-width:46ch;font-size:15.5px;}
+
+    /* TOOLBAR */
+    .shop-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:28px;}
+    .filters{display:flex;gap:8px;flex-wrap:wrap;}
+    .chip{padding:9px 16px;border-radius:999px;border:1px solid var(--line-strong);background:var(--surface);font:500 13px/1 var(--sans);color:var(--ink);cursor:pointer;transition:all .2s ease;}
+    .chip:hover{background:var(--surface-2);}
+    .chip[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink);}
+    .shop-bar .spacer{flex:1;}
+    .sort select{padding:10px 14px;border-radius:12px;border:1px solid var(--line-strong);background:var(--surface);font:500 13px/1 var(--sans);color:var(--ink);cursor:pointer;outline:none;}
+
+    /* PRODUCTS GRID */
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;}
+    .prod{background:var(--surface);border-radius:20px;overflow:hidden;box-shadow:inset 0 0 0 1px var(--line);transition:transform .45s var(--ease),box-shadow .45s var(--ease);display:flex;flex-direction:column;}
+    .prod:hover{transform:translateY(-5px);box-shadow:var(--shadow),inset 0 0 0 1px var(--line);}
+    .prod .media{position:relative;aspect-ratio:1/1.1;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+    .prod .media svg.ph{width:40%;max-width:96px;opacity:.72;}
+    .prod .badges{position:absolute;top:12px;left:12px;display:flex;flex-direction:column;gap:6px;}
+    .badge{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;border-radius:999px;background:var(--ink);color:#fff;}
+    .badge.sale{background:var(--accent);}
+    .badge.out{background:#A8324E;color:#fff;}
+    .fav{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:999px;border:none;background:rgba(255,255,255,.9);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .2s ease;}
+    .fav:hover{transform:scale(1.08);}
+    .fav svg{width:16px;height:16px;stroke:var(--ink);fill:none;stroke-width:1.7;}
+    .fav[aria-pressed="true"] svg{fill:var(--accent);stroke:var(--accent);}
+    .prod .add{position:absolute;left:14px;right:14px;bottom:14px;opacity:0;transform:translateY(8px);transition:opacity .3s var(--ease),transform .3s var(--ease);}
+    .prod:hover .add{opacity:1;transform:none;}
+    .prod .add .btn{width:100%;padding:11px;}
+    .prod .body{padding:15px 16px 18px;display:flex;flex-direction:column;flex:1;}
+    .prod .cat-l{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);}
+    .prod h3{font-size:15.5px;font-weight:700;margin:7px 0 6px;}
+    .prod .price-row{margin-top:auto;padding-top:12px;display:flex;align-items:baseline;gap:8px;}
+    .price{font-size:17px;font-weight:800;letter-spacing:-.01em;}
+    .price s{font-size:13px;color:var(--muted);font-weight:500;margin-left:2px;}
+    .stock-tag{font-size:11px;color:var(--muted);margin-left:auto;}
+    .add-mobile{display:none;}
+
+    /* EDITORIAL PROMO */
+    .editorial{background:var(--ink);color:#F6E9EB;border-radius:28px;margin:0 30px;padding:64px 48px;position:relative;overflow:hidden;}
+    .editorial .row{position:relative;display:grid;grid-template-columns:1.3fr .7fr;gap:36px;align-items:center;}
+    .editorial h2{font-family:var(--serif);font-size:clamp(30px,3.8vw,50px);font-weight:600;margin:14px 0 12px;}
+    .code-box{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px;border-radius:16px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);}
+    .code-box code{font-family:var(--mono);font-size:15px;letter-spacing:.16em;color:#F0B7C6;font-weight:500;}
+    .code-box button{background:#F6E9EB;color:var(--ink);border:none;border-radius:999px;padding:9px 15px;font:600 12px/1 var(--sans);cursor:pointer;}
+
+    /* FOOTER */
+    footer{border-top:1px solid var(--line);padding:56px 0 30px;margin-top:40px;}
+    .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:32px;}
+    .foot-brand img{height:54px;width:54px;margin-bottom:14px;}
+    .foot-col h4{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 14px;}
+    .foot-col a{display:block;color:var(--ink-2);text-decoration:none;font-size:13.5px;padding:4px 0;}
+    .foot-bottom{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:40px;padding-top:20px;font-family:var(--mono);font-size:11px;color:var(--muted);}
+
+    /* DRAWER CART */
+    .scrim{position:fixed;inset:0;background:rgba(62,38,34,.45);opacity:0;pointer-events:none;transition:opacity .35s var(--ease);z-index:70;}
+    .scrim.show{opacity:1;pointer-events:auto;}
+    .drawer{position:fixed;top:0;right:0;height:100dvh;width:420px;max-width:94vw;background:var(--canvas);z-index:80;transform:translateX(102%);transition:transform .45s var(--ease);display:flex;flex-direction:column;box-shadow:-30px 0 80px -40px rgba(62,38,34,.6);}
+    .drawer.show{transform:none;}
+    .drawer-head{display:flex;align-items:center;justify-content:space-between;padding:20px 22px;border-bottom:1px solid var(--line);}
+    .drawer-head h3{margin:0;font-size:17px;font-weight:700;}
+    .drawer-body{flex:1;overflow-y:auto;padding:12px 22px;}
+    .ci{display:flex;gap:13px;padding:15px 0;border-bottom:1px solid var(--line);}
+    .ci .im{width:64px;height:64px;border-radius:12px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;}
+    .ci .im svg{width:26px;height:26px;stroke:#9E3E60;fill:none;stroke-width:1.5;opacity:.7;}
+    .ci .info{flex:1;min-width:0;}
+    .qty{display:inline-flex;align-items:center;gap:10px;margin-top:8px;}
+    .qty button{width:26px;height:26px;border-radius:8px;border:1px solid var(--line-strong);background:var(--surface);cursor:pointer;font-weight:700;}
+    .qty span{font-size:13px;font-weight:700;min-width:16px;text-align:center;}
+    .drawer-foot{border-top:1px solid var(--line);padding:20px 22px;background:var(--surface);}
+    .sum{display:flex;justify-content:space-between;font-size:14px;margin-bottom:6px;}
+    .sum.total{font-size:17px;font-weight:800;margin:12px 0 16px;}
+    .drawer-foot .btn{width:100%;}
+
+    /* CHECKOUT MODAL */
+    .modal-overlay{position:fixed;inset:0;background:rgba(43,29,34,.5);backdrop-filter:blur(4px);z-index:90;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s ease;}
+    .modal-overlay.show{opacity:1;pointer-events:auto;}
+    .modal-card{width:100%;max-width:540px;background:var(--surface);border-radius:24px;box-shadow:0 30px 70px rgba(0,0,0,0.25);overflow:hidden;animation:pop .25s var(--ease);}
+    @keyframes pop{from{transform:scale(0.96) translateY(12px);}to{transform:none;}}
+    .modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--line);}
+    .modal-body{padding:22px 24px;max-height:75vh;overflow-y:auto;}
+    .lbl{display:block;font-weight:700;font-size:12px;margin:0 0 5px;color:var(--ink-2);}
+    .inp{width:100%;padding:11px 14px;border-radius:12px;border:1px solid var(--line-strong);background:#fff;font:400 13.5px/1 var(--sans);margin-bottom:12px;outline:none;}
+    .inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+    .f-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+    /* Toast */
+    .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,150%);z-index:100;display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:999px;background:var(--ink);color:#F9EDEF;font-size:13.5px;font-weight:600;box-shadow:0 24px 48px -20px rgba(62,38,34,.6);transition:transform .4s var(--ease);pointer-events:none;}
+    .toast.show{transform:translate(-50%,0);}
+
+    /* Social Buttons */
+    .social-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;border:1px solid var(--line-strong);background:#fff;color:var(--ink-2);font-size:11.5px;font-weight:700;text-decoration:none;transition:all .18s ease;box-shadow:0 1px 3px rgba(59,42,48,0.06);}
+    .social-btn:hover{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-deep);transform:translateY(-1px);box-shadow:0 4px 10px rgba(194,92,130,0.18);}
+    .social-btn svg{width:13px;height:13px;flex-shrink:0;}
+
+    @media (max-width:1100px){ .grid{grid-template-columns:repeat(3,1fr);} }
+    @media (max-width:960px){
+      .hero{grid-template-columns:1fr;gap:40px;padding:48px 0 56px;}
+      .search{display:none;}
+      .benefits .grid4{grid-template-columns:1fr 1fr;}
+      .editorial .row{grid-template-columns:1fr;gap:24px;}
+      .foot-grid{grid-template-columns:1fr 1fr;}
+    }
+    @media (max-width:640px){
+      .wrap{padding:0 18px;}
+      .grid{grid-template-columns:1fr 1fr;gap:14px;}
+      .prod .add{display:none;}
+      .add-mobile{display:block;margin-top:12px;}
+      .foot-grid{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="announce">
+    <span>Envío <b>gratis</b> en compras desde $50 · Retiro en tienda en Guayaquil · Devoluciones en 30 días</span>
+  </div>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="wrap header-row">
+      <a class="logo" href="#" aria-label="RS Store Inicio">
+        <img src="rs-store-logo.svg" alt="RS Store">
+        <span class="wm"><b>RS STORE</b><span>ROPA · ESTILO · TÚ</span></span>
+      </a>
+      <nav class="nav" aria-label="Principal">
+        <a href="#tienda">Tienda</a>
+        <a href="#editorial">Ofertas</a>
+        <a href="javascript:void(0)" onclick="openCart()">Ver Carrito</a>
+      </nav>
+      <span class="hspace"></span>
+      <div class="search">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="searchInput" type="search" placeholder="Buscar producto...">
+      </div>
+      <button class="icon-btn" id="openCart" aria-label="Abrir carrito">
+        <svg viewBox="0 0 24 24"><path d="M5 8h14l-1.2 11.2a1.6 1.6 0 0 1-1.6 1.4H7.8a1.6 1.6 0 0 1-1.6-1.4L5 8Z"/><path d="M8.6 8V6.6a3.4 3.4 0 0 1 6.8 0V8"/></svg>
+        <span class="cart-badge" id="cartBadge">0</span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="wrap hero">
+      <div class="hero-copy">
+        <span class="eyebrow">Colección 2026</span>
+        <h1>Ropa y accesorios con <em>estilo propio.</em></h1>
+        <p>RS Store reúne prendas, calzado, belleza y detalles elegidos uno por uno. Calidad garantizada, facturación electrónica legal y envíos a todo Ecuador.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="#tienda">Ver Catálogo Online
+            <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.9"/></svg>
+          </a>
+          <button type="button" class="btn btn-outline btn-lg" onclick="openCart()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 8h14l-1.2 11.2a1.6 1.6 0 0 1-1.6 1.4H7.8a1.6 1.6 0 0 1-1.6-1.4L5 8Z"/><path d="M8.6 8V6.6a3.4 3.4 0 0 1 6.8 0V8"/></svg>
+            Ver mi carrito
+          </button>
+        </div>
+        <div class="hero-meta">
+          <div class="m"><b id="statProds">+20</b><span>productos</span></div>
+          <div class="m"><b>24–48 h</b><span>envío Servientrega</span></div>
+          <div class="m"><b>SRI 15%</b><span>factura con RUC o C.F.</span></div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-card">
+          <img src="rs-store-logo.svg" alt="RS Store Boutique">
+        </div>
+        <div class="hero-chip a">
+          <span class="ic"><svg viewBox="0 0 24 24"><path d="M3 7h11v9H3zM14 9h4l3 3v4h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></svg></span>
+          <span><span class="t">Envío gratis</span><br><span class="s">en compras desde $50</span></span>
+        </div>
+        <div class="hero-chip b">
+          <span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 4.4 3 7.6 7 9 4-1.4 7-4.6 7-9V6l-7-3Z"/></svg></span>
+          <span><span class="t">Factura Legal</span><br><span class="s">Comprobante RIDE SRI</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- BENEFITS -->
+    <div class="benefits">
+      <div class="wrap">
+        <div class="grid4">
+          <div class="benefit"><svg viewBox="0 0 24 24"><path d="M3 7h11v9H3zM14 9h4l3 3v4h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></svg><span><span class="t">Envío nacional</span><br><span class="s">A todo Ecuador</span></span></div>
+          <div class="benefit"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 1 3 6.2"/><path d="M4 20v-4h4"/></svg><span><span class="t">Devoluciones</span><br><span class="s">30 días de garantía</span></span></div>
+          <div class="benefit"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg><span><span class="t">Pago Seguro</span><br><span class="s">Transferencia o tarjeta</span></span></div>
+          <div class="benefit"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8"/></svg><span><span class="t">Factura Inmediata</span><br><span class="s">Descarga directa en RIDE</span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIENDA -->
+    <section class="block" id="tienda">
+      <div class="wrap">
+        <div class="sec-head">
+          <div><span class="eyebrow">Catálogo Conectado a Base de Datos</span><h2>Nuestra Colección</h2></div>
+        </div>
+
+        <div class="shop-bar">
+          <div class="filters">
+            <button class="chip" data-cat="all" aria-pressed="true">Todo</button>
+            <button class="chip" data-cat="accesorios" aria-pressed="false">Accesorios</button>
+            <button class="chip" data-cat="ropa" aria-pressed="false">Ropa</button>
+            <button class="chip" data-cat="calzado" aria-pressed="false">Calzado</button>
+            <button class="chip" data-cat="belleza" aria-pressed="false">Belleza</button>
+            <button class="chip" data-cat="hogar" aria-pressed="false">Hogar</button>
+            <button class="chip" data-cat="regalos" aria-pressed="false">Regalos</button>
+          </div>
+          <span class="spacer"></span>
+          <div class="sort">
+            <select id="sortSelect">
+              <option value="default">Destacados</option>
+              <option value="price-asc">Precio: menor a mayor</option>
+              <option value="price-desc">Precio: mayor a menor</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid" id="productsGrid">
+          <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);">Cargando productos de la base de datos...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EDITORIAL -->
+    <section id="editorial">
+      <div class="editorial">
+        <div class="row">
+          <div>
+            <span class="eyebrow" style="color:#F0B7C6;">Descuento Especial</span>
+            <h2>−20% en tu primera compra</h2>
+            <p>Aplica el código en tu compra online o menciónalo en caja al facturar en nuestro local de Guayaquil.</p>
+            <a class="btn btn-primary" href="#tienda" style="background:#fff;color:var(--ink);">Ver Productos</a>
+          </div>
+          <div>
+            <div class="code-box"><code>RSSTYLE20</code><button type="button" onclick="copyPromoCode('RSSTYLE20')">Copiar</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="wrap">
+      <div class="foot-grid">
+        <div class="foot-brand">
+          <img src="rs-store-logo.svg" alt="RS Store">
+          <p>Ropa, accesorios y detalles curados con estilo. Sistema de Facturación Electrónica integrado para Ecuador.</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;">
+            <a href="https://instagram.com" target="_blank" rel="noopener" class="social-btn" title="Instagram">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+              <span>Instagram</span>
+            </a>
+            <a href="https://tiktok.com" target="_blank" rel="noopener" class="social-btn" title="TikTok">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-1.01v8.47c0 2.22-.88 4.35-2.45 5.92-1.57 1.57-3.7 2.45-5.92 2.45-4.63 0-8.38-3.75-8.38-8.38 0-4.63 3.75-8.38 8.38-8.38.35 0 .7.02 1.05.07V12.7c-.35-.07-.7-.1-1.05-.1-2.4 0-4.35 1.95-4.35 4.35s1.95 4.35 4.35 4.35c2.4 0 4.35-1.95 4.35-4.35V0h-4.44z"/></svg>
+              <span>TikTok</span>
+            </a>
+            <a href="https://facebook.com" target="_blank" rel="noopener" class="social-btn" title="Facebook">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+              <span>Facebook</span>
+            </a>
+            <a href="https://wa.me/593991234567" target="_blank" rel="noopener" class="social-btn" title="WhatsApp">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+              <span>WhatsApp</span>
+            </a>
+          </div>
+        </div>
+        <div class="foot-col"><h4>Tienda</h4><a href="#tienda">Accesorios</a><a href="#tienda">Ropa</a><a href="#tienda">Calzado</a><a href="#tienda">Belleza</a></div>
+        <div class="foot-col"><h4>Ayuda</h4><a href="#">Envíos y entregas</a><a href="#">Cambios y devoluciones</a><a href="#">Guía de tallas</a><a href="#">Preguntas frecuentes</a></div>
+        <div class="foot-col"><h4>Contacto</h4><a href="#">Guayaquil, Ecuador</a><a href="#">ventas@rsstore.ec</a><a href="#">+593 99 123 4567</a></div>
+      </div>
+      <div class="foot-bottom" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <span>© 2026 RS Store · Facturación Electrónica SRI Ecuador</span>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span style="font-size:11.5px;color:var(--muted);">Síguenos:</span>
+          <a href="https://instagram.com" target="_blank" rel="noopener" class="social-btn" style="padding:4px 8px;font-size:11px;">Instagram</a>
+          <a href="https://tiktok.com" target="_blank" rel="noopener" class="social-btn" style="padding:4px 8px;font-size:11px;">TikTok</a>
+          <a href="https://facebook.com" target="_blank" rel="noopener" class="social-btn" style="padding:4px 8px;font-size:11px;">Facebook</a>
+        </div>
+        <span>Precios en USD con IVA incluido · Pago seguro</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- CART DRAWER -->
+  <div class="scrim" id="scrim"></div>
+  <aside class="drawer" id="drawer">
+    <div class="drawer-head">
+      <h3>Tu Carrito</h3>
+      <button class="icon-btn" id="closeCart"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="drawer-body" id="cartBody"></div>
+    <div class="drawer-foot">
+      <!-- Cupón de Descuento en Carrito -->
+      <div style="background:#FAF5F6;border:1px dashed var(--line-strong);border-radius:12px;padding:10px 12px;margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-size:12px;font-weight:700;color:var(--ink-2);">🎟️ ¿Tienes un cupón de descuento?</span>
+          <span id="couponStatusBadge" style="font-size:11px;font-weight:700;"></span>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <input id="cartCouponInput" type="text" placeholder="Ej: RSSTYLE20" style="text-transform:uppercase;font-family:var(--mono);font-size:12px;padding:6px 10px;border-radius:8px;border:1px solid var(--line-strong);flex:1;outline:none;">
+          <button type="button" class="btn btn-primary btn-sm" id="btnApplyCoupon" onclick="applyCartCoupon()" style="padding:6px 14px;font-size:12px;">Aplicar</button>
+        </div>
+        <div id="appliedCouponInfo" style="display:none;font-size:11.5px;color:var(--ok);margin-top:6px;font-weight:600;"></div>
+      </div>
+
+      <div class="sum"><span>Subtotal</span><span id="cartSubtotal">$0.00</span></div>
+      <div class="sum" id="rowCartDiscount" style="display:none;color:var(--accent-deep);font-weight:700;">
+        <span id="cartDiscountLabel">Descuento Cupón</span>
+        <span id="cartDiscount">-$0.00</span>
+      </div>
+      <div class="sum"><span>Envío (Gratis desde $50)</span><span id="cartShipping">—</span></div>
+      <div class="sum total"><span>Total</span><span id="cartTotal">$0.00</span></div>
+      <button class="btn btn-primary btn-lg" id="btnCheckout" onclick="openCheckoutModal()">Finalizar Compra y Facturar</button>
+    </div>
+  </aside>
+
+  <!-- CHECKOUT & FACTURACIÓN MODAL -->
+  <div class="modal-overlay" id="checkoutModal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3 style="margin:0;font-size:17px;font-weight:800;">Datos de Envío y Facturación</h3>
+        <button class="icon-btn" onclick="closeCheckoutModal()"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+      <form id="checkoutForm">
+        <div class="modal-body">
+          <div style="background:var(--surface-2);padding:12px;border-radius:14px;margin-bottom:14px;">
+            <label class="lbl">Tipo de Factura</label>
+            <select class="inp" id="chkDocType" style="margin-bottom:8px;">
+              <option value="CONSUMIDOR_FINAL">Consumidor Final</option>
+              <option value="CEDULA">Factura con Datos (Cédula de 10 dígitos)</option>
+              <option value="RUC">Factura con Datos (RUC de 13 dígitos)</option>
+            </select>
+            <div id="clientDetailsFields" hidden>
+              <div class="f-row">
+                <div>
+                  <label class="lbl">No. Identificación</label>
+                  <input class="inp" id="chkDocNum" placeholder="10 dígitos cédula o 13 RUC">
+                  <span id="chkSriIndicator" style="font-size:11px;color:var(--muted);display:block;margin-top:-8px;margin-bottom:10px;font-weight:600;">⚡ Consulta Automática SRI</span>
+                </div>
+                <div>
+                  <label class="lbl">Nombres / Razón Social</label>
+                  <input class="inp" id="chkClientName" placeholder="Se completará automáticamente...">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="f-row">
+            <div><label class="lbl">Correo Electrónico (Opcional)</label><input class="inp" id="chkEmail" type="email" placeholder="cliente@correo.com (Opcional)"></div>
+            <div><label class="lbl">Teléfono / WhatsApp</label><input class="inp" id="chkPhone" required placeholder="099XXXXXXX"></div>
+          </div>
+
+          <!-- LOGÍSTICA & ENVÍO SERVIENTREGA ECUADOR -->
+          <div style="background:#FAF5F6;border:1px solid var(--line-strong);border-radius:14px;padding:14px;margin-bottom:12px;">
+            <div style="font-weight:800;font-size:13px;color:var(--accent-deep);margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+              🚚 <span>Datos de Entrega &amp; Logística Servientrega</span>
+            </div>
+
+            <div class="f-row">
+              <div>
+                <label class="lbl">Tipo de Entrega</label>
+                <select class="inp" id="chkTipoEntrega" onchange="toggleDeliveryType()">
+                  <option value="DOMICILIO">Entrega a Domicilio / Oficina</option>
+                  <option value="AGENCIA">Retiro en Agencia Servientrega</option>
+                </select>
+              </div>
+              <div>
+                <label class="lbl">Provincia de Destino</label>
+                <select class="inp" id="chkProvincia" onchange="recalculateShipping()">
+                  <option value="Azuay">Azuay</option>
+                  <option value="Bolívar">Bolívar</option>
+                  <option value="Cañar">Cañar</option>
+                  <option value="Carchi">Carchi</option>
+                  <option value="Chimborazo">Chimborazo</option>
+                  <option value="Cotopaxi">Cotopaxi</option>
+                  <option value="El Oro">El Oro</option>
+                  <option value="Esmeraldas">Esmeraldas</option>
+                  <option value="Galápagos">Galápagos</option>
+                  <option value="Guayas" selected>Guayas</option>
+                  <option value="Imbabura">Imbabura</option>
+                  <option value="Loja">Loja</option>
+                  <option value="Los Ríos">Los Ríos</option>
+                  <option value="Manabí">Manabí</option>
+                  <option value="Morona Santiago">Morona Santiago</option>
+                  <option value="Napo">Napo</option>
+                  <option value="Orellana">Orellana</option>
+                  <option value="Pastaza">Pastaza</option>
+                  <option value="Pichincha">Pichincha</option>
+                  <option value="Santa Elena">Santa Elena</option>
+                  <option value="Santo Domingo de los Tsáchilas">Santo Domingo de los Tsáchilas</option>
+                  <option value="Sucumbíos">Sucumbíos</option>
+                  <option value="Tungurahua">Tungurahua</option>
+                  <option value="Zamora Chinchipe">Zamora Chinchipe</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="lbl">Ciudad / Cantón</label>
+              <input class="inp" id="chkCiudad" required placeholder="Ej. Guayaquil, Samborondón, Quito, Cuenca...">
+            </div>
+
+            <!-- Campos para Retiro en Agencia -->
+            <div id="agenciaField" style="display:none;margin-top:6px;">
+              <label class="lbl">Agencia Servientrega de Retiro</label>
+              <input class="inp" id="chkAgenciaServientrega" placeholder="Ej. Servientrega Mall del Sol, Servientrega Centro...">
+              <div style="font-size:11px;color:var(--muted);margin-top:2px;">Se enviará para retiro personal con tu cédula en la agencia indicada.</div>
+            </div>
+
+            <!-- Campos para Entrega a Domicilio -->
+            <div id="domicilioFields" style="margin-top:6px;">
+              <div class="f-row">
+                <div>
+                  <label class="lbl">Calle Principal</label>
+                  <input class="inp" id="chkCallePrincipal" placeholder="Ej. Av. Víctor Emilio Estrada">
+                </div>
+                <div>
+                  <label class="lbl">No. Casa / Manzana / Villa</label>
+                  <input class="inp" id="chkNumeroCasa" placeholder="Ej. #412 o Mz. 12 Villa 4">
+                </div>
+              </div>
+
+              <div class="f-row">
+                <div>
+                  <label class="lbl">Calle Secundaria / Intersección</label>
+                  <input class="inp" id="chkCalleSecundaria" placeholder="Ej. y Guayacanes">
+                </div>
+                <div>
+                  <label class="lbl">Referencia Visual (Requerido por Servientrega)</label>
+                  <input class="inp" id="chkReferencia" placeholder="Ej. Casa verde dos pisos, frente a Farmacia">
+                </div>
+              </div>
+            </div>
+
+            <!-- Botón GPS para mensajero -->
+            <div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);">
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                <button type="button" class="btn btn-outline" id="btnShareGps" onclick="shareGpsLocation()" style="font-size:12px;padding:6px 12px;display:inline-flex;align-items:center;gap:6px;border-color:var(--accent);color:var(--accent-deep);background:#fff;">
+                  📍 Compartir mi ubicación exacta (GPS para el mensajero)
+                </button>
+                <span id="chkGpsStatus" style="font-size:11.5px;color:var(--muted);">Opcional pero asegura entrega exacta sin llamadas</span>
+              </div>
+            </div>
+          </div>
+
+          <label class="lbl">Método de Pago</label>
+          <select class="inp" id="chkPayment">
+            <option value="TRANSFERENCIA BANCARIA (BANCO PICHINCHA / GUAYAQUIL)">Transferencia Bancaria (Pichincha / Guayaquil / Deuna)</option>
+            <option value="TARJETA DE CREDITO / DEBITO">Tarjeta de Crédito / Débito</option>
+            <option value="PAGO AL RETIRAR EN TIENDA GUAYAQUIL">Pago y retiro en tienda física</option>
+          </select>
+
+          <!-- Tarjeta de Datos Bancarios y Subida de Comprobante -->
+          <div id="bankTransferCard" style="background:#FAF5F6;border:1px solid var(--line-strong);border-radius:14px;padding:14px;margin-top:10px;margin-bottom:10px;">
+            <div style="font-weight:800;font-size:13px;color:var(--accent-deep);margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+              🏦 <span>Datos para Transferencia Bancaria Oficial</span>
+            </div>
+            <div style="font-size:12px;display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">
+              <div><b>Banco:</b> <span id="bankNameDisplay">Banco Pichincha</span></div>
+              <div><b>Tipo:</b> <span id="bankTypeDisplay">Cuenta Corriente</span></div>
+              <div><b>No. Cuenta:</b> <span id="bankNumDisplay" style="font-family:var(--mono);font-weight:700;">2100876543</span></div>
+              <div><b>Titular:</b> <span id="bankOwnerDisplay">RS STORE BOUTIQUE S.A.S.</span></div>
+              <div><b>RUC:</b> <span id="bankRucDisplay" style="font-family:var(--mono);">0992345678001</span></div>
+              <div><b>Email:</b> <span id="bankEmailDisplay">pagos@rsstore.ec</span></div>
+            </div>
+
+            <!-- Upload Voucher Widget -->
+            <div style="background:#fff;border:1.5px dashed var(--accent);border-radius:12px;padding:12px;text-align:center;">
+              <div style="font-weight:700;font-size:12.5px;color:var(--ink);">Adjunta la foto o captura de tu transferencia</div>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">Validación instantánea por OCR bancario ecuatoriano</div>
+              <input type="file" id="chkVoucherFile" accept="image/*" class="inp" style="padding:6px 10px;font-size:12px;background:#FAF5F6;">
+              <div id="chkVoucherPreviewContainer" style="display:none;margin-top:8px;">
+                <img id="chkVoucherPreviewImg" style="max-height:110px;border-radius:8px;border:1px solid var(--line-strong);">
+              </div>
+            </div>
+          </div>
+
+          <!-- Desglose de Totales con Servientrega y Régimen RIMPE -->
+          <div style="background:#FAF5F6;padding:14px;border-radius:14px;font-size:13px;border:1px solid var(--line-strong);">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+              <span>Subtotal productos:</span>
+              <span id="chkSubtotalDisplay" style="font-weight:700;">$0.00</span>
+            </div>
+            <div id="chkDiscountRow" style="display:none;justify-content:space-between;margin-bottom:4px;color:var(--accent-deep);font-weight:700;">
+              <span id="chkDiscountLabel">Descuento cupón:</span>
+              <span id="chkDiscountDisplay">-$0.00</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+              <span id="chkShippingLabel">Envío Servientrega:</span>
+              <span id="chkShippingDisplay" style="font-weight:700;color:var(--accent-deep);">$0.00</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+              <span id="chkIvaLabel">IVA (15%):</span>
+              <span id="chkIvaDisplay" style="font-weight:700;">$0.00</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;border-top:1px dashed var(--line-strong);padding-top:8px;font-size:16px;">
+              <b>Total a Pagar:</b>
+              <b id="chkTotalDisplay" style="color:var(--accent-deep);font-size:18px;">$0.00</b>
+            </div>
+            <div id="chkTaxNotice" style="font-size:11.5px;color:var(--muted);margin-top:6px;line-height:1.4;">
+              Incluye IVA (15%) e inventario reservado en tiempo real.
+            </div>
+          </div>
+        </div>
+        <div style="padding:16px 24px;background:var(--surface-2);display:flex;justify-content:flex-end;gap:10px;">
+          <button type="button" class="btn btn-ghost" onclick="closeCheckoutModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btnConfirmOrder">Confirmar Pedido &amp; Factura</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ORDER SUCCESS MODAL -->
+  <div class="modal-overlay" id="successModal">
+    <div class="modal-card" style="text-align:center;padding:32px 24px;">
+      <div style="width:64px;height:64px;border-radius:50%;background:#D6EEDB;color:#1E6B2C;display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+      </div>
+      <h3 style="margin:0 0 6px;font-size:22px;">¡Gracias por tu compra!</h3>
+      <p style="color:var(--muted);font-size:14px;margin:0 0 18px;">Tu pedido ha sido registrado con éxito en nuestro sistema.</p>
+      
+      <div style="background:var(--surface-2);padding:14px;border-radius:14px;margin-bottom:14px;text-align:left;font-size:13px;">
+        <div><b>Código de Pedido:</b> <span id="succOrderCode" style="font-family:var(--mono);">—</span></div>
+        <div style="margin-top:4px;"><b>Factura Electrónica:</b> <span id="succInvoiceNum" style="font-family:var(--mono);color:var(--accent-deep);">—</span></div>
+      </div>
+
+      <div id="succVoucherNotice" style="background:#E6F4EA;border:1px solid #CEEAD6;border-radius:12px;padding:12px;font-size:12.5px;color:#137333;font-weight:700;margin-bottom:14px;display:none;text-align:center;">
+        ⚡ ¡Comprobante bancario recibido! Nuestro sistema OCR lo está validando automáticamente con el banco.
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <a id="succWhatsAppBtn" class="btn btn-outline btn-lg" href="#" target="_blank" style="background:#25D366;color:#fff;border:none;box-shadow:0 8px 20px -8px rgba(37,211,102,0.6);text-decoration:none;font-weight:700;">
+          💬 Confirmar o Enviar Comprobante por WhatsApp
+        </a>
+        <a id="succInvoiceLink" class="btn btn-primary btn-lg" href="#" target="_blank">Ver / Descargar Factura RIDE (SRI)</a>
+        <button type="button" class="btn btn-ghost" onclick="closeSuccessModal()">Seguir Comprando</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"><span id="toastMsg">Listo</span></div>
+
+  <script>
+    const GRAD = { accesorios:'linear-gradient(150deg,#FBE0E9,#F2BED2)', ropa:'linear-gradient(150deg,#EFE6F7,#D9C9EF)', calzado:'linear-gradient(150deg,#F5EADD,#E6CFB6)', belleza:'linear-gradient(150deg,#FBE0E8,#EFBFD2)', hogar:'linear-gradient(150deg,#F3E9DA,#E7D3BC)', regalos:'linear-gradient(150deg,#F8D8E4,#EDB4CB)' };
+    const ICON = {
+      accesorios:'<path d="M24 8 10 15v9c0 8.4 6 13.6 14 15 8-1.4 14-6.6 14-15v-9L24 8Z"/>',
+      ropa:'<path d="M19 10 9 17v8l4-2v15h22V23l4 2v-8L29 10"/><path d="M19 10a5 5 0 0 0 10 0"/>',
+      calzado:'<path d="M15 40h18l1-8H14z"/><path d="M13 32h22M20 24c0-6 8-6 8 0"/>',
+      belleza:'<path d="M19 8h10v6l4 22a3 3 0 0 1-3 4H18a3 3 0 0 1-3-4l4-22z"/><path d="M16 26h16"/>',
+      hogar:'<path d="M18 22h12v16a3 3 0 0 1-3 3h-6a3 3 0 0 1-3-3z"/><path d="M24 22c-2-3-4-4-4-7a4 4 0 0 1 8 0c0 3-2 4-4 7z"/>',
+      regalos:'<path d="M10 20h28v18H10z"/><path d="M10 20h28M24 20v18"/>'
+    };
+
+    let products = [];
+    let cart = [];
+    let activeFilter = 'all';
+
+    function money(n) { return '$' + Number(n || 0).toFixed(2); }
+    function toast(msg) {
+      const t = document.getElementById('toast');
+      document.getElementById('toastMsg').textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    // Fetch Products from SQLite API
+    async function fetchProducts() {
+      try {
+        const res = await fetch('/api/products?onlyVisible=true');
+        const json = await res.json();
+        if (json.success) {
+          products = json.data;
+          document.getElementById('statProds').textContent = '+' + products.length;
+          renderProducts();
+        }
+      } catch (err) {
+        document.getElementById('productsGrid').innerHTML = '<p style="grid-column:1/-1;text-align:center;color:red;">Error al conectar con la base de datos.</p>';
+      }
+    }
+
+    function renderProducts() {
+      const grid = document.getElementById('productsGrid');
+      const q = (document.getElementById('searchInput') ? document.getElementById('searchInput').value : '').toLowerCase().trim();
+      let list = products.filter(p => activeFilter === 'all' || p.cat === activeFilter);
+      if (q) list = list.filter(p => p.name.toLowerCase().includes(q) || (p.desc || '').toLowerCase().includes(q));
+
+      const sort = document.getElementById('sortSelect').value;
+      if (sort === 'price-asc') list.sort((a,b) => a.price - b.price);
+      if (sort === 'price-desc') list.sort((a,b) => b.price - a.price);
+
+      if (!list.length) {
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);">No se encontraron productos disponibles.</div>';
+        return;
+      }
+
+      let selectedSizes = {};
+
+      grid.innerHTML = list.map(p => {
+        const isOut = p.stock <= 0;
+        const badges = [];
+        if (isOut) badges.push('<span class="badge out">Agotado</span>');
+        else if (p.badge === 'sale') badges.push('<span class="badge sale">Oferta</span>');
+        else if (p.badge === 'nuevo') badges.push('<span class="badge">Nuevo</span>');
+
+        const media = p.img ? `<img src="${p.img}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;">` : `<svg class="ph" viewBox="0 0 48 48">${ICON[p.cat] || ICON.accesorios}</svg>`;
+
+        let tObj = {};
+        try { tObj = JSON.parse(p.tallas || '{}'); } catch(e) {}
+        const tallasKeys = Object.keys(tObj);
+        const hasMultipleSizes = tallasKeys.length > 1 || (tallasKeys.length === 1 && tallasKeys[0] !== 'Única');
+        const firstAvailable = tallasKeys.find(k => (tObj[k] || 0) > 0) || tallasKeys[0] || 'Única';
+        selectedSizes[p.id] = firstAvailable;
+
+        let sizeSelectorHtml = '';
+        if (hasMultipleSizes) {
+          sizeSelectorHtml = `
+            <div style="margin:8px 0;">
+              <div style="font-size:11px;font-weight:700;color:var(--ink-2);margin-bottom:5px;">Elige tu talla:</div>
+              <div class="size-pills-row" id="sizes-row-${p.id}" style="display:flex;gap:6px;flex-wrap:wrap;">
+                ${tallasKeys.map(t => {
+                  const sQty = tObj[t] || 0;
+                  const isAvailable = sQty > 0;
+                  const isSelected = t === firstAvailable;
+                  return `
+                    <button type="button" class="size-pill-btn ${isSelected ? 'active' : ''}" 
+                            id="pill-${p.id}-${t}"
+                            data-prod="${p.id}" data-talla="${t}" ${!isAvailable ? 'disabled title="Agotada"' : ''}
+                            onclick="selectSize(${p.id}, '${t}')"
+                            style="padding:5px 10px;border-radius:8px;border:1.5px solid ${isSelected ? 'var(--accent-deep)' : 'var(--line-strong)'};background:${isSelected ? 'var(--accent-soft)' : '#fff'};color:${!isAvailable ? '#A88C94' : 'var(--ink)'};font-size:12px;font-weight:700;cursor:${isAvailable ? 'pointer' : 'not-allowed'};${!isAvailable ? 'text-decoration:line-through;opacity:0.5;' : ''}">
+                      ${t}
+                    </button>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          `;
+        }
+
+        return `
+          <article class="prod">
+            <div class="media" style="background:${GRAD[p.cat] || GRAD.accesorios}">
+              ${media}
+              <div class="badges">${badges.join('')}</div>
+              <button class="fav" type="button" aria-label="Favoritos" onclick="toast('Guardado en favoritos')"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-9.2A3.8 3.8 0 0 1 12 8.4 3.8 3.8 0 0 1 19 10.8C19 15.6 12 20 12 20Z"/></svg></button>
+              <div class="add">
+                ${isOut ? '<button class="btn btn-outline" disabled style="width:100%;">Sin Stock</button>' : `<button class="btn btn-primary" onclick="addToCartWithSize(${p.id})">Agregar al Carrito</button>`}
+              </div>
+            </div>
+            <div class="body">
+              <span class="cat-l">${p.cat}</span>
+              <h3>${p.name}</h3>
+              <p style="font-size:12.5px;color:var(--muted);margin:0 0 8px;line-height:1.4;">${p.desc || ''}</p>
+              ${sizeSelectorHtml}
+              <div class="price-row">
+                <span class="price">${money(p.price)}</span>
+                ${p.was_price ? `<s>${money(p.was_price)}</s>` : ''}
+                <span class="stock-tag">${isOut ? 'Agotado' : p.stock + ' disponibles'}</span>
+              </div>
+              <div class="add-mobile">
+                ${isOut ? '<button class="btn btn-outline" disabled style="width:100%;">Sin Stock</button>' : `<button class="btn btn-primary" onclick="addToCartWithSize(${p.id})" style="width:100%;">Agregar</button>`}
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      window.selectedSizesMap = selectedSizes;
+    }
+
+    function selectSize(prodId, talla) {
+      if (!window.selectedSizesMap) window.selectedSizesMap = {};
+      window.selectedSizesMap[prodId] = talla;
+
+      const container = document.getElementById(`sizes-row-${prodId}`);
+      if (container) {
+        container.querySelectorAll('.size-pill-btn').forEach(b => {
+          const isSelected = b.dataset.talla === talla;
+          b.style.borderColor = isSelected ? 'var(--accent-deep)' : 'var(--line-strong)';
+          b.style.background = isSelected ? 'var(--accent-soft)' : '#fff';
+        });
+      }
+    }
+
+    function addToCartWithSize(id) {
+      const p = products.find(x => x.id === id);
+      if (!p) return;
+      if (p.stock <= 0) { toast('Producto sin inventario'); return; }
+
+      let talla = 'Única';
+      if (window.selectedSizesMap && window.selectedSizesMap[id]) {
+        talla = window.selectedSizesMap[id];
+      }
+
+      // Check stock for this specific size if product has tallas
+      let tObj = {};
+      try { tObj = JSON.parse(p.tallas || '{}'); } catch(e) {}
+      if (tObj[talla] !== undefined && tObj[talla] <= 0) {
+        toast(`La talla ${talla} está agotada`);
+        return;
+      }
+
+      const cartKey = `${p.id}-${talla}`;
+      const item = cart.find(x => x.cartKey === cartKey);
+      const maxForSize = tObj[talla] !== undefined ? tObj[talla] : p.stock;
+
+      if (item) {
+        if (item.qty + 1 > maxForSize) {
+          toast(`Stock máximo alcanzado para talla ${talla} (${maxForSize} un.)`);
+          return;
+        }
+        item.qty++;
+      } else {
+        cart.push({ cartKey, id: p.id, name: p.name, price: p.price, cat: p.cat, img: p.img, qty: 1, talla });
+      }
+
+      updateCartUI();
+      openCart();
+      toast(`Agregado: ${p.name} ${talla !== 'Única' ? `(Talla ${talla})` : ''}`);
+    }
+
+    function updateCartUI() {
+      const count = cart.reduce((s, x) => s + x.qty, 0);
+      document.getElementById('cartBadge').textContent = count;
+      const body = document.getElementById('cartBody');
+
+      if (!cart.length) {
+        body.innerHTML = '<div style="text-align:center;padding:50px 20px;color:var(--muted);"><p>Tu carrito está vacío</p></div>';
+        document.getElementById('cartSubtotal').textContent = '$0.00';
+        document.getElementById('cartShipping').textContent = '—';
+        document.getElementById('cartTotal').textContent = '$0.00';
+        return;
+      }
+
+      body.innerHTML = cart.map((it, idx) => `
+        <div class="ci">
+          <span class="im" style="background:${GRAD[it.cat] || '#FBE0E9'}">
+            ${it.img ? `<img src="${it.img}" style="width:100%;height:100%;object-fit:cover;">` : `<svg viewBox="0 0 48 48">${ICON[it.cat] || ICON.accesorios}</svg>`}
+          </span>
+          <div class="info">
+            <b>${it.name}</b>
+            ${it.talla && it.talla !== 'Única' ? `<div style="font-size:11.5px;color:var(--accent-deep);font-weight:700;">Talla: ${it.talla}</div>` : ''}
+            <div style="color:var(--muted);font-size:12.5px;">${money(it.price)}</div>
+            <div class="qty">
+              <button onclick="changeQty(${idx}, -1)">−</button>
+              <span>${it.qty}</span>
+              <button onclick="changeQty(${idx}, 1)">+</button>
+              <button style="background:none;border:none;color:var(--muted);text-decoration:underline;cursor:pointer;margin-left:8px;" onclick="removeFromCart(${idx})">Quitar</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      recalculateShipping();
+    }
+
+    function changeQty(idx, delta) {
+      cart[idx].qty += delta;
+      if (cart[idx].qty <= 0) cart.splice(idx, 1);
+      updateCartUI();
+    }
+    function removeFromCart(idx) {
+      cart.splice(idx, 1);
+      updateCartUI();
+    }
+
+    // Drawer Cart open/close
+    const drawer = document.getElementById('drawer');
+    const scrim = document.getElementById('scrim');
+    function openCart() { drawer.classList.add('show'); scrim.classList.add('show'); }
+    function closeCart() { drawer.classList.remove('show'); scrim.classList.remove('show'); }
+    document.getElementById('openCart').addEventListener('click', openCart);
+    document.getElementById('closeCart').addEventListener('click', closeCart);
+    scrim.addEventListener('click', closeCart);
+
+    // ================= SERVIENTREGA, GPS & SHIPPING CALCULATION =================
+    let currentGpsLat = null;
+    let currentGpsLng = null;
+    let currentGpsMapsUrl = '';
+    let currentShippingCost = 3.00;
+
+    function toggleDeliveryType() {
+      const type = document.getElementById('chkTipoEntrega').value;
+      const domFields = document.getElementById('domicilioFields');
+      const agField = document.getElementById('agenciaField');
+      if (type === 'AGENCIA') {
+        if (domFields) domFields.style.display = 'none';
+        if (agField) agField.style.display = 'block';
+      } else {
+        if (domFields) domFields.style.display = 'block';
+        if (agField) agField.style.display = 'none';
+      }
+    }
+
+    function shareGpsLocation() {
+      const statusEl = document.getElementById('chkGpsStatus');
+      const btn = document.getElementById('btnShareGps');
+      if (!navigator.geolocation) {
+        alert('Tu navegador no soporta geolocalización.');
+        return;
+      }
+      btn.disabled = true;
+      statusEl.textContent = '⏳ Obteniendo coordenadas satelitales...';
+      statusEl.style.color = 'var(--accent-deep)';
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          btn.disabled = false;
+          currentGpsLat = pos.coords.latitude;
+          currentGpsLng = pos.coords.longitude;
+          currentGpsMapsUrl = `https://maps.google.com/?q=${currentGpsLat},${currentGpsLng}`;
+          statusEl.innerHTML = `✓ <b>Ubicación fijada:</b> Lat ${currentGpsLat.toFixed(5)}, Lng ${currentGpsLng.toFixed(5)} <a href="${currentGpsMapsUrl}" target="_blank" style="color:var(--accent-deep);text-decoration:underline;margin-left:4px;">Ver Mapa ↗</a>`;
+          statusEl.style.color = 'var(--ok)';
+          toast('Ubicación GPS registrada');
+        },
+        (err) => {
+          btn.disabled = false;
+          statusEl.textContent = '⚠️ No se pudo obtener GPS. Puedes ingresar la dirección en los campos.';
+          statusEl.style.color = 'var(--warn)';
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    }
+
+    let appliedCoupon = null;
+
+    async function applyCartCoupon() {
+      const inp = document.getElementById('cartCouponInput');
+      const code = (inp ? inp.value : '').trim().toUpperCase();
+      const badge = document.getElementById('couponStatusBadge');
+      const info = document.getElementById('appliedCouponInfo');
+      if (!code) {
+        toast('Ingresa un código de descuento');
+        return;
+      }
+      const subtotal = cart.reduce((s, x) => s + (x.price * x.qty), 0);
+      if (subtotal <= 0) {
+        toast('Agrega productos al carrito primero');
+        return;
+      }
+
+      badge.textContent = '⏳ Validando...';
+      badge.style.color = 'var(--muted)';
+
+      try {
+        const res = await fetch('/api/coupons/validate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code, subtotal })
+        });
+        const json = await res.json();
+        if (json.valid && json.data) {
+          appliedCoupon = json.data;
+          badge.textContent = '✓ Aplicado';
+          badge.style.color = 'var(--ok)';
+          info.style.display = 'block';
+          info.style.color = 'var(--ok)';
+          info.textContent = `🎉 Descuento del ${appliedCoupon.tipo === 'PORCENTAJE' ? appliedCoupon.valor + '%' : '$' + appliedCoupon.valor} aplicado (-${money(appliedCoupon.monto_descuento)})`;
+          toast(`¡Cupón ${appliedCoupon.codigo} aplicado!`);
+          recalculateShipping();
+        } else {
+          appliedCoupon = null;
+          badge.textContent = '✕ No válido';
+          badge.style.color = 'var(--danger)';
+          info.style.display = 'block';
+          info.style.color = 'var(--danger)';
+          info.textContent = json.error || 'Código no válido';
+          toast(json.error || 'Cupón inválido');
+          recalculateShipping();
+        }
+      } catch (err) {
+        badge.textContent = 'Error';
+        toast('Error al validar cupón');
+      }
+    }
+
+    function recalculateShipping() {
+      const subtotal = cart.reduce((s, x) => s + (x.price * x.qty), 0);
+      const freeShippingLimit = parseFloat(storeSettings.envio_gratis_desde || '50.00');
+      const prov = document.getElementById('chkProvincia') ? document.getElementById('chkProvincia').value : 'Guayas';
+      const matrixProv = (storeSettings.ciudad_matriz || 'Guayas').trim().toLowerCase();
+      const currentProvNorm = (prov || '').trim().toLowerCase();
+
+      const localRate = parseFloat(storeSettings.tarifa_envio_local || '3.00');
+      const nationalRate = parseFloat(storeSettings.tarifa_envio_nacional || '5.50');
+      const specialRate = parseFloat(storeSettings.tarifa_envio_especial || '8.50');
+
+      const isSpecial = ['galápagos', 'galapagos', 'morona santiago', 'napo', 'orellana', 'pastaza', 'sucumbíos', 'sucumbios', 'zamora chinchipe'].includes(currentProvNorm);
+
+      if (subtotal >= freeShippingLimit) {
+        currentShippingCost = 0.00;
+      } else if (currentProvNorm === matrixProv) {
+        currentShippingCost = localRate;
+      } else if (isSpecial) {
+        currentShippingCost = specialRate;
+      } else {
+        currentShippingCost = nationalRate;
+      }
+
+      // Descuento de cupón
+      let discount = 0;
+      if (appliedCoupon) {
+        if (appliedCoupon.tipo === 'PORCENTAJE') {
+          discount = parseFloat(((subtotal * appliedCoupon.valor) / 100).toFixed(2));
+        } else {
+          discount = parseFloat(Math.min(appliedCoupon.valor, subtotal).toFixed(2));
+        }
+        appliedCoupon.monto_descuento = discount;
+      }
+
+      const isRimpePopular = storeSettings.tipo_contribuyente === 'RIMPE_POPULAR';
+      const total = Math.max(0, subtotal - discount + currentShippingCost);
+
+      // Update UI in Drawer & Checkout Modal
+      document.getElementById('cartSubtotal').textContent = money(subtotal);
+      document.getElementById('cartShipping').textContent = currentShippingCost === 0 ? 'Gratis' : money(currentShippingCost);
+      document.getElementById('cartTotal').textContent = money(total);
+
+      const rowCartDisc = document.getElementById('rowCartDiscount');
+      if (rowCartDisc) {
+        if (discount > 0) {
+          rowCartDisc.style.display = 'flex';
+          document.getElementById('cartDiscount').textContent = `-${money(discount)}`;
+          document.getElementById('cartDiscountLabel').textContent = `Descuento (${appliedCoupon.codigo})`;
+        } else {
+          rowCartDisc.style.display = 'none';
+        }
+      }
+
+      if (document.getElementById('chkSubtotalDisplay')) document.getElementById('chkSubtotalDisplay').textContent = money(subtotal);
+      
+      const chkDiscRow = document.getElementById('chkDiscountRow');
+      if (chkDiscRow) {
+        if (discount > 0) {
+          chkDiscRow.style.display = 'flex';
+          document.getElementById('chkDiscountDisplay').textContent = `-${money(discount)}`;
+          document.getElementById('chkDiscountLabel').textContent = `Descuento Cupón (${appliedCoupon.codigo}):`;
+        } else {
+          chkDiscRow.style.display = 'none';
+        }
+      }
+
+      if (document.getElementById('chkShippingDisplay')) {
+        document.getElementById('chkShippingDisplay').textContent = currentShippingCost === 0 ? 'Gratis' : money(currentShippingCost);
+      }
+      if (document.getElementById('chkIvaLabel')) {
+        document.getElementById('chkIvaLabel').textContent = isRimpePopular ? 'IVA (0% - RIMPE Negocio Popular):' : 'IVA Estimado (15%):';
+      }
+      if (document.getElementById('chkIvaDisplay')) {
+        document.getElementById('chkIvaDisplay').textContent = isRimpePopular ? '$0.00' : money(Math.max(0, subtotal - discount) * 0.15 / 1.15);
+      }
+      if (document.getElementById('chkTaxNotice')) {
+        document.getElementById('chkTaxNotice').innerHTML = isRimpePopular 
+          ? '💡 <b>Contribuyente Régimen RIMPE - Negocio Popular:</b> Por ley tributaria no se cobra IVA (Tarifa 0%).' 
+          : '💡 Precios incluyen IVA 15% según normativa del SRI Ecuador.';
+      }
+      if (document.getElementById('chkTotalDisplay')) {
+        document.getElementById('chkTotalDisplay').textContent = money(total);
+      }
+    }
+
+    // Checkout Modal
+    function openCheckoutModal() {
+      if (!cart.length) { toast('El carrito está vacío'); return; }
+      closeCart();
+      recalculateShipping();
+      document.getElementById('checkoutModal').classList.add('show');
+    }
+    function closeCheckoutModal() { document.getElementById('checkoutModal').classList.remove('show'); }
+
+    // Toggle Consumidor Final vs Factura con Datos
+    document.getElementById('chkDocType').addEventListener('change', (e) => {
+      const isCf = e.target.value === 'CONSUMIDOR_FINAL';
+      document.getElementById('clientDetailsFields').hidden = isCf;
+      if (!isCf) document.getElementById('chkDocNum').focus();
+    });
+
+    // Auto lookup client in SRI in Real-Time (Storefront)
+    let chkSriTimer;
+    async function triggerChkSriLookup() {
+      const doc = document.getElementById('chkDocNum').value.trim();
+      const indicator = document.getElementById('chkSriIndicator');
+      if (!doc || doc.length < 10) return;
+
+      indicator.textContent = '⏳ Consultando al SRI...';
+      indicator.style.color = 'var(--accent-deep)';
+
+      try {
+        const res = await fetch(`/api/sri/lookup/${doc}`);
+        const json = await res.json();
+        if (json.success && json.razon_social) {
+          document.getElementById('chkClientName').value = json.razon_social;
+          indicator.textContent = '✓ Nombre verificado en el SRI';
+          indicator.style.color = 'var(--ok)';
+          toast('Identificación validada en SRI');
+        } else {
+          indicator.textContent = '⚡ Consulta SRI lista';
+          indicator.style.color = 'var(--muted)';
+        }
+      } catch (e) {
+        indicator.textContent = '⚡ Consulta SRI lista';
+        indicator.style.color = 'var(--muted)';
+      }
+    }
+
+    document.getElementById('chkDocNum').addEventListener('input', (e) => {
+      const val = e.target.value.trim();
+      if (val.length === 10 || val.length === 13) {
+        clearTimeout(chkSriTimer);
+        chkSriTimer = setTimeout(triggerChkSriLookup, 300);
+      }
+    });
+    document.getElementById('chkDocNum').addEventListener('change', triggerChkSriLookup);
+
+    // Submit Web Order & Issue Invoice
+    document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const docType = document.getElementById('chkDocType').value;
+      const isCf = docType === 'CONSUMIDOR_FINAL';
+
+      const tipoEntrega = document.getElementById('chkTipoEntrega').value;
+      const provincia = document.getElementById('chkProvincia').value;
+      const ciudad = document.getElementById('chkCiudad').value.trim();
+      const callePrin = document.getElementById('chkCallePrincipal')?.value.trim() || '';
+      const calleSec = document.getElementById('chkCalleSecundaria')?.value.trim() || '';
+      const numCasa = document.getElementById('chkNumeroCasa')?.value.trim() || '';
+      const refVisual = document.getElementById('chkReferencia')?.value.trim() || '';
+      const agenciaServi = document.getElementById('chkAgenciaServientrega')?.value.trim() || '';
+
+      let direccionCompleta = '';
+      if (tipoEntrega === 'AGENCIA') {
+        direccionCompleta = `Retiro en Agencia Servientrega: ${agenciaServi || 'Agencia Oficial'} (${ciudad}, ${provincia})`;
+      } else {
+        direccionCompleta = [callePrin, numCasa, calleSec ? `y ${calleSec}` : '', `(${ciudad}, ${provincia})`].filter(Boolean).join(' ');
+        if (refVisual) direccionCompleta += ` [Ref: ${refVisual}]`;
+      }
+
+      const payload = {
+        cliente: {
+          tipo_doc: docType,
+          num_doc: isCf ? '9999999999999' : document.getElementById('chkDocNum').value.trim(),
+          razon_social: isCf ? 'CONSUMIDOR FINAL' : document.getElementById('chkClientName').value.trim(),
+          email: document.getElementById('chkEmail').value.trim(),
+          telefono: document.getElementById('chkPhone').value.trim(),
+          direccion: direccionCompleta
+        },
+        items: cart.map(i => ({ id: i.id, qty: i.qty, talla: i.talla || '' })),
+        envio: currentShippingCost,
+        codigo_cupon: appliedCoupon ? appliedCoupon.codigo : '',
+        descuento: appliedCoupon ? appliedCoupon.monto_descuento : 0,
+        metodo_pago: document.getElementById('chkPayment').value,
+        direccion_envio: direccionCompleta,
+        provincia,
+        ciudad,
+        tipo_entrega: tipoEntrega,
+        calle_principal: callePrin,
+        calle_secundaria: calleSec,
+        numero_casa: numCasa,
+        referencia: refVisual,
+        agencia_servientrega: agenciaServi,
+        gps_lat: currentGpsLat,
+        gps_lng: currentGpsLng,
+        gps_maps_url: currentGpsMapsUrl,
+        emitir_factura: true
+      };
+
+      try {
+        const btn = document.getElementById('btnConfirmOrder');
+        btn.disabled = true;
+        btn.textContent = 'Procesando factura...';
+
+        const res = await fetch('/api/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const json = await res.json();
+        btn.disabled = false;
+        btn.textContent = 'Confirmar Pedido & Factura';
+
+        if (!json.success) {
+          alert('Error: ' + json.error);
+          return;
+        }
+
+        let voucherUploaded = false;
+        if (chkVoucherBase64) {
+          try {
+            btn.textContent = '⚡ Validando comprobante OCR...';
+            await fetch('/api/payments/upload-voucher', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                comprobanteBase64: chkVoucherBase64,
+                pedido_id: json.data.pedido_id,
+                cliente_nombre: payload.cliente.razon_social,
+                cliente_telefono: payload.cliente.telefono,
+                monto_esperado: json.data.total
+              })
+            });
+            voucherUploaded = true;
+          } catch (ve) { console.error('Error enviando voucher:', ve); }
+        }
+
+        // Clean cart & refresh products
+        cart = [];
+        appliedCoupon = null;
+        if (document.getElementById('cartCouponInput')) document.getElementById('cartCouponInput').value = '';
+        if (document.getElementById('couponStatusBadge')) document.getElementById('couponStatusBadge').textContent = '';
+        if (document.getElementById('appliedCouponInfo')) document.getElementById('appliedCouponInfo').style.display = 'none';
+        chkVoucherBase64 = '';
+        if (document.getElementById('chkVoucherFile')) document.getElementById('chkVoucherFile').value = '';
+        if (document.getElementById('chkVoucherPreviewContainer')) document.getElementById('chkVoucherPreviewContainer').style.display = 'none';
+        updateCartUI();
+        closeCheckoutModal();
+        fetchProducts();
+
+        // Show Success screen with invoice link
+        document.getElementById('succOrderCode').textContent = json.data.codigo_pedido;
+        document.getElementById('succVoucherNotice').style.display = voucherUploaded ? 'block' : 'none';
+
+        const storePhone = (storeSettings.telefono_contacto || '593987654321').replace(/\D/g, '');
+        const waText = encodeURIComponent(`¡Hola RS Store! Acabo de hacer el pedido #${json.data.codigo_pedido} por valor de ${money(json.data.total || 0)}. Adjunto mis datos para coordinar el envío.`);
+        document.getElementById('succWhatsAppBtn').href = `https://wa.me/${storePhone}?text=${waText}`;
+
+        if (json.data.factura) {
+          document.getElementById('succInvoiceNum').textContent = json.data.factura.secuencial;
+          document.getElementById('succInvoiceLink').href = `/factura-ride.html?id=${json.data.factura.id}`;
+          document.getElementById('succInvoiceLink').hidden = false;
+        } else {
+          document.getElementById('succInvoiceLink').hidden = true;
+        }
+        document.getElementById('successModal').classList.add('show');
+      } catch (err) {
+        alert('Error en el checkout: ' + err.message);
+      }
+    });
+
+    function closeSuccessModal() { document.getElementById('successModal').classList.remove('show'); }
+
+    // ================= BANK SETTINGS & VOUCHER LISTENERS =================
+    let chkVoucherBase64 = '';
+    let storeSettings = {};
+
+    async function loadStoreBankSettings() {
+      try {
+        const res = await fetch('/api/settings');
+        const json = await res.json();
+        if (json.success) {
+          storeSettings = json.data;
+          if (document.getElementById('bankNameDisplay')) document.getElementById('bankNameDisplay').textContent = storeSettings.banco_nombre || 'Banco Pichincha';
+          if (document.getElementById('bankTypeDisplay')) document.getElementById('bankTypeDisplay').textContent = storeSettings.banco_tipo_cuenta || 'Cuenta Corriente';
+          if (document.getElementById('bankNumDisplay')) document.getElementById('bankNumDisplay').textContent = storeSettings.banco_numero_cuenta || '2100876543';
+          if (document.getElementById('bankOwnerDisplay')) document.getElementById('bankOwnerDisplay').textContent = storeSettings.banco_titular || 'RS STORE BOUTIQUE S.A.S.';
+          if (document.getElementById('bankRucDisplay')) document.getElementById('bankRucDisplay').textContent = storeSettings.banco_identificacion || '0992345678001';
+          if (document.getElementById('bankEmailDisplay')) document.getElementById('bankEmailDisplay').textContent = storeSettings.banco_email || 'pagos@rsstore.ec';
+        }
+      } catch (e) {}
+    }
+
+    document.getElementById('chkPayment')?.addEventListener('change', (e) => {
+      const isTransfer = e.target.value.includes('TRANSFERENCIA');
+      const card = document.getElementById('bankTransferCard');
+      if (card) card.style.display = isTransfer ? 'block' : 'none';
+    });
+
+    document.getElementById('chkVoucherFile')?.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) {
+        chkVoucherBase64 = '';
+        document.getElementById('chkVoucherPreviewContainer').style.display = 'none';
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        chkVoucherBase64 = ev.target.result;
+        document.getElementById('chkVoucherPreviewImg').src = chkVoucherBase64;
+        document.getElementById('chkVoucherPreviewContainer').style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // ================= STOREFRONT INTERACTIVITY (CHIPS, SORT, SEARCH, PROMO) =================
+    // 1. Filtrado por categoría con chips (.chip)
+    document.querySelectorAll('.chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.chip').forEach(b => b.setAttribute('aria-pressed', 'false'));
+        btn.setAttribute('aria-pressed', 'true');
+        activeFilter = btn.dataset.cat || 'all';
+        renderProducts();
+      });
+    });
+
+    // 2. Ordenamiento por precio o destacados (#sortSelect)
+    document.getElementById('sortSelect')?.addEventListener('change', () => {
+      renderProducts();
+    });
+
+    // 3. Búsqueda en tiempo real de productos (#searchInput)
+    document.getElementById('searchInput')?.addEventListener('input', () => {
+      renderProducts();
+    });
+
+    // 4. Copiar código de promoción con respaldo para navegadores
+    window.copyPromoCode = function(code) {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(code).then(() => {
+          toast(`¡Código ${code} copiado!`);
+          const cInp = document.getElementById('cartCouponInput');
+          if (cInp) cInp.value = code;
+        }).catch(() => fallbackCopy(code));
+      } else {
+        fallbackCopy(code);
+      }
+    };
+
+    function fallbackCopy(code) {
+      const ta = document.createElement('textarea');
+      ta.value = code;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        document.execCommand('copy');
+        toast(`¡Código ${code} copiado!`);
+        const cInp = document.getElementById('cartCouponInput');
+        if (cInp) cInp.value = code;
+      } catch (e) {
+        prompt('Copia tu código de descuento:', code);
+      }
+      document.body.removeChild(ta);
+    }
+
+    // 5. Cargar Banners y Redes Sociales Dinámicamente desde el Servidor
+    async function fetchBannersAndSocialSettings() {
+      try {
+        const [resBanners, resSettings] = await Promise.all([
+          fetch('/api/banners?solo_activos=1').then(r => r.json()).catch(() => ({ success: false })),
+          fetch('/api/settings').then(r => r.json()).catch(() => ({ success: false }))
+        ]);
+
+        // 1. Renderizar Banners
+        if (resBanners.success && Array.isArray(resBanners.data)) {
+          const banners = resBanners.data;
+
+          // Top Bar
+          const topBanner = banners.find(b => b.posicion === 'TOP_BAR');
+          const topEl = document.querySelector('.announce');
+          if (topEl) {
+            if (topBanner && topBanner.activo) {
+              topEl.style.display = 'block';
+              if (topBanner.color_fondo) topEl.style.background = topBanner.color_fondo;
+              if (topBanner.color_texto) topEl.style.color = topBanner.color_texto;
+              topEl.innerHTML = `<span>${topBanner.titulo} ${topBanner.boton_texto ? `<a href="${topBanner.boton_link || '#tienda'}" style="color:${topBanner.color_texto || '#fff'};text-decoration:underline;margin-left:8px;font-weight:700;">${topBanner.boton_texto} →</a>` : ''}</span>`;
+            }
+          }
+
+          // Promo Central Banner (Captura 2)
+          const promoBanner = banners.find(b => b.posicion === 'PROMO_CENTRAL');
+          const editorialSec = document.getElementById('editorial');
+          if (editorialSec) {
+            if (promoBanner && promoBanner.activo) {
+              editorialSec.style.display = 'block';
+              const card = editorialSec.querySelector('.editorial');
+              if (card && promoBanner.color_fondo) card.style.background = promoBanner.color_fondo;
+              if (card && promoBanner.color_texto) card.style.color = promoBanner.color_texto;
+
+              const eyebrow = editorialSec.querySelector('.eyebrow');
+              if (eyebrow) eyebrow.textContent = promoBanner.badge || 'Descuento Especial';
+
+              const h2 = editorialSec.querySelector('h2');
+              if (h2) h2.textContent = promoBanner.titulo || '−20% en tu primera compra';
+
+              const p = editorialSec.querySelector('p');
+              if (p) p.textContent = promoBanner.subtitulo || '';
+
+              const btn = editorialSec.querySelector('.btn-primary');
+              if (btn) {
+                btn.textContent = promoBanner.boton_texto || 'Ver Productos';
+                btn.href = promoBanner.boton_link || '#tienda';
+              }
+
+              const codeEl = editorialSec.querySelector('.code-box code');
+              const copyBtn = editorialSec.querySelector('.code-box button');
+              if (promoBanner.codigo_cupon) {
+                if (codeEl) codeEl.textContent = promoBanner.codigo_cupon;
+                if (copyBtn) copyBtn.onclick = () => copyPromoCode(promoBanner.codigo_cupon);
+              }
+            } else if (promoBanner && !promoBanner.activo) {
+              editorialSec.style.display = 'none';
+            }
+          }
+        }
+
+        // 2. Renderizar Redes Sociales
+        if (resSettings.success && resSettings.data) {
+          const c = resSettings.data;
+          const ig = c.social_instagram || 'https://instagram.com/rsstore.ec';
+          const tk = c.social_tiktok || 'https://tiktok.com/@rsstore.ec';
+          const fb = c.social_facebook || 'https://facebook.com/rsstore.ec';
+          const wa = c.social_whatsapp || '+593 99 123 4567';
+          const cleanWa = wa.replace(/[^0-9]/g, '');
+          const waUrl = `https://wa.me/${cleanWa}?text=Hola%20RS%20Store%2C%20quisiera%20m%C3%A1s%20informaci%C3%B3n`;
+
+          document.querySelectorAll('a[title="Instagram"], .social-ig').forEach(a => a.href = ig);
+          document.querySelectorAll('a[title="TikTok"], .social-tk').forEach(a => a.href = tk);
+          document.querySelectorAll('a[title="Facebook"], .social-fb').forEach(a => a.href = fb);
+          document.querySelectorAll('a[title="WhatsApp"], .social-wa').forEach(a => a.href = waUrl);
+        }
+      } catch (e) {
+        console.warn('Notice banners/social:', e.message);
+      }
+    }
+
+    // Init
+    fetchProducts();
+    fetchBannersAndSocialSettings();
+    loadStoreBankSettings();
+  </script>
+</body>
+</html>

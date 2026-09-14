@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="roseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCE7EE"/>
+      <stop offset="50%" stop-color="#F3BDD0"/>
+      <stop offset="100%" stop-color="#DE8CA4"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D4AF37"/>
+      <stop offset="100%" stop-color="#AA7C11"/>
+    </linearGradient>
+  </defs>
+  <!-- Background Circle with Soft Border -->
+  <circle cx="100" cy="100" r="94" fill="url(#roseGrad)" stroke="#FFFFFF" stroke-width="4"/>
+  <circle cx="100" cy="100" r="86" fill="none" stroke="#9E3E60" stroke-width="1.2" stroke-dasharray="3 3" opacity="0.6"/>
+  <!-- RS Monogram -->
+  <text x="100" y="118" font-family="'Cormorant Garamond', Georgia, serif" font-size="74" font-weight="700" font-style="italic" fill="#5A2436" text-anchor="middle" letter-spacing="-2">RS</text>
+  <!-- Brand Name Subtitle -->
+  <text x="100" y="148" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#9E3E60" text-anchor="middle" letter-spacing="4">BOUTIQUE</text>
+</svg>
