@@ -36,6 +36,9 @@ function initSchema() {
       is_new INTEGER NOT NULL DEFAULT 0,
       badge TEXT DEFAULT '',
       img TEXT DEFAULT '',
+      images TEXT DEFAULT '[]',
+      genero TEXT DEFAULT 'MUJER',
+      tallas TEXT DEFAULT '{}',
       created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
       updated_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
     );
@@ -480,6 +483,22 @@ function initSchema() {
       1,
       2
     );
+  }
+
+  // Migraciones de columnas para compatibilidad
+  try {
+    const cols = db.prepare(`PRAGMA table_info(productos)`).all().map(c => c.name);
+    if (!cols.includes('images')) {
+      db.exec(`ALTER TABLE productos ADD COLUMN images TEXT DEFAULT '[]';`);
+    }
+    if (!cols.includes('genero')) {
+      db.exec(`ALTER TABLE productos ADD COLUMN genero TEXT DEFAULT 'MUJER';`);
+    }
+    if (!cols.includes('tallas')) {
+      db.exec(`ALTER TABLE productos ADD COLUMN tallas TEXT DEFAULT '{}';`);
+    }
+  } catch (err) {
+    console.error('Error migrando columnas en productos:', err.message);
   }
 }
 

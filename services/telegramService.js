@@ -413,16 +413,30 @@ async function processTelegramUpdates() {
   isProcessingUpdates = true;
 
   try {
-    const url = `https://api.telegram.org/bot${token}/getUpdates?offset=${lastUpdateId + 1}&timeout=5`;
-    const res = await fetch(url);
-    const json = await res.json();
+    const offsetParam = lastUpdateId > 0 ? `offset=${lastUpdateId + 1}&` : '';
+    const url = `https://api.telegram.org/bot${token}/getUpdates?${offsetParam}timeout=8`;
+    
+    // Controlador de timeout para evitar sockets colgados
+    const controller = new AbortController();
+    const timeoutHandle = setTimeout(() => controller.abort(), 16000);
 
-    if (json.ok && json.result && json.result.length > 0) {
+    let json = null;
+    try {
+      const res = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeoutHandle);
+      json = await res.json();
+    } catch (netErr) {
+      clearTimeout(timeoutHandle);
+      return;
+    }
+
+    if (json && json.ok && Array.isArray(json.result) && json.result.length > 0) {
       for (const update of json.result) {
         lastUpdateId = update.update_id;
         try {
           // A) Manejar mensajes de texto entrantes (/start, cédula, /pedidos, /ventas, etc.)
           if (update.message && update.message.text) {
+            console.log(`[Telegram Bot] Mensaje recibido de ${update.message.from?.first_name || 'usuario'} (${update.message.chat?.id}): "${update.message.text}"`);
             await handleIncomingMessage(update.message);
           }
 
@@ -547,25 +561,35 @@ async function processTelegramUpdates() {
     }
   }
   } catch (err) {
-    // Error silencioso de red en polling para no interrumpir el daemon
+    // Error silencioso
   } finally {
     isProcessingUpdates = false;
   }
 }
 
 /**
- * Inicia el ciclo de polling en segundo plano
+ * Inicia el ciclo de polling continuo en segundo plano
  */
 function startTelegramPolling() {
   if (pollingActive) return;
   pollingActive = true;
+  console.log('[Telegram Bot] Servicio de recepción y respuestas automáticas iniciado.');
 
-  setInterval(async () => {
-    const token = getConfig('telegram_bot_token', '');
-    if (token) {
-      await processTelegramUpdates();
+  // Bucle asíncrono permanente de polling
+  (async function loop() {
+    while (pollingActive) {
+      try {
+        const token = getConfig('telegram_bot_token', '');
+        if (token) {
+          await processTelegramUpdates();
+        }
+      } catch (err) {
+        console.error('[Telegram Loop Error]:', err.message);
+      }
+      // Pequeña pausa de 1 segundo entre ciclos para máxima capacidad de respuesta
+      await new Promise(r => setTimeout(r, 1000));
     }
-  }, 3500);
+  })();
 }
 
 /**

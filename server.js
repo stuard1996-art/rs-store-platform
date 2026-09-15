@@ -39,12 +39,16 @@ app.use(express.static(path.join(__dirname, 'public'), { etag: false, maxAge: 0 
 // Listar productos
 app.get('/api/products', (req, res) => {
   try {
-    const { cat, q, onlyVisible } = req.query;
+    const { cat, genero, q, onlyVisible } = req.query;
     let sql = 'SELECT * FROM productos WHERE 1=1';
     const params = [];
 
     if (onlyVisible === 'true' || onlyVisible === '1') {
       sql += ' AND visible = 1';
+    }
+    if (genero && genero !== 'all' && genero !== 'TODOS') {
+      sql += ' AND (genero = ? OR genero = "UNISEX")';
+      params.push(genero.toUpperCase());
     }
     if (cat && cat !== 'all') {
       sql += ' AND cat = ?';
@@ -77,7 +81,7 @@ app.get('/api/products/:id', (req, res) => {
 // Crear producto
 app.post('/api/products', (req, res) => {
   try {
-    const { name, cat, price, was_price = null, stock = 0, desc = '', visible = 1, is_new = 0, badge = '', img = '', tallas = null } = req.body;
+    const { name, cat, price, was_price = null, stock = 0, desc = '', visible = 1, is_new = 0, badge = '', img = '', images = null, genero = 'MUJER', tallas = null } = req.body;
     if (!name || price === undefined) {
       return res.status(400).json({ success: false, error: 'Nombre y precio son obligatorios' });
     }
@@ -99,12 +103,25 @@ app.post('/api/products', (req, res) => {
       tallasStr = JSON.stringify({ 'Única': numStock });
     }
 
+    let imagesStr = '[]';
+    if (images) {
+      if (Array.isArray(images)) {
+        imagesStr = JSON.stringify(images);
+      } else if (typeof images === 'string') {
+        imagesStr = images;
+      }
+    } else if (img) {
+      imagesStr = JSON.stringify([img]);
+    }
+
+    const generoVal = (genero || 'MUJER').toUpperCase();
+
     const stmt = db.prepare(`
-      INSERT INTO productos (name, cat, price, was_price, stock, desc, visible, is_new, badge, img, tallas)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO productos (name, cat, price, was_price, stock, desc, visible, is_new, badge, img, images, genero, tallas)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
-    const result = stmt.run(name, cat || 'accesorios', numPrice, numWasPrice, numStock, desc, visible ? 1 : 0, is_new ? 1 : 0, badge, img, tallasStr);
+    const result = stmt.run(name, cat || 'accesorios', numPrice, numWasPrice, numStock, desc, visible ? 1 : 0, is_new ? 1 : 0, badge, img, imagesStr, generoVal, tallasStr);
     const newProd = db.prepare('SELECT * FROM productos WHERE id = ?').get(result.lastInsertRowid);
     res.status(201).json({ success: true, data: newProd, message: 'Producto creado exitosamente' });
   } catch (err) {
@@ -116,7 +133,7 @@ app.post('/api/products', (req, res) => {
 app.put('/api/products/:id', (req, res) => {
   try {
     const { id } = req.params;
-    const { name, cat, price, was_price, stock, desc, visible, is_new, badge, img, tallas } = req.body;
+    const { name, cat, price, was_price, stock, desc, visible, is_new, badge, img, images, genero, tallas } = req.body;
 
     const existing = db.prepare('SELECT * FROM productos WHERE id = ?').get(id);
     if (!existing) return res.status(404).json({ success: false, error: 'Producto no encontrado' });
@@ -136,17 +153,30 @@ app.put('/api/products/:id', (req, res) => {
       }
     }
 
+    let imagesStr = existing.images || '[]';
+    if (images !== undefined) {
+      if (Array.isArray(images)) {
+        imagesStr = JSON.stringify(images);
+      } else if (typeof images === 'string') {
+        imagesStr = images;
+      }
+    } else if (img && (!existing.images || existing.images === '[]')) {
+      imagesStr = JSON.stringify([img]);
+    }
+
+    const generoVal = genero !== undefined ? String(genero).toUpperCase() : (existing.genero || 'MUJER');
+
     const stmt = db.prepare(`
       UPDATE productos SET
         name = ?, cat = ?, price = ?, was_price = ?, stock = ?,
-        desc = ?, visible = ?, is_new = ?, badge = ?, img = ?, tallas = ?,
+        desc = ?, visible = ?, is_new = ?, badge = ?, img = ?, images = ?, genero = ?, tallas = ?,
         updated_at = datetime('now', 'localtime')
       WHERE id = ?
     `);
 
     stmt.run(
-      name || existing.name,
-      cat || existing.cat,
+      name !== undefined ? name : existing.name,
+      cat !== undefined ? cat : existing.cat,
       numPrice,
       numWasPrice,
       numStock,
@@ -155,6 +185,8 @@ app.put('/api/products/:id', (req, res) => {
       is_new !== undefined ? (is_new ? 1 : 0) : existing.is_new,
       badge !== undefined ? badge : existing.badge,
       img !== undefined ? img : existing.img,
+      imagesStr,
+      generoVal,
       tallasStr,
       id
     );
@@ -1581,12 +1613,11 @@ app.post('/api/purchases', (req, res) => {
         const stockAnterior = prod.stock || 0;
         const stockActual = stockAnterior + qty;
 
-        // Actualizar tallas JSON si existe
+        // Actualizar tallas JSON en el producto
         let tallasObj = {};
         try { tallasObj = JSON.parse(prod.tallas || '{}'); } catch(e) {}
-        if (talla && Object.keys(tallasObj).length > 0) {
-          tallasObj[talla] = (tallasObj[talla] || 0) + qty;
-        }
+        const tallaKey = (talla || 'Única').trim();
+        tallasObj[tallaKey] = (tallasObj[tallaKey] || 0) + qty;
 
         db.prepare(`
           UPDATE productos 

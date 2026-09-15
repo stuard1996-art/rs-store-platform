@@ -263,6 +263,226 @@
     .inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
     .f-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 
+    /* PRODUCT ZOOM LIGHTBOX MODAL */
+    .modal-card-zoom {
+      width: 100%;
+      max-width: 980px;
+      background: var(--surface);
+      border-radius: 26px;
+      box-shadow: 0 35px 95px rgba(0,0,0,0.38);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      max-height: 92vh;
+      animation: pop .25s var(--ease);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .zoom-content-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+    @media (max-width: 820px) {
+      .zoom-content-grid {
+        grid-template-columns: 1fr;
+        overflow-y: auto;
+      }
+      .modal-card-zoom {
+        max-height: 94vh;
+        border-radius: 20px;
+      }
+    }
+    .zoom-viewer-pane {
+      position: relative;
+      background: #191214;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      user-select: none;
+      min-height: 380px;
+    }
+    .zoom-img-wrapper {
+      width: 100%;
+      height: 100%;
+      min-height: 380px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: grab;
+      touch-action: none;
+    }
+    .zoom-img-wrapper.grabbing {
+      cursor: grabbing;
+    }
+    .zoom-img-wrapper img {
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+      transform-origin: center center;
+      transition: transform 0.12s ease-out;
+      will-change: transform;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    }
+    .zoom-toolbar {
+      position: absolute;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(36, 23, 27, 0.88);
+      backdrop-filter: blur(12px);
+      padding: 6px 14px;
+      border-radius: 30px;
+      border: 1px solid rgba(255,255,255,0.16);
+      z-index: 10;
+      color: #fff;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    .zoom-toolbar button {
+      background: rgba(255,255,255,0.14);
+      border: none;
+      color: #fff;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 700;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .zoom-toolbar button:hover {
+      background: var(--accent);
+      transform: scale(1.08);
+    }
+    .zoom-level-text {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      min-width: 48px;
+      text-align: center;
+      color: #F8E2E8;
+    }
+    .zoom-hint-badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: rgba(25, 15, 18, 0.72);
+      backdrop-filter: blur(8px);
+      color: #FBE3EA;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 11px;
+      border-radius: 20px;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid rgba(255,255,255,0.1);
+      z-index: 10;
+    }
+
+    /* ZOOM GALLERY STRIP (Multi-position thumbnails) */
+    .zoom-gallery-strip {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 15;
+      max-height: calc(100% - 90px);
+      overflow-y: auto;
+      padding: 2px;
+    }
+    @media (max-width: 820px) {
+      .zoom-gallery-strip {
+        position: relative;
+        top: auto;
+        right: auto;
+        flex-direction: row;
+        justify-content: center;
+        background: #201518;
+        padding: 8px 12px;
+        width: 100%;
+        overflow-x: auto;
+      }
+    }
+    .zoom-thumb-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 10px;
+      border: 2px solid rgba(255,255,255,0.3);
+      overflow: hidden;
+      cursor: pointer;
+      padding: 0;
+      background: #000;
+      opacity: 0.75;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+    .zoom-thumb-btn:hover, .zoom-thumb-btn.active {
+      opacity: 1;
+      border-color: var(--accent);
+      transform: scale(1.08);
+      box-shadow: 0 4px 14px rgba(201,79,109,0.5);
+    }
+    .zoom-thumb-btn img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* GENDER / DEPARTMENT SELECTOR TABS */
+    .gender-nav-container {
+      margin-bottom: 18px;
+    }
+    .gender-nav-tabs {
+      display: flex;
+      gap: 6px;
+      background: var(--surface-2);
+      padding: 5px;
+      border-radius: 999px;
+      border: 1px solid var(--line-strong);
+      max-width: 540px;
+      margin: 0 auto;
+    }
+    .gender-tab {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      border: none;
+      background: transparent;
+      color: var(--ink-2);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .02em;
+      cursor: pointer;
+      transition: all .2s ease;
+      text-transform: uppercase;
+    }
+    .gender-tab:hover {
+      color: var(--accent-deep);
+    }
+    .gender-tab.active {
+      background: var(--surface);
+      color: var(--accent-deep);
+      box-shadow: 0 4px 16px rgba(62,38,34,.12);
+    }
+
     /* Toast */
     .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,150%);z-index:10050;display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:999px;background:var(--ink);color:#F9EDEF;font-size:13.5px;font-weight:600;box-shadow:0 24px 48px -20px rgba(62,38,34,.6);transition:transform .4s var(--ease);pointer-events:none;}
     .toast.show{transform:translate(-50%,0);}
@@ -667,10 +887,10 @@
     <div class="benefits">
       <div class="wrap">
         <div class="grid4">
-          <div class="benefit"><svg viewBox="0 0 24 24"><path d="M3 7h11v9H3zM14 9h4l3 3v4h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></svg><span><span class="t">Envío nacional</span><br><span class="s">A todo Ecuador</span></span></div>
-          <div class="benefit"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 1 3 6.2"/><path d="M4 20v-4h4"/></svg><span><span class="t">Devoluciones</span><br><span class="s">30 días de garantía</span></span></div>
-          <div class="benefit"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg><span><span class="t">Pago Seguro</span><br><span class="s">Transferencia o tarjeta</span></span></div>
-          <div class="benefit"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8"/></svg><span><span class="t">Factura Inmediata</span><br><span class="s">Descarga directa en RIDE</span></span></div>
+          <div class="benefit"><svg viewBox="0 0 24 24"><path d="M3 7h11v9H3zM14 9h4l3 3v4h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></svg><span><span class="t">Envío Nacional</span><br><span class="s">Servientrega 24 a 48h</span></span></div>
+          <div class="benefit"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span><span class="t">Boutique Confiable</span><br><span class="s">Atención personalizada</span></span></div>
+          <div class="benefit"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg><span><span class="t">Pago Seguro</span><br><span class="s">Transferencia Bancaria Directa</span></span></div>
+          <div class="benefit"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8"/></svg><span><span class="t">Factura SRI</span><br><span class="s">Descarga directa en RIDE</span></span></div>
         </div>
       </div>
     </div>
@@ -682,19 +902,38 @@
           <div><span class="eyebrow">Catálogo Conectado a Base de Datos</span><h2>Nuestra Colección</h2></div>
         </div>
 
+        <!-- PESTAÑAS PRINCIPALES POR GÉNERO / DEPARTAMENTO -->
+        <div class="gender-nav-container">
+          <div class="gender-nav-tabs" role="tablist">
+            <button type="button" class="gender-tab active" data-gender="MUJER" onclick="setGender('MUJER', this)">
+              <span>🌸</span> <span>Mujer</span>
+            </button>
+            <button type="button" class="gender-tab" data-gender="HOMBRE" onclick="setGender('HOMBRE', this)">
+              <span>👔</span> <span>Hombre</span>
+            </button>
+            <button type="button" class="gender-tab" data-gender="NINOS" onclick="setGender('NINOS', this)">
+              <span>🧸</span> <span>Niños</span>
+            </button>
+            <button type="button" class="gender-tab" data-gender="TODOS" onclick="setGender('TODOS', this)">
+              <span>✨</span> <span>Todos</span>
+            </button>
+          </div>
+        </div>
+
         <div class="shop-bar">
           <div class="filters">
-            <button class="chip" data-cat="all" aria-pressed="true">Todo</button>
-            <button class="chip" data-cat="accesorios" aria-pressed="false">Accesorios</button>
-            <button class="chip" data-cat="ropa" aria-pressed="false">Ropa</button>
-            <button class="chip" data-cat="calzado" aria-pressed="false">Calzado</button>
-            <button class="chip" data-cat="belleza" aria-pressed="false">Belleza</button>
-            <button class="chip" data-cat="hogar" aria-pressed="false">Hogar</button>
-            <button class="chip" data-cat="regalos" aria-pressed="false">Regalos</button>
+            <!-- Desglose de subcategorías generado dinámicamente -->
+            <button class="chip" data-cat="all" aria-pressed="true" onclick="setFilter('all', this)">✨ Todo Mujer</button>
+            <button class="chip" data-cat="vestidos" aria-pressed="false" onclick="setFilter('vestidos', this)">👗 Vestidos</button>
+            <button class="chip" data-cat="blusas" aria-pressed="false" onclick="setFilter('blusas', this)">👚 Blusas & Tops</button>
+            <button class="chip" data-cat="pantalones" aria-pressed="false" onclick="setFilter('pantalones', this)">👖 Pantalones & Jeans</button>
+            <button class="chip" data-cat="calzado" aria-pressed="false" onclick="setFilter('calzado', this)">👠 Calzado</button>
+            <button class="chip" data-cat="accesorios" aria-pressed="false" onclick="setFilter('accesorios', this)">👜 Bolsos & Accesorios</button>
+            <button class="chip" data-cat="belleza" aria-pressed="false" onclick="setFilter('belleza', this)">💄 Belleza</button>
           </div>
           <span class="spacer"></span>
           <div class="sort">
-            <select id="sortSelect">
+            <select id="sortSelect" onchange="renderProducts()">
               <option value="default">Destacados</option>
               <option value="price-asc">Precio: menor a mayor</option>
               <option value="price-desc">Precio: mayor a menor</option>
@@ -1008,6 +1247,80 @@
     </div>
   </div>
 
+  <!-- PRODUCT ZOOM LIGHTBOX MODAL -->
+  <div class="modal-overlay" id="productZoomModal" onclick="if(event.target===this) closeProductZoom()">
+    <div class="modal-card-zoom" onclick="event.stopPropagation()">
+      <!-- Modal Header -->
+      <div class="modal-head" style="background:var(--surface);padding:14px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="badge" id="zoomModalCat" style="background:var(--accent-soft);color:var(--accent-deep);font-weight:700;font-size:11px;padding:3px 9px;border-radius:20px;text-transform:uppercase;">BOUTIQUE</span>
+          <h3 id="zoomModalTitle" style="margin:0;font-size:18px;font-weight:800;color:var(--ink);">Detalle del Producto</h3>
+        </div>
+        <button type="button" class="btn btn-ghost" onclick="closeProductZoom()" style="width:36px;height:36px;border-radius:50%;padding:0;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:var(--muted);border:1px solid var(--line-strong);">✕</button>
+      </div>
+
+      <!-- Modal Body (Grid: Viewer + Info) -->
+      <div class="zoom-content-grid">
+        <!-- Interactive Image Viewer -->
+        <div class="zoom-viewer-pane" id="zoomViewerPane">
+          <div class="zoom-hint-badge">
+            <span>🔍 Haz doble clic, rueda o pulsa los botones para hacer zoom</span>
+          </div>
+
+          <div class="zoom-img-wrapper" id="zoomImgWrapper" ondblclick="toggleDoubleZoom(event)">
+            <img id="zoomModalImg" src="" alt="Producto" draggable="false">
+          </div>
+
+          <!-- Galería de miniaturas de diferentes posiciones -->
+          <div class="zoom-gallery-strip" id="zoomGalleryStrip"></div>
+
+          <!-- Floating Zoom Controls -->
+          <div class="zoom-toolbar">
+            <button type="button" onclick="zoomOut()" title="Alejar (-)" aria-label="Alejar">−</button>
+            <span class="zoom-level-text" id="zoomLevelText">100%</span>
+            <button type="button" onclick="zoomIn()" title="Acercar (+)" aria-label="Acercar">+</button>
+            <button type="button" onclick="resetZoom()" title="Restablecer (1x)" aria-label="Restablecer" style="font-size:11px;font-weight:800;font-family:var(--mono);">1x</button>
+          </div>
+        </div>
+
+        <!-- Product Details & Actions -->
+        <div style="padding:24px 26px;display:flex;flex-direction:column;justify-content:space-between;background:var(--surface);overflow-y:auto;">
+          <div>
+            <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:12px;">
+              <span id="zoomModalPrice" style="font-size:28px;font-weight:800;color:var(--accent-deep);font-family:var(--sans);">$0.00</span>
+              <s id="zoomModalWasPrice" style="color:var(--muted);font-size:17px;font-weight:500;display:none;">$0.00</s>
+              <span id="zoomModalStock" class="badge" style="font-size:11.5px;font-weight:700;">Disponible</span>
+            </div>
+
+            <p id="zoomModalDesc" style="font-size:14px;color:var(--ink-2);line-height:1.6;margin:0 0 18px;background:var(--surface-2);padding:12px 16px;border-radius:14px;border:1px solid var(--line);">
+              Prenda seleccionada con diseño exclusivo y máxima comodidad.
+            </p>
+
+            <!-- Tallas en el modal -->
+            <div id="zoomModalSizes" style="margin-bottom:20px;"></div>
+
+            <!-- Beneficios de compra -->
+            <div style="background:#FAF6F7;border-radius:14px;padding:12px 14px;margin-bottom:20px;font-size:12.5px;color:var(--muted);line-height:1.5;">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;color:var(--ink-2);font-weight:600;">
+                <span>🚚</span> <span>Envíos a todo Ecuador por <b>Servientrega</b></span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;color:var(--ink-2);font-weight:600;">
+                <span>🧾</span> <span>Facturación electrónica autorizada por el <b>SRI</b></span>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;padding-top:10px;border-top:1px solid var(--line);">
+            <button type="button" class="btn btn-ghost" onclick="closeProductZoom()" style="flex:1;">Cerrar</button>
+            <button type="button" class="btn btn-primary" id="zoomModalAddBtn" style="flex:2;padding:13px 18px;font-size:15px;font-weight:800;">
+              Agregar al Carrito
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ORDER SUCCESS MODAL -->
   <div class="modal-overlay" id="successModal">
     <div class="modal-card" style="text-align:center;padding:32px 24px;">
@@ -1052,7 +1365,42 @@
 
     let products = [];
     let cart = [];
+    let activeGender = 'MUJER';
     let activeFilter = 'all';
+
+    const SUB_CATEGORIES_BY_GENDER = {
+      'MUJER': [
+        { id: 'all', label: '✨ Todo Mujer' },
+        { id: 'vestidos', label: '👗 Vestidos' },
+        { id: 'blusas', label: '👚 Blusas & Tops' },
+        { id: 'pantalones', label: '👖 Pantalones & Jeans' },
+        { id: 'calzado', label: '👠 Calzado' },
+        { id: 'accesorios', label: '👜 Bolsos & Accesorios' },
+        { id: 'belleza', label: '💄 Belleza' }
+      ],
+      'HOMBRE': [
+        { id: 'all', label: '✨ Todo Hombre' },
+        { id: 'ropa', label: '👔 Camisas & Polos' },
+        { id: 'pantalones', label: '👖 Pantalones & Bermudas' },
+        { id: 'calzado', label: '👞 Calzado Masculino' },
+        { id: 'accesorios', label: '🕶️ Accesorios' }
+      ],
+      'NINOS': [
+        { id: 'all', label: '✨ Todo Niños' },
+        { id: 'ropa', label: '🧸 Conjuntos & Ropa' },
+        { id: 'calzado', label: '👟 Calzado Infantil' },
+        { id: 'regalos', label: '🎁 Regalos & Detalles' }
+      ],
+      'TODOS': [
+        { id: 'all', label: '✨ Todo el Catálogo' },
+        { id: 'ropa', label: '👗 Ropa' },
+        { id: 'calzado', label: '👠 Calzado' },
+        { id: 'accesorios', label: '👜 Accesorios' },
+        { id: 'belleza', label: '💄 Belleza' },
+        { id: 'hogar', label: '🕯️ Velas & Hogar' },
+        { id: 'regalos', label: '🎁 Regalos' }
+      ]
+    };
 
     function money(n) { return '$' + Number(n || 0).toFixed(2); }
     function toast(msg) {
@@ -1070,6 +1418,7 @@
         if (json.success) {
           products = json.data;
           document.getElementById('statProds').textContent = '+' + products.length;
+          renderSubcategoryPills();
           renderProducts();
         }
       } catch (err) {
@@ -1077,7 +1426,40 @@
       }
     }
 
-    
+    window.setGender = function(gender, el) {
+      activeGender = (gender || 'MUJER').toUpperCase();
+      activeFilter = 'all';
+
+      document.querySelectorAll('.gender-tab').forEach(b => {
+        b.classList.toggle('active', b.dataset.gender === activeGender);
+      });
+
+      renderSubcategoryPills();
+      renderProducts();
+    };
+
+    function renderSubcategoryPills() {
+      const desktopContainer = document.querySelector('.shop-bar .filters');
+      const mobileContainer = document.querySelector('.mobile-cat-scroll');
+      const cats = SUB_CATEGORIES_BY_GENDER[activeGender] || SUB_CATEGORIES_BY_GENDER['TODOS'];
+
+      if (desktopContainer) {
+        desktopContainer.innerHTML = cats.map(c => `
+          <button class="chip" data-cat="${c.id}" aria-pressed="${c.id === activeFilter ? 'true' : 'false'}" onclick="setFilter('${c.id}', this)">
+            ${c.label}
+          </button>
+        `).join('');
+      }
+
+      if (mobileContainer) {
+        mobileContainer.innerHTML = cats.map(c => `
+          <button type="button" class="m-pill ${c.id === activeFilter ? 'active' : ''}" onclick="setFilter('${c.id}', this)">
+            ${c.label}
+          </button>
+        `).join('');
+      }
+    }
+
     window.setFilter = function(cat, el) {
       activeFilter = cat || 'all';
       document.querySelectorAll('.chip').forEach(b => {
@@ -1095,7 +1477,15 @@
     function renderProducts() {
       const grid = document.getElementById('productsGrid');
       const q = (document.getElementById('searchInput') ? document.getElementById('searchInput').value : '').toLowerCase().trim();
+      
       let list = products.filter(p => {
+        // 1. Filtrar por Género / Departamento
+        if (activeGender !== 'TODOS') {
+          const pGen = (p.genero || 'MUJER').toUpperCase();
+          if (pGen !== activeGender && pGen !== 'UNISEX') return false;
+        }
+
+        // 2. Filtrar por Subcategoría
         if (activeFilter === 'all') return true;
         if (p.cat === activeFilter) return true;
         const nameLower = (p.name || '').toLowerCase();
@@ -1105,14 +1495,15 @@
         if (activeFilter === 'pantalones' && (nameLower.includes('pant') || nameLower.includes('jean') || descLower.includes('pant'))) return true;
         return false;
       });
+
       if (q) list = list.filter(p => p.name.toLowerCase().includes(q) || (p.desc || '').toLowerCase().includes(q));
 
-      const sort = document.getElementById('sortSelect').value;
+      const sort = document.getElementById('sortSelect') ? document.getElementById('sortSelect').value : 'default';
       if (sort === 'price-asc') list.sort((a,b) => a.price - b.price);
       if (sort === 'price-desc') list.sort((a,b) => b.price - a.price);
 
       if (!list.length) {
-        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);">No se encontraron productos disponibles.</div>';
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);">No se encontraron productos en esta sección.</div>';
         return;
       }
 
@@ -1127,6 +1518,10 @@
         'Sérum Pétalo': 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=800&q=85',
         'Vela Jardín': 'https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=800&q=85',
         'Set Regalo Dulce': 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=800&q=85',
+        'Camisa Lino Classic': 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=800&q=85',
+        'Mocasines Cuero Habana': 'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?auto=format&fit=crop&w=800&q=85',
+        'Conjunto Pastel Safari': 'https://images.unsplash.com/photo-1519457431-44ccd64a579b?auto=format&fit=crop&w=800&q=85',
+        'Zapatillas Mini Confort': 'https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&w=800&q=85',
         'accesorios': 'https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&w=800&q=85',
         'ropa': 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=85',
         'calzado': 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=800&q=85',
@@ -1144,6 +1539,15 @@
 
         const imgUrl = (p.img && p.img.trim()) ? p.img : (BOUTIQUE_FALLBACK_IMAGES[p.name] || BOUTIQUE_FALLBACK_IMAGES[p.cat] || BOUTIQUE_FALLBACK_IMAGES.ropa);
         const media = `<img src="${imgUrl}" alt="${p.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.4s ease;">`;
+
+        let galleryCount = 1;
+        if (p.images) {
+          try {
+            const arr = Array.isArray(p.images) ? p.images : JSON.parse(p.images);
+            if (arr && arr.length > 0) galleryCount = arr.length;
+          } catch(e) {}
+        }
+        const multiPhotoBadge = galleryCount > 1 ? `<div style="position:absolute;top:10px;left:10px;background:rgba(30,20,23,0.72);color:#fff;border-radius:14px;padding:3px 9px;font-size:11px;font-weight:700;backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.2);display:flex;align-items:center;gap:4px;">📷 ${galleryCount} fotos</div>` : '';
 
         let tObj = {};
         try { tObj = JSON.parse(p.tallas || '{}'); } catch(e) {}
@@ -1178,26 +1582,32 @@
         }
 
         return `
-          <article class="prod">
-            <div class="media" style="background:${GRAD[p.cat] || GRAD.accesorios}">
+          <article class="prod" onclick="openProductZoom(${p.id})">
+            <div class="media" style="background:${GRAD[p.cat] || GRAD.accesorios};cursor:pointer;position:relative;">
               ${media}
+              ${multiPhotoBadge}
               <div class="badges">${badges.join('')}</div>
-              <button class="fav" type="button" aria-label="Favoritos" onclick="toast('Guardado en favoritos')"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-9.2A3.8 3.8 0 0 1 12 8.4 3.8 3.8 0 0 1 19 10.8C19 15.6 12 20 12 20Z"/></svg></button>
-              <div class="add">
+              <button class="fav" type="button" aria-label="Favoritos" onclick="event.stopPropagation(); toast('Guardado en favoritos')"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-9.2A3.8 3.8 0 0 1 12 8.4 3.8 3.8 0 0 1 19 10.8C19 15.6 12 20 12 20Z"/></svg></button>
+              <div class="add" onclick="event.stopPropagation();">
                 ${isOut ? '<button class="btn btn-outline" disabled style="width:100%;">Sin Stock</button>' : `<button class="btn btn-primary" onclick="addToCartWithSize(${p.id})">Agregar al Carrito</button>`}
+              </div>
+              <div style="position:absolute;bottom:10px;right:10px;background:rgba(30,20,23,0.65);color:#fff;border-radius:20px;padding:4px 9px;font-size:11px;font-weight:700;backdrop-filter:blur(6px);display:flex;align-items:center;gap:4px;pointer-events:none;border:1px solid rgba(255,255,255,0.2);">
+                🔍 Zoom
               </div>
             </div>
             <div class="body">
-              <span class="cat-l">${p.cat}</span>
-              <h3>${p.name}</h3>
+              <span class="cat-l" onclick="openProductZoom(${p.id})" style="cursor:pointer;">${p.genero ? (p.genero + ' · ' + p.cat) : p.cat}</span>
+              <h3 onclick="openProductZoom(${p.id})" style="cursor:pointer;">${p.name}</h3>
               <p style="font-size:12.5px;color:var(--muted);margin:0 0 8px;line-height:1.4;">${p.desc || ''}</p>
-              ${sizeSelectorHtml}
-              <div class="price-row">
+              <div onclick="event.stopPropagation();">
+                ${sizeSelectorHtml}
+              </div>
+              <div class="price-row" onclick="openProductZoom(${p.id})" style="cursor:pointer;">
                 <span class="price">${money(p.price)}</span>
                 ${p.was_price ? `<s>${money(p.was_price)}</s>` : ''}
                 <span class="stock-tag">${isOut ? 'Agotado' : p.stock + ' disponibles'}</span>
               </div>
-              <div class="add-mobile">
+              <div class="add-mobile" onclick="event.stopPropagation();">
                 ${isOut ? '<button class="btn btn-outline" disabled style="width:100%;">Sin Stock</button>' : `<button class="btn btn-primary" onclick="addToCartWithSize(${p.id})" style="width:100%;">Agregar</button>`}
               </div>
             </div>
@@ -1258,6 +1668,288 @@
       openCart();
       toast(`Agregado: ${p.name} ${talla !== 'Única' ? `(Talla ${talla})` : ''}`);
     }
+
+    // ==========================================
+    // PRODUCT ZOOM LIGHTBOX MODAL LOGIC
+    // ==========================================
+    let currentZoomScale = 1;
+    let currentPanX = 0;
+    let currentPanY = 0;
+    let isPanning = false;
+    let startPanX = 0;
+    let startPanY = 0;
+    let currentZoomProduct = null;
+
+    window.openProductZoom = function(productId) {
+      const p = products.find(x => x.id === productId);
+      if (!p) return;
+      currentZoomProduct = p;
+
+      const imgUrl = (p.img && p.img.trim()) ? p.img : (BOUTIQUE_FALLBACK_IMAGES[p.name] || BOUTIQUE_FALLBACK_IMAGES[p.cat] || BOUTIQUE_FALLBACK_IMAGES.ropa);
+
+      const modal = document.getElementById('productZoomModal');
+      const img = document.getElementById('zoomModalImg');
+      const title = document.getElementById('zoomModalTitle');
+      const cat = document.getElementById('zoomModalCat');
+      const price = document.getElementById('zoomModalPrice');
+      const wasPrice = document.getElementById('zoomModalWasPrice');
+      const desc = document.getElementById('zoomModalDesc');
+      const stock = document.getElementById('zoomModalStock');
+      const sizesContainer = document.getElementById('zoomModalSizes');
+      const addBtn = document.getElementById('zoomModalAddBtn');
+
+      img.src = imgUrl;
+      img.alt = p.name;
+      title.textContent = p.name;
+      cat.textContent = (p.genero ? `${p.genero} · ${p.cat}` : (p.cat || 'Boutique')).toUpperCase();
+      price.textContent = money(p.price);
+      if (p.was_price) {
+        wasPrice.textContent = money(p.was_price);
+        wasPrice.style.display = 'inline';
+      } else {
+        wasPrice.style.display = 'none';
+      }
+      desc.textContent = p.desc || 'Prenda exclusiva confeccionada con finos acabados para un look sofisticado y elegante.';
+      const isOut = p.stock <= 0;
+      stock.textContent = isOut ? 'Agotado' : `${p.stock} disponibles`;
+      stock.className = isOut ? 'badge out' : 'badge';
+
+      // Galería de miniaturas multi-ángulo
+      let gallery = [];
+      if (p.images) {
+        try {
+          const parsed = Array.isArray(p.images) ? p.images : JSON.parse(p.images);
+          if (Array.isArray(parsed)) gallery = parsed;
+        } catch(e) {}
+      }
+      if (!gallery.length && p.img && p.img.trim()) gallery = [p.img.trim()];
+      if (!gallery.length) gallery = [imgUrl];
+
+      const strip = document.getElementById('zoomGalleryStrip');
+      if (strip) {
+        if (gallery.length > 1) {
+          strip.style.display = 'flex';
+          strip.innerHTML = gallery.map((src, idx) => `
+            <button type="button" class="zoom-thumb-btn ${src === imgUrl ? 'active' : (idx === 0 ? 'active' : '')}" onclick="switchZoomGalleryPhoto('${src}', this)" title="Ver ángulo ${idx + 1}">
+              <img src="${src}" alt="Ángulo ${idx + 1}">
+            </button>
+          `).join('');
+        } else {
+          strip.style.display = 'none';
+        }
+      }
+
+      // Tallas en el modal
+      let tObj = {};
+      try { tObj = JSON.parse(p.tallas || '{}'); } catch(e) {}
+      const tallasKeys = Object.keys(tObj);
+      const activeTalla = (window.selectedSizesMap && window.selectedSizesMap[p.id]) || tallasKeys[0] || 'Única';
+
+      if (tallasKeys.length > 1 || (tallasKeys.length === 1 && tallasKeys[0] !== 'Única')) {
+        sizesContainer.innerHTML = `
+          <div style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:6px;">Talla seleccionada:</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            ${tallasKeys.map(t => {
+              const qty = tObj[t] || 0;
+              const isAvail = qty > 0;
+              const isSel = t === activeTalla;
+              return `<button type="button" class="size-pill-btn" onclick="selectSize(${p.id}, '${t}'); updateZoomModalSize('${t}')" style="padding:6px 12px;border-radius:10px;border:1.5px solid ${isSel ? 'var(--accent-deep)' : 'var(--line-strong)'};background:${isSel ? 'var(--accent-soft)' : '#fff'};color:${!isAvail ? '#A88C94' : 'var(--ink)'};font-weight:700;font-size:12.5px;cursor:${isAvail ? 'pointer' : 'not-allowed'};${!isAvail ? 'text-decoration:line-through;opacity:0.5;' : ''}">${t}</button>`;
+            }).join('')}
+          </div>
+        `;
+        sizesContainer.style.display = 'block';
+      } else {
+        sizesContainer.style.display = 'none';
+      }
+
+      if (isOut) {
+        addBtn.disabled = true;
+        addBtn.textContent = 'Sin Stock';
+        addBtn.className = 'btn btn-outline';
+      } else {
+        addBtn.disabled = false;
+        addBtn.textContent = 'Agregar al Carrito';
+        addBtn.className = 'btn btn-primary';
+        addBtn.onclick = function() {
+          addToCartWithSize(p.id);
+          closeProductZoom();
+          openCart();
+        };
+      }
+
+      // Reset zoom y desplegar
+      resetZoomTransform();
+      modal.classList.add('show');
+      document.body.classList.add('modal-open');
+    };
+
+    window.switchZoomGalleryPhoto = function(src, btn) {
+      const img = document.getElementById('zoomModalImg');
+      if (img) img.src = src;
+      const strip = document.getElementById('zoomGalleryStrip');
+      if (strip) {
+        strip.querySelectorAll('.zoom-thumb-btn').forEach(b => b.classList.remove('active'));
+      }
+      if (btn) btn.classList.add('active');
+      resetZoomTransform();
+    };
+
+    window.updateZoomModalSize = function(talla) {
+      if (!currentZoomProduct) return;
+      const container = document.getElementById('zoomModalSizes');
+      if (container) {
+        container.querySelectorAll('button').forEach(b => {
+          const isSel = b.textContent.trim() === talla;
+          b.style.borderColor = isSel ? 'var(--accent-deep)' : 'var(--line-strong)';
+          b.style.background = isSel ? 'var(--accent-soft)' : '#fff';
+        });
+      }
+    };
+
+    window.closeProductZoom = function() {
+      const modal = document.getElementById('productZoomModal');
+      if (modal) modal.classList.remove('show');
+      document.body.classList.remove('modal-open');
+      resetZoomTransform();
+    };
+
+    function updateZoomTransform(smooth = false) {
+      const img = document.getElementById('zoomModalImg');
+      const levelText = document.getElementById('zoomLevelText');
+      if (!img) return;
+
+      if (smooth) {
+        img.style.transition = 'transform 0.22s cubic-bezier(0.2,0,0,1)';
+      } else {
+        img.style.transition = 'transform 0.05s ease-out';
+      }
+
+      img.style.transform = `scale(${currentZoomScale}) translate(${currentPanX}px, ${currentPanY}px)`;
+      if (levelText) {
+        levelText.textContent = Math.round(currentZoomScale * 100) + '%';
+      }
+    }
+
+    function resetZoomTransform() {
+      currentZoomScale = 1;
+      currentPanX = 0;
+      currentPanY = 0;
+      updateZoomTransform(true);
+    }
+
+    window.zoomIn = function() {
+      currentZoomScale = Math.min(4.5, +(currentZoomScale + 0.5).toFixed(2));
+      updateZoomTransform(true);
+    };
+
+    window.zoomOut = function() {
+      currentZoomScale = Math.max(1, +(currentZoomScale - 0.5).toFixed(2));
+      if (currentZoomScale === 1) {
+        currentPanX = 0;
+        currentPanY = 0;
+      }
+      updateZoomTransform(true);
+    };
+
+    window.resetZoom = function() {
+      resetZoomTransform();
+    };
+
+    window.toggleDoubleZoom = function(e) {
+      if (currentZoomScale > 1.2) {
+        resetZoomTransform();
+      } else {
+        currentZoomScale = 2.5;
+        currentPanX = 0;
+        currentPanY = 0;
+        updateZoomTransform(true);
+      }
+    };
+
+    // Listeners interactivos de Zoom (Mouse Drag, Wheel y Touch Pinch)
+    document.addEventListener('DOMContentLoaded', () => {
+      const wrapper = document.getElementById('zoomImgWrapper');
+      if (wrapper) {
+        // Wheel Zoom
+        wrapper.addEventListener('wheel', (e) => {
+          e.preventDefault();
+          const delta = e.deltaY > 0 ? -0.25 : 0.25;
+          currentZoomScale = Math.min(4.5, Math.max(1, +(currentZoomScale + delta).toFixed(2)));
+          if (currentZoomScale === 1) {
+            currentPanX = 0;
+            currentPanY = 0;
+          }
+          updateZoomTransform(false);
+        }, { passive: false });
+
+        // Mouse Drag Pan
+        wrapper.addEventListener('mousedown', (e) => {
+          if (currentZoomScale <= 1) return;
+          isPanning = true;
+          startPanX = (e.clientX - currentPanX * currentZoomScale);
+          startPanY = (e.clientY - currentPanY * currentZoomScale);
+          wrapper.classList.add('grabbing');
+        });
+
+        window.addEventListener('mousemove', (e) => {
+          if (!isPanning) return;
+          currentPanX = (e.clientX - startPanX) / currentZoomScale;
+          currentPanY = (e.clientY - startPanY) / currentZoomScale;
+          updateZoomTransform(false);
+        });
+
+        window.addEventListener('mouseup', () => {
+          if (isPanning) {
+            isPanning = false;
+            wrapper.classList.remove('grabbing');
+          }
+        });
+
+        // Touch Pinch & Drag para teléfonos móviles
+        let touchStartDist = null;
+        let touchStartScale = 1;
+
+        wrapper.addEventListener('touchstart', (e) => {
+          if (e.touches.length === 2) {
+            touchStartDist = Math.hypot(
+              e.touches[0].clientX - e.touches[1].clientX,
+              e.touches[0].clientY - e.touches[1].clientY
+            );
+            touchStartScale = currentZoomScale;
+          } else if (e.touches.length === 1 && currentZoomScale > 1) {
+            isPanning = true;
+            startPanX = e.touches[0].clientX - (currentPanX * currentZoomScale);
+            startPanY = e.touches[0].clientY - (currentPanY * currentZoomScale);
+          }
+        }, { passive: true });
+
+        wrapper.addEventListener('touchmove', (e) => {
+          if (e.touches.length === 2 && touchStartDist) {
+            const currentDist = Math.hypot(
+              e.touches[0].clientX - e.touches[1].clientX,
+              e.touches[0].clientY - e.touches[1].clientY
+            );
+            const ratio = currentDist / touchStartDist;
+            currentZoomScale = Math.min(4.5, Math.max(1, +(touchStartScale * ratio).toFixed(2)));
+            updateZoomTransform(false);
+          } else if (e.touches.length === 1 && isPanning) {
+            currentPanX = (e.touches[0].clientX - startPanX) / currentZoomScale;
+            currentPanY = (e.touches[0].clientY - startPanY) / currentZoomScale;
+            updateZoomTransform(false);
+          }
+        }, { passive: true });
+
+        wrapper.addEventListener('touchend', () => {
+          touchStartDist = null;
+          isPanning = false;
+        });
+      }
+
+      // Tecla Escape para cerrar el zoom
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeProductZoom();
+      });
+    });
 
     function updateCartUI() {
       const count = cart.reduce((s, x) => s + x.qty, 0);
