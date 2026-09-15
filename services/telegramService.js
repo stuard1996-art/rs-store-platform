@@ -14,11 +14,15 @@ function getConfig(key, defaultVal = '') {
   }
 }
 
+function getBotToken() {
+  return (process.env.TELEGRAM_BOT_TOKEN || getConfig('telegram_bot_token', '8842570395:AAHeIO1VJq8HHFZU4C3xhOq1uulFQjGnWHw')).trim();
+}
+
 /**
  * Envía un mensaje a un chat específico vía Telegram
  */
 async function sendTelegramMessage(chatId, text, options = {}) {
-  const token = getConfig('telegram_bot_token', '');
+  const token = getBotToken();
   if (!token || !chatId) {
     return { success: false, error: 'Telegram no está configurado (Token o Chat ID ausente)' };
   }
@@ -278,8 +282,26 @@ async function handleIncomingMessage(msg) {
   }
 
   // 3. Auto-vinculación directa con cédula si aún no está vinculado
-  const checkLinked = db.prepare(`SELECT id, nombre, rol FROM usuarios WHERE telegram_chat_id = ? AND activo = 1`).get(String(chatId));
+  let checkLinked = db.prepare(`SELECT id, nombre, rol FROM usuarios WHERE telegram_chat_id = ? AND activo = 1`).get(String(chatId));
+  
+  // Auto-reconocer al administrador principal por su chatId oficial de Steven
+  const isMasterAdmin = String(chatId) === '5857562616' || String(chatId) === String(getConfig('telegram_chat_id', '5857562616'));
+  if (!checkLinked && isMasterAdmin) {
+    checkLinked = vincularUsuarioTelegram(chatId, fromUsername, 'admin') || { nombre: 'Steven (Administrador)', rol: 'ADMIN' };
+  }
+
   if (!checkLinked) {
+    // Si escribió un saludo sin estar vinculado todavía
+    const isGreeting = ['hola', 'buenas', 'hey', 'start', 'buen dia'].some(s => text.toLowerCase().includes(s));
+    if (isGreeting) {
+      await sendTelegramMessage(chatId,
+        `👋 ¡Hola! Bienvenido al Asistente Inteligente de <b>RS Store Boutique</b>.\n\n` +
+        `Para vincular tu cuenta y habilitar consultas de ventas, inventario y pedidos en vivo:\n\n` +
+        `👉 <b>Escribe aquí tu número de Cédula</b> o tu <b>Usuario</b> registrado en el sistema (ejemplo: <code>0942610361</code> o <code>admin</code>).`
+      );
+      return;
+    }
+
     const vinculacionDirecta = vincularUsuarioTelegram(chatId, fromUsername, text);
     if (vinculacionDirecta) {
       await sendTelegramMessage(chatId,
@@ -406,7 +428,7 @@ async function handleIncomingMessage(msg) {
  * Procesa clics en botones de acción y nuevos mensajes entrantes
  */
 async function processTelegramUpdates() {
-  const token = getConfig('telegram_bot_token', '');
+  const token = getBotToken();
   if (!token) return;
 
   if (isProcessingUpdates) return;
@@ -427,6 +449,13 @@ async function processTelegramUpdates() {
       json = await res.json();
     } catch (netErr) {
       clearTimeout(timeoutHandle);
+      return;
+    }
+
+    if (json && !json.ok && json.error_code === 409) {
+      // 409 Conflict: Otra instancia (ej. producción vs local) está consultando Telegram
+      console.warn('[Telegram Bot] Aviso: Conflicto 409 detectado (otra instancia está haciendo polling). Pausando 15 segundos...');
+      await new Promise(r => setTimeout(r, 15000));
       return;
     }
 

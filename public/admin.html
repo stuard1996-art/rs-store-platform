@@ -1247,6 +1247,60 @@
             </div>
           </div>
 
+                    </div>
+
+          <!-- CARD HERO BANNER: IMAGEN PRINCIPAL DE PORTADA -->
+          <div class="card" style="margin-bottom:20px;">
+            <div class="card-head" style="display:flex;align-items:center;gap:12px;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:22px;">🖼️</span>
+                <div>
+                  <h3 style="margin:0;">Imagen Principal de Portada (Hero Banner de la Tienda)</h3>
+                  <div style="font-size:12px;color:var(--muted);">Configura la foto principal que se muestra en la cabecera de la tienda online para tus clientes.</div>
+                </div>
+              </div>
+              <span class="spacer"></span>
+              <span id="heroBannerBadge" class="badge-status PAGADO">Portada Activa</span>
+            </div>
+            <div class="card-body">
+              <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:center;">
+                <!-- Vista previa de la Portada -->
+                <div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px;background:#fff;border-radius:16px;border:1.5px dashed var(--hairline-strong);min-width:200px;max-width:260px;box-shadow:0 4px 14px rgba(0,0,0,0.03);">
+                  <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;">Vista Previa Actual</div>
+                  <img id="adminHeroBannerPreview" src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1000&q=85" alt="Hero Banner" style="height:140px;width:100%;object-fit:cover;border-radius:10px;border:1px solid var(--hairline);">
+                  <span id="adminHeroBannerUrlText" style="font-size:10px;color:var(--muted);max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Foto de Colección 2026</span>
+                </div>
+
+                <!-- Botones y Controles de Subida -->
+                <div style="flex:1;min-width:260px;display:flex;flex-direction:column;gap:12px;">
+                  <div>
+                    <label class="lbl">Subir Imagen de Portada desde tu Dispositivo (JPG, PNG, WebP):</label>
+                    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                      <input type="file" id="inputHeroBannerFile" accept="image/*" onchange="handleHeroBannerSelect(event)" style="display:none;">
+                      <button type="button" class="btn btn-ghost" onclick="document.getElementById('inputHeroBannerFile').click()" style="border:1.5px solid var(--accent);color:var(--accent-deep);font-weight:700;">
+                        📁 Elegir Imagen desde Celular o PC
+                      </button>
+                      <button type="button" class="btn btn-primary" id="btnSaveHeroBanner" onclick="saveHeroBanner()" style="display:none;">
+                        💾 Guardar y Aplicar Portada
+                      </button>
+                    </div>
+                    <div style="font-size:11.5px;color:var(--muted);margin-top:6px;">Recomendado: Imagen vertical o cuadrada de alta calidad (800x1000px o similar). Se comprime automáticamente.</div>
+                  </div>
+
+                  <!-- Enlace URL alternativo -->
+                  <div style="border-top:1px dashed var(--hairline);padding-top:10px;">
+                    <label class="lbl">O pegar enlace URL directo de la imagen:</label>
+                    <div style="display:flex;gap:10px;align-items:center;">
+                      <input class="inp" id="inputHeroBannerUrl" placeholder="https://images.unsplash.com/..." style="background:#fff;font-size:12.5px;" oninput="previewHeroBannerUrl(this.value)">
+                      <button type="button" class="btn btn-ghost btn-sm" onclick="applyHeroBannerFromUrl()" style="white-space:nowrap;">Guardar URL</button>
+                      <button type="button" class="btn btn-outline btn-sm" onclick="resetHeroBannerDefault()" style="white-space:nowrap;" title="Restablecer a imagen predeterminada">Restablecer</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- CARD 1: FIRMA ELECTRÓNICA .P12 -->
           <div class="card" style="margin-bottom:20px;">
             <div class="card-head">
@@ -1904,6 +1958,19 @@
                 <label class="lbl" style="margin:0;">Datos del Cliente</label>
                 <span id="posSriIndicator" style="font-size:11px;color:var(--muted);font-weight:600;">⚡ Consulta Automática SRI</span>
               </div>
+              <!-- Selector Rápido de Clientes Registrados & Botón Crear Cliente -->
+              <div style="background:var(--accent-soft);padding:10px 12px;border-radius:12px;border:1px solid var(--accent);margin-bottom:10px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                  <span style="font-size:11.5px;font-weight:700;color:var(--accent-deep);text-transform:uppercase;letter-spacing:.04em;">👤 Seleccionar o Crear Cliente:</span>
+                  <button type="button" class="btn btn-primary btn-sm" style="padding:4px 10px;font-size:11.5px;border-radius:8px;" onclick="openPosNewClientModal()">
+                    ➕ Nuevo Cliente
+                  </button>
+                </div>
+                <select class="inp" id="posClientSelect" style="background:#fff;font-weight:600;font-size:13px;" onchange="onPosClientSelect(this.value)">
+                  <option value="CONSUMIDOR_FINAL">👤 CONSUMIDOR FINAL (9999999999999)</option>
+                </select>
+              </div>
+
               <div style="display:flex;gap:8px;margin-bottom:8px;">
                 <select class="inp" id="posDocType" style="max-width:140px;">
                   <option value="CONSUMIDOR_FINAL">Consumidor Final</option>
@@ -1917,6 +1984,10 @@
                 <input class="inp" id="posClientPhone" placeholder="Teléfono / WhatsApp">
                 <input class="inp" id="posClientEmail" placeholder="Correo electrónico">
               </div>
+              <label style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ink-2);margin-top:8px;cursor:pointer;">
+                <input type="checkbox" id="posSaveNewClient" checked style="accent-color:var(--accent-deep);cursor:pointer;">
+                Guardar automáticamente en el directorio de Clientes si es nuevo
+              </label>
             </div>
 
             <label class="lbl">Seleccionar Productos del Catálogo</label>
@@ -3403,7 +3474,258 @@
     }
 
     // ================= POS CAJA / FACTURACIÓN DIRECTA =================
+    
+    // ================= CLIENTES EN POS & FACTURACIÓN =================
+    let allPosClientsList = [];
+
+    async function loadPosClients() {
+      try {
+        const res = await fetch('/api/clients');
+        const json = await res.json();
+        if (json.success && Array.isArray(json.data)) {
+          allPosClientsList = json.data;
+          renderPosClientSelect();
+        }
+      } catch (err) {
+        console.warn('Notice loading clients:', err.message);
+      }
+    }
+
+    function renderPosClientSelect() {
+      const sel = document.getElementById('posClientSelect');
+      if (!sel) return;
+      const currentVal = sel.value;
+      sel.innerHTML = `
+        <option value="CONSUMIDOR_FINAL">👤 CONSUMIDOR FINAL (9999999999999)</option>
+        ${allPosClientsList.filter(c => c.num_doc !== '9999999999999').map(c => `
+          <option value="${c.id}">👤 ${c.razon_social} (${c.num_doc || 'Sin doc'})${c.telefono ? ' - Tel: ' + c.telefono : ''}</option>
+        `).join('')}
+      `;
+      if (currentVal && Array.from(sel.options).some(o => o.value === currentVal)) {
+        sel.value = currentVal;
+      }
+    }
+
+    function onPosClientSelect(val) {
+      if (val === 'CONSUMIDOR_FINAL') {
+        document.getElementById('posDocType').value = 'CONSUMIDOR_FINAL';
+        document.getElementById('posDocNum').value = '9999999999999';
+        document.getElementById('posClientName').value = 'CONSUMIDOR FINAL';
+        document.getElementById('posClientPhone').value = '';
+        document.getElementById('posClientEmail').value = '';
+        return;
+      }
+      const c = allPosClientsList.find(x => String(x.id) === String(val));
+      if (c) {
+        document.getElementById('posDocType').value = c.tipo_doc || (c.num_doc && c.num_doc.length === 13 ? 'RUC' : 'CEDULA');
+        document.getElementById('posDocNum').value = c.num_doc || '';
+        document.getElementById('posClientName').value = c.razon_social || '';
+        document.getElementById('posClientPhone').value = c.telefono || '';
+        document.getElementById('posClientEmail').value = c.email || '';
+      }
+    }
+
+    function openPosNewClientModal() {
+      document.getElementById('newCliTipoDoc').value = 'CEDULA';
+      document.getElementById('newCliNumDoc').value = '';
+      document.getElementById('newCliNombre').value = '';
+      document.getElementById('newCliTelefono').value = '';
+      document.getElementById('newCliEmail').value = '';
+      document.getElementById('newCliDireccion').value = 'Guayaquil, Ecuador';
+      document.getElementById('newCliSriStatus').textContent = '';
+      window.showModal('modalPosNewClient');
+      setTimeout(() => document.getElementById('newCliNumDoc').focus(), 150);
+    }
+
+    function closePosNewClientModal() {
+      window.closeModal('modalPosNewClient');
+    }
+
+    async function lookupNewCliSri() {
+      const doc = document.getElementById('newCliNumDoc').value.trim();
+      const st = document.getElementById('newCliSriStatus');
+      if (!doc || doc.length < 10) return;
+      if (st) { st.textContent = '⏳ Consultando SRI...'; st.style.color = 'var(--accent-deep)'; }
+      try {
+        const res = await fetch(`/api/sri/lookup/${doc}`);
+        const json = await res.json();
+        if (json.success && json.razon_social) {
+          document.getElementById('newCliNombre').value = json.razon_social;
+          if (json.tipo_doc) document.getElementById('newCliTipoDoc').value = json.tipo_doc;
+          if (json.telefono && !document.getElementById('newCliTelefono').value) document.getElementById('newCliTelefono').value = json.telefono;
+          if (json.email && !document.getElementById('newCliEmail').value) document.getElementById('newCliEmail').value = json.email;
+          if (st) { st.textContent = '✓ Verificado en el SRI'; st.style.color = 'var(--ok)'; }
+        } else {
+          if (st) { st.textContent = '✓ Documento listo para registrar'; st.style.color = 'var(--muted)'; }
+        }
+      } catch(e) {
+        if (st) { st.textContent = ''; }
+      }
+    }
+
+    async function savePosNewClient() {
+      const tipo_doc = document.getElementById('newCliTipoDoc').value;
+      const num_doc = document.getElementById('newCliNumDoc').value.trim();
+      const razon_social = document.getElementById('newCliNombre').value.trim();
+      const telefono = document.getElementById('newCliTelefono').value.trim();
+      const email = document.getElementById('newCliEmail').value.trim();
+      const direccion = document.getElementById('newCliDireccion').value.trim();
+
+      if (!num_doc || !razon_social) {
+        alert('Por favor completa el número de documento y el nombre del cliente');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/clients', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tipo_doc, num_doc, razon_social, telefono, email, direccion })
+        });
+        const json = await res.json();
+        if (!json.success) throw new Error(json.error || 'Error al guardar cliente');
+
+        toast('Cliente registrado con éxito');
+        closePosNewClientModal();
+        await loadPosClients();
+
+        // Seleccionar de inmediato en el formulario POS
+        const newId = json.data ? json.data.id : null;
+        if (newId) {
+          const sel = document.getElementById('posClientSelect');
+          if (sel) sel.value = String(newId);
+          onPosClientSelect(newId);
+        } else {
+          document.getElementById('posDocType').value = tipo_doc;
+          document.getElementById('posDocNum').value = num_doc;
+          document.getElementById('posClientName').value = razon_social;
+          document.getElementById('posClientPhone').value = telefono;
+          document.getElementById('posClientEmail').value = email;
+        }
+      } catch(err) {
+        alert('Error: ' + err.message);
+      }
+    }
+
+    // ================= HERO BANNER (IMAGEN PRINCIPAL DE PORTADA) =================
+    let pendingHeroBannerDataUrl = null;
+
+    function handleHeroBannerSelect(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const img = new Image();
+        img.onload = function() {
+          const maxW = 1200;
+          const maxH = 1400;
+          let w = img.width;
+          let h = img.height;
+          if (w > maxW || h > maxH) {
+            const ratio = Math.min(maxW / w, maxH / h);
+            w = Math.round(w * ratio);
+            h = Math.round(h * ratio);
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          pendingHeroBannerDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+
+          const preview = document.getElementById('adminHeroBannerPreview');
+          if (preview) preview.src = pendingHeroBannerDataUrl;
+          const label = document.getElementById('adminHeroBannerUrlText');
+          if (label) label.textContent = file.name + ' (Listo para guardar)';
+
+          const btnSave = document.getElementById('btnSaveHeroBanner');
+          if (btnSave) btnSave.style.display = 'inline-block';
+        };
+        img.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function saveHeroBanner() {
+      if (!pendingHeroBannerDataUrl) return;
+      try {
+        const res = await fetch('/api/settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ banner_hero_img: pendingHeroBannerDataUrl })
+        });
+        const json = await res.json();
+        if (json.success) {
+          toast('¡Imagen de portada (Hero Banner) actualizada y guardada!');
+          const btnSave = document.getElementById('btnSaveHeroBanner');
+          if (btnSave) btnSave.style.display = 'none';
+          const badge = document.getElementById('heroBannerBadge');
+          if (badge) {
+            badge.textContent = 'Guardado';
+            badge.className = 'badge-status PAGADO';
+          }
+        } else {
+          alert('Error: ' + json.error);
+        }
+      } catch(err) {
+        alert('Error al guardar portada: ' + err.message);
+      }
+    }
+
+    function previewHeroBannerUrl(url) {
+      if (!url || !url.trim()) return;
+      const preview = document.getElementById('adminHeroBannerPreview');
+      if (preview) preview.src = url.trim();
+    }
+
+    async function applyHeroBannerFromUrl() {
+      const url = (document.getElementById('inputHeroBannerUrl').value || '').trim();
+      if (!url) {
+        alert('Por favor ingresa una URL válida');
+        return;
+      }
+      try {
+        const res = await fetch('/api/settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ banner_hero_img: url })
+        });
+        const json = await res.json();
+        if (json.success) {
+          toast('¡Enlace de portada guardado con éxito!');
+          const label = document.getElementById('adminHeroBannerUrlText');
+          if (label) label.textContent = url;
+          const preview = document.getElementById('adminHeroBannerPreview');
+          if (preview) preview.src = url;
+        } else alert('Error: ' + json.error);
+      } catch(err) { alert('Error: ' + err.message); }
+    }
+
+    async function resetHeroBannerDefault() {
+      const defaultUrl = 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1000&q=85';
+      if (!confirm('¿Restablecer la portada predeterminada de la tienda?')) return;
+      try {
+        const res = await fetch('/api/settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ banner_hero_img: defaultUrl })
+        });
+        const json = await res.json();
+        if (json.success) {
+          toast('Portada restablecida al original');
+          const preview = document.getElementById('adminHeroBannerPreview');
+          if (preview) preview.src = defaultUrl;
+          const inp = document.getElementById('inputHeroBannerUrl');
+          if (inp) inp.value = '';
+          const label = document.getElementById('adminHeroBannerUrlText');
+          if (label) label.textContent = 'Foto de Colección 2026 (Original)';
+        }
+      } catch(e) { alert(e.message); }
+    }
+
     function openPosModal() {
+      loadPosClients();
       posCart = [];
       updatePosCartUI();
       renderPosProductCatalog(allProducts);
@@ -5907,5 +6229,62 @@
       }
     }, 3000);
   </script>
+  <!-- ================= MODAL: NUEVO CLIENTE (DESDE POS) ================= -->
+  <div class="overlay" id="modalPosNewClient">
+    <div class="modal sm" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:22px;">👤</span>
+          <div>
+            <h3 style="margin:0;">Registrar Nuevo Cliente</h3>
+            <div style="font-size:12px;color:var(--muted);">Se guardará en el catálogo y se seleccionará para la factura actual.</div>
+          </div>
+        </div>
+        <button class="icon-btn" onclick="closePosNewClientModal()"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div>
+            <label class="lbl">Tipo de Identificación *</label>
+            <select class="inp" id="newCliTipoDoc">
+              <option value="CEDULA">Cédula de Identidad</option>
+              <option value="RUC">RUC</option>
+              <option value="PASAPORTE">Pasaporte</option>
+            </select>
+          </div>
+          <div>
+            <label class="lbl">Número de Documento *</label>
+            <div style="display:flex;gap:8px;">
+              <input class="inp" id="newCliNumDoc" placeholder="Ej: 0923456789" onchange="lookupNewCliSri()">
+              <button type="button" class="btn btn-ghost btn-sm" onclick="lookupNewCliSri()" title="Consultar en SRI">⚡ SRI</button>
+            </div>
+            <span id="newCliSriStatus" style="font-size:11px;color:var(--muted);"></span>
+          </div>
+          <div>
+            <label class="lbl">Nombres y Apellidos / Razón Social *</label>
+            <input class="inp" id="newCliNombre" placeholder="Ej: María José Pérez">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div>
+              <label class="lbl">Teléfono / WhatsApp</label>
+              <input class="inp" id="newCliTelefono" placeholder="0999999999">
+            </div>
+            <div>
+              <label class="lbl">Correo Electrónico</label>
+              <input class="inp" id="newCliEmail" placeholder="cliente@correo.com">
+            </div>
+          </div>
+          <div>
+            <label class="lbl">Dirección de Domicilio</label>
+            <input class="inp" id="newCliDireccion" placeholder="Guayaquil, Ecuador">
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-ghost" onclick="closePosNewClientModal()">Cancelar</button>
+        <button type="button" class="btn btn-primary" onclick="savePosNewClient()">💾 Guardar y Seleccionar</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

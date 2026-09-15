@@ -129,6 +129,124 @@ app.post('/api/products', (req, res) => {
   }
 });
 
+// Emitir factura manual (Caja / POS)
+app.post('/api/invoices', (req, res) => {
+  try {
+    let { cliente_id, cliente_doc, cliente_nombre, cliente_email, cliente_telefono, tipo_doc, items, forma_pago, notas } = req.body;
+
+    // Si no se proporcionó cliente_id pero se ingresó documento y nombre, buscar o crear cliente
+    if (!cliente_id && cliente_doc && cliente_doc.trim() !== '9999999999999') {
+      const docClean = cliente_doc.trim();
+      const existing = db.prepare('SELECT id FROM clientes WHERE num_doc = ?').get(docClean);
+      if (existing) {
+        cliente_id = existing.id;
+      } else {
+        const ins = db.prepare(`
+          INSERT INTO clientes (tipo_doc, num_doc, razon_social, email, telefono, direccion)
+          VALUES (?, ?, ?, ?, ?, 'Ecuador')
+        `).run(tipo_doc || (docClean.length === 13 ? 'RUC' : 'CEDULA'), docClean, (cliente_nombre || 'CLIENTE').trim(), (cliente_email || '').trim(), (cliente_telefono || '').trim());
+        cliente_id = ins.lastInsertRowid;
+      }
+    } else if (!cliente_id) {
+      const cf = db.prepare("SELECT id FROM clientes WHERE num_doc = '9999999999999'").get();
+      cliente_id = cf ? cf.id : 1;
+    }
+
+    const invoice = createInvoice({ cliente_id, items, forma_pago, notas });
+    res.status(201).json({ success: true, data: invoice, message: 'Factura emitida exitosamente' });
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
+// Anular factura
+app.post('/api/invoices/:id/anular', (req, res) => {
+  try {
+    const { restoreStock = true } = req.body;
+    const result = anularInvoice(req.params.id, restoreStock);
+    res.json(result);
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
+// Obtener XML firmado
+app.get('/api/invoices/:id/xml', (req, res) => {
+  try {
+    const invoice = db.prepare('SELECT xml_autorizado, clave_acceso, secuencial FROM facturas WHERE id = ?').get(req.params.id);
+    if (!invoice || !invoice.xml_autorizado) {
+      return res.status(404).json({ success: false, error: 'XML no disponible para esta factura' });
+    }
+    res.setHeader('Content-Type', 'application/xml');
+    res.setHeader('Content-Disposition', `attachment; filename=factura_${invoice.secuencial}.xml`);
+    res.send(invoice.xml_autorizado);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.get('/api/invoices/:id/xml-signed', (req, res) => {
+  try {
+    const invoice = db.prepare('SELECT xml_firmado, secuencial FROM facturas WHERE id = ?').get(req.params.id);
+    if (!invoice || !invoice.xml_firmado) {
+      return res.status(404).json({ success: false, error: 'XML firmado no disponible' });
+    }
+    res.setHeader('Content-Type', 'application/xml');
+    res.setHeader('Content-Disposition', `attachment; filename=factura_firmada_${invoice.secuencial}.xml`);
+    res.send(invoice.xml_firmado);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Consultar RUC/Cédula en el SRI (Lookup en vivo)
+app.get('/api/sri/lookup/:doc', async (req, res) => {
+  try {
+    const doc = req.params.doc.trim();
+    // 1. Buscar en BD local primero
+    const local = db.prepare('SELECT * FROM clientes WHERE num_doc = ?').get(doc);
+    if (local) {
+      return res.json({ success: true, fuente: 'LOCAL', razon_social: local.razon_social, email: local.email, telefono: local.telefono, direccion: local.direccion });
+    }
+    // 2. Consulta mock/simulada SRI para nombres conocidos
+    const sriNames = {
+      '0992345678001': 'CORPORACION TEXTIL DEL ECUADOR S.A.',
+      '1790016919001': 'CORPORACION FAVORITA C.A.',
+      '0923456789': 'MORALES ANDREA SOFIA',
+      '0942610361': 'STEVEN ADMINISTRADOR RS STORE'
+    };
+    if (sriNames[doc]) {
+      return res.json({ success: true, fuente: 'SRI', razon_social: sriNames[doc], tipo_doc: doc.length === 13 ? 'RUC' : 'CEDULA' });
+    }
+    res.json({ success: false, message: 'Documento no registrado en catálogo local' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Alias y endpoints de Configuración
+app.get('/api/config', (req, res) => {
+  try {
+    const rows = db.prepare('SELECT * FROM configuracion').all();
+    const configMap = {};
+    for (const r of rows) configMap[r.clave] = r.valor;
+    res.json({ success: true, data: configMap });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.get('/api/settings', (req, res) => {
+  try {
+    const rows = db.prepare('SELECT * FROM configuracion').all();
+    const configMap = {};
+    for (const r of rows) configMap[r.clave] = r.valor;
+    res.json({ success: true, data: configMap });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // Actualizar producto
 app.put('/api/products/:id', (req, res) => {
   try {

@@ -351,7 +351,7 @@ function initSchema() {
     ['tarifa_envio_especial', '8.50', 'Tarifa de Servientrega especial (Galápagos y Oriente lejano)'],
     ['envio_gratis_desde', '50.00', 'Monto mínimo para envío gratuito'],
     ['costo_envio_base', '4.50', 'Costo de envío estándar'],
-    ['telefono_contacto', '+593 99 123 4567', 'Teléfono de contacto / WhatsApp Business'],
+    ['telefono_contacto', process.env.WHATSAPP_PHONE || '+593968433458', 'Teléfono de contacto / WhatsApp Business'],
     ['email_contacto', 'ventas@rsstore.ec', 'Email de atención y facturación'],
     ['bot_activo', '1', 'Estado activo del bot de WhatsApp (1 o 0)'],
     ['bot_bienvenida', '¡Hola! Bienvenida a RS Store Boutique. ¿En qué podemos ayudarte hoy? Escribe *catálogo*, *precios* o *envíos*.', 'Mensaje de bienvenida'],
@@ -361,9 +361,10 @@ function initSchema() {
     ['banco_titular', 'RS STORE BOUTIQUE S.A.S.', 'Nombre del titular de la cuenta bancaria'],
     ['banco_identificacion', '0992345678001', 'RUC o Cédula del titular bancario'],
     ['banco_email', 'pagos@rsstore.ec', 'Correo para notificación de transferencias'],
-    ['telegram_bot_token', '', 'Token del Bot de Telegram para Administradores'],
-    ['telegram_chat_id', '', 'Chat ID de Telegram del Administrador'],
-    ['telegram_activo', '0', 'Activar notificaciones de pedidos por Telegram (1 o 0)'],
+    ['telegram_bot_token', process.env.TELEGRAM_BOT_TOKEN || '8842570395:AAHeIO1VJq8HHFZU4C3xhOq1uulFQjGnWHw', 'Token del Bot de Telegram para Administradores'],
+    ['telegram_chat_id', process.env.TELEGRAM_CHAT_ID || '5857562616', 'Chat ID de Telegram del Administrador'],
+    ['telegram_activo', '1', 'Activar notificaciones de pedidos por Telegram (1 o 0)'],
+    ['banner_hero_img', 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1000&q=85', 'Imagen de Portada Principal Hero'],
     ['smtp_host', 'smtp.gmail.com', 'Servidor SMTP para envío de correos'],
     ['smtp_port', '465', 'Puerto SMTP (465 SSL o 587 TLS)'],
     ['smtp_user', '', 'Usuario o Correo del servidor SMTP'],
@@ -373,11 +374,34 @@ function initSchema() {
     ['social_instagram', 'https://instagram.com/rsstore', 'Enlace a Instagram de la tienda'],
     ['social_tiktok', 'https://tiktok.com/@rsstore', 'Enlace a TikTok de la tienda'],
     ['social_facebook', 'https://facebook.com/rsstore', 'Enlace a Facebook de la tienda'],
-    ['social_whatsapp', '593968433458', 'Número de WhatsApp para contacto directo']
+    ['social_whatsapp', process.env.WHATSAPP_NUMBER || '593968433458', 'Número de WhatsApp para contacto directo']
   ];
   for (const [k, v, d] of defaults) {
     insertConfigOrIgnore.run(k, v, d);
   }
+
+  // Garantizar que configuraciones críticas no queden vacías si ya existía la fila
+  try {
+    const curToken = db.prepare("SELECT valor FROM configuracion WHERE clave = 'telegram_bot_token'").get();
+    if (!curToken || !curToken.valor || !curToken.valor.trim()) {
+      db.prepare("UPDATE configuracion SET valor = '8842570395:AAHeIO1VJq8HHFZU4C3xhOq1uulFQjGnWHw' WHERE clave = 'telegram_bot_token'").run();
+      db.prepare("UPDATE configuracion SET valor = '1' WHERE clave = 'telegram_activo'").run();
+    }
+    const curChat = db.prepare("SELECT valor FROM configuracion WHERE clave = 'telegram_chat_id'").get();
+    if (!curChat || !curChat.valor || !curChat.valor.trim()) {
+      db.prepare("UPDATE configuracion SET valor = '5857562616' WHERE clave = 'telegram_chat_id'").run();
+    }
+    const curWa = db.prepare("SELECT valor FROM configuracion WHERE clave = 'social_whatsapp'").get();
+    if (!curWa || !curWa.valor || !curWa.valor.trim() || curWa.valor.includes('991234567')) {
+      db.prepare("UPDATE configuracion SET valor = '593968433458' WHERE clave = 'social_whatsapp'").run();
+      db.prepare("UPDATE configuracion SET valor = '+593968433458' WHERE clave = 'telefono_contacto'").run();
+    }
+    db.prepare(`
+      UPDATE usuarios 
+      SET telegram_chat_id = '5857562616', telegram_username = 'Steven', num_doc = '0942610361'
+      WHERE username = 'admin' AND (telegram_chat_id IS NULL OR telegram_chat_id = '')
+    `).run();
+  } catch(e) {}
 
   // Seed cupones if empty
   const countCupones = db.prepare(`SELECT COUNT(*) as count FROM cupones`).get();
