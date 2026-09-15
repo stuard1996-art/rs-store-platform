@@ -199,22 +199,29 @@ function vincularUsuarioTelegram(chatId, fromUsername, inputDocOrUser) {
 const { processAdminQuery } = require('./adminQueryService.js');
 
 function getMainMenuKeyboard() {
-  return {
-    inline_keyboard: [
-      [
-        { text: '📦 Pedidos Web', callback_data: 'query:pedidos' },
-        { text: '💰 Ventas de Hoy', callback_data: 'query:ventas' }
-      ],
-      [
-        { text: '🏦 Balance de Caja', callback_data: 'query:caja' },
-        { text: '⚠️ Stock Crítico', callback_data: 'query:stock' }
-      ],
-      [
-        { text: '🧾 Facturas SRI', callback_data: 'query:facturas' },
-        { text: '🌐 Panel Admin', url: 'http://localhost:3000/admin.html' }
-      ]
+  const publicUrl = getConfig('app_public_url', process.env.RAILWAY_STATIC_URL ? `https://${process.env.RAILWAY_STATIC_URL}` : '');
+  const buttons = [
+    [
+      { text: '📦 Pedidos Web', callback_data: 'query:pedidos' },
+      { text: '💰 Ventas de Hoy', callback_data: 'query:ventas' }
+    ],
+    [
+      { text: '🏦 Balance de Caja', callback_data: 'query:caja' },
+      { text: '⚠️ Stock Crítico', callback_data: 'query:stock' }
+    ],
+    [
+      { text: '🧾 Facturas SRI', callback_data: 'query:facturas' },
+      { text: '👥 Clientes', callback_data: 'query:clientes' }
     ]
-  };
+  ];
+
+  if (publicUrl && publicUrl.startsWith('https://')) {
+    buttons.push([
+      { text: '🌐 Abrir Tienda Online', url: publicUrl }
+    ]);
+  }
+
+  return { inline_keyboard: buttons };
 }
 
 /**
@@ -473,27 +480,33 @@ async function processTelegramUpdates() {
           if (update.callback_query) {
             const cq = update.callback_query;
             const data = cq.data || '';
+            const targetChatId = cq.message?.chat?.id || cq.from?.id;
+            console.log(`[Telegram Bot] Botón interactivo presionado: "${data}" por usuario ${cq.from?.first_name || 'usuario'} (${targetChatId})`);
+            
             const parts = data.split(':');
             const action = parts[0];
             const pedidoId = parseInt(parts[1], 10);
             const compId = parseInt(parts[2], 10);
             let replyToast = 'Acción procesada';
 
-          // Consultas directas desde botones del bot (/ventas, /pedidos, /caja, /stock)
-          if (action === 'query') {
-            const queryTarget = parts[1];
-            await fetch(`https://api.telegram.org/bot${token}/answerCallbackQuery`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ callback_query_id: cq.id, text: 'Consultando datos en tiempo real...' })
-            });
-            await handleIncomingMessage({
-              chat: { id: cq.message.chat.id },
-              from: cq.from,
-              text: '/' + queryTarget
-            });
-            continue;
-          }
+            // Consultas directas desde botones del bot (/ventas, /pedidos, /caja, /stock)
+            if (action === 'query') {
+              const queryTarget = parts[1];
+              try {
+                await fetch(`https://api.telegram.org/bot${token}/answerCallbackQuery`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ callback_query_id: cq.id, text: 'Consultando datos en tiempo real...' })
+                });
+              } catch(e) {}
+
+              await handleIncomingMessage({
+                chat: { id: targetChatId },
+                from: cq.from,
+                text: '/' + queryTarget
+              });
+              continue;
+            }
 
           if (action === 'approve') {
             db.prepare("UPDATE pedidos SET estado = 'PAGADO' WHERE id = ?").run(pedidoId);
@@ -719,5 +732,7 @@ module.exports = {
   notifyOrderToTelegram,
   startTelegramPolling,
   testTelegramBot,
-  vincularUsuarioTelegram
+  vincularUsuarioTelegram,
+  getMainMenuKeyboard
 };
+

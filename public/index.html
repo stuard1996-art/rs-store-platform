@@ -1264,7 +1264,7 @@
           <span class="badge" id="zoomModalCat" style="background:var(--accent-soft);color:var(--accent-deep);font-weight:700;font-size:11px;padding:3px 9px;border-radius:20px;text-transform:uppercase;">BOUTIQUE</span>
           <h3 id="zoomModalTitle" style="margin:0;font-size:18px;font-weight:800;color:var(--ink);">Detalle del Producto</h3>
         </div>
-        <button type="button" class="btn btn-ghost" onclick="closeProductZoom()" style="width:36px;height:36px;border-radius:50%;padding:0;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:var(--muted);border:1px solid var(--line-strong);">✕</button>
+        <button type="button" class="btn btn-ghost" id="btnCloseProductZoom" onclick="closeProductZoom()" style="width:38px;height:38px;border-radius:50%;padding:0;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:var(--ink);background:var(--surface-2);border:1px solid var(--line-strong);cursor:pointer;position:relative;z-index:9999;" title="Cerrar (Esc)" aria-label="Cerrar modal">✕</button>
       </div>
 
       <!-- Modal Body (Grid: Viewer + Info) -->
@@ -1704,12 +1704,8 @@
         modal.classList.add('show');
         document.body.classList.add('modal-open');
       }
-      if (!p) return;
-      currentZoomProduct = p;
-
       const imgUrl = (p.img && p.img.trim()) ? p.img : (BOUTIQUE_FALLBACK_IMAGES[p.name] || BOUTIQUE_FALLBACK_IMAGES[p.cat] || BOUTIQUE_FALLBACK_IMAGES.ropa);
 
-      const modal = document.getElementById('productZoomModal');
       const img = document.getElementById('zoomModalImg');
       const title = document.getElementById('zoomModalTitle');
       const cat = document.getElementById('zoomModalCat');
@@ -1830,7 +1826,12 @@
 
     window.closeProductZoom = function() {
       const modal = document.getElementById('productZoomModal');
-      if (modal) modal.classList.remove('show');
+      if (modal) {
+        modal.classList.remove('show');
+        modal.style.setProperty('display', 'none', 'important');
+        modal.style.opacity = '0';
+        modal.style.pointerEvents = 'none';
+      }
       document.body.classList.remove('modal-open');
       resetZoomTransform();
     };
@@ -1967,9 +1968,21 @@
         });
       }
 
-      // Tecla Escape para cerrar el zoom
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeProductZoom();
+      // Tecla Escape para cerrar ABSOLUTAMENTE TODOS los modales y cajones
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' || e.keyCode === 27) {
+          if (typeof closeProductZoom === 'function') closeProductZoom();
+          if (typeof closeCheckoutModal === 'function') closeCheckoutModal();
+          if (typeof closeCart === 'function') closeCart();
+          if (typeof closeSuccessModal === 'function') closeSuccessModal();
+          document.querySelectorAll('.modal-overlay.show, .drawer.show, .modal-overlay').forEach(el => {
+            el.classList.remove('show');
+            el.style.setProperty('display', 'none', 'important');
+            el.style.opacity = '0';
+            el.style.pointerEvents = 'none';
+          });
+          document.body.classList.remove('modal-open', 'drawer-open');
+        }
       });
     });
 

@@ -200,22 +200,36 @@ async function processAdminQuery(queryText) {
   }
 
   // 5. BÚSQUEDA DE CLIENTES POR CÉDULA O NOMBRE
-  if (q.includes('cliente') || q.includes('cedula') || q.includes('ruc') || /^\d{10,13}$/.test(q)) {
-    const term = q.replace('cliente', '').replace('cedula', '').replace('ruc', '').replace('buscar', '').trim();
-    const clientes = db.prepare(`
-      SELECT c.*, COUNT(p.id) as total_pedidos, COALESCE(SUM(p.total), 0) as gasto_total
-      FROM clientes c
-      LEFT JOIN pedidos p ON c.id = p.cliente_id
-      WHERE LOWER(c.razon_social) LIKE ? OR c.num_doc LIKE ? OR c.telefono LIKE ?
-      GROUP BY c.id
-      LIMIT 5
-    `).all(`%${term}%`, `%${term}%`, `%${term}%`);
+  if (q.includes('cliente') || q.includes('cedula') || q.includes('ruc') || q === '/clientes' || /^\d{10,13}$/.test(q)) {
+    let term = q.replace('/clientes', '').replace('/cliente', '').replace('clientes', '').replace('cliente', '').replace('cedula', '').replace('ruc', '').replace('buscar', '').trim();
+    
+    let clientes;
+    if (!term || term.length <= 1) {
+      // Listar clientes más frecuentes o recientes
+      clientes = db.prepare(`
+        SELECT c.*, COUNT(p.id) as total_pedidos, COALESCE(SUM(p.total), 0) as gasto_total
+        FROM clientes c
+        LEFT JOIN pedidos p ON c.id = p.cliente_id
+        GROUP BY c.id
+        ORDER BY total_pedidos DESC, c.id DESC
+        LIMIT 6
+      `).all();
+    } else {
+      clientes = db.prepare(`
+        SELECT c.*, COUNT(p.id) as total_pedidos, COALESCE(SUM(p.total), 0) as gasto_total
+        FROM clientes c
+        LEFT JOIN pedidos p ON c.id = p.cliente_id
+        WHERE LOWER(c.razon_social) LIKE ? OR c.num_doc LIKE ? OR c.telefono LIKE ?
+        GROUP BY c.id
+        LIMIT 6
+      `).all(`%${term}%`, `%${term}%`, `%${term}%`);
+    }
 
     if (clientes.length) {
       return {
         type: 'CLIENTES',
-        title: `👤 Clientes Encontrados (${clientes.length})`,
-        summary: `Resultados de búsqueda para "${term}":`,
+        title: `👤 Clientes Registrados (${clientes.length})`,
+        summary: term ? `Resultados de búsqueda para "${term}":` : `Clientes frecuentes y registrados:`,
         details: {
           clientes: clientes.map(c => ({
             id: c.id,

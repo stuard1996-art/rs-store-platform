@@ -528,6 +528,33 @@
   window.closeModal = function(id) {
     return window.hideModal(id);
   };
+
+  window.closeAllModals = function() {
+    document.querySelectorAll('.overlay, .modal-overlay').forEach(function(el) {
+      el.classList.remove('active', 'show');
+      el.removeAttribute('style');
+      el.style.setProperty('display', 'none', 'important');
+    });
+    document.body.classList.remove('modal-open');
+  };
+
+  // Universal ESC key listener for Admin: closes ABSOLUTELY all modals
+  window.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' || e.keyCode === 27) {
+      window.closeAllModals();
+    }
+  });
+
+  // Universal backdrop click listener for Admin overlays
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.overlay').forEach(function(ov) {
+      ov.addEventListener('click', function(e) {
+        if (e.target === ov) {
+          window.hideModal(ov.id);
+        }
+      });
+    });
+  });
 </script>
 
 </head>
