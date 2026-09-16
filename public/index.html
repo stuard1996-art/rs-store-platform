@@ -101,11 +101,11 @@
     .hero-card{position:relative;border-radius:26px;aspect-ratio:5/5.2;box-shadow:var(--shadow),inset 0 0 0 1px rgba(255,255,255,.5);overflow:hidden;}
     .hero-card .hero-bg-photo{width:100%;height:100%;object-fit:cover;transition:transform .6s ease;}
     .hero-card:hover .hero-bg-photo{transform:scale(1.04);}
-    .hero-brand-overlay{position:absolute;bottom:16px;left:16px;right:16px;background:rgba(255,255,255,0.9);backdrop-filter:blur(14px);border-radius:18px;padding:11px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 12px 30px rgba(62,38,34,0.18);border:1px solid rgba(255,255,255,0.7);}
-    .hero-brand-overlay b{font-size:13px;font-weight:800;color:var(--ink);display:block;letter-spacing:.02em;line-height:1.2;}
-    .hero-brand-overlay span{font-family:var(--mono);font-size:8.5px;letter-spacing:.18em;color:var(--accent-deep);font-weight:700;}
-    .hero-chip{position:absolute;background:var(--surface);border-radius:16px;box-shadow:0 18px 40px -22px rgba(62,38,34,.5);padding:12px 15px;display:flex;align-items:center;gap:11px;}
-    .hero-chip.a{left:-18px;bottom:60px;}
+    .hero-brand-overlay{position:absolute;bottom:16px;left:16px;right:16px;background:rgba(255,255,255,0.92);backdrop-filter:blur(14px);border-radius:18px;padding:11px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 12px 30px rgba(62,38,34,0.18);border:1px solid rgba(255,255,255,0.7);z-index:10;}
+    .hero-brand-overlay b{font-size:13px;font-weight:800;color:var(--ink);display:block;letter-spacing:.02em;line-height:1.2;white-space:nowrap;}
+    .hero-brand-overlay span{font-family:var(--mono);font-size:8.5px;letter-spacing:.18em;color:var(--accent-deep);font-weight:700;white-space:nowrap;}
+    .hero-chip{position:absolute;background:var(--surface);border-radius:16px;box-shadow:0 18px 40px -22px rgba(62,38,34,.5);padding:12px 15px;display:flex;align-items:center;gap:11px;z-index:15;}
+    .hero-chip.a{left:-18px;top:40px;bottom:auto;}
     .hero-chip.b{right:-14px;top:56px;}
     .hero-chip .ic{width:34px;height:34px;border-radius:11px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;}
     .hero-chip .ic svg{width:18px;height:18px;stroke:var(--accent-deep);fill:none;stroke-width:1.7;}
@@ -518,7 +518,8 @@
 
     /* GENDER / DEPARTMENT SELECTOR TABS */
     .gender-nav-container {
-      margin-bottom: 18px;
+      margin-bottom: 16px;
+      width: 100%;
     }
     .gender-nav-tabs {
       display: flex;
@@ -527,9 +528,14 @@
       padding: 5px;
       border-radius: 999px;
       border: 1px solid var(--line-strong);
-      max-width: 540px;
+      max-width: 660px;
       margin: 0 auto;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      white-space: nowrap;
     }
+    .gender-nav-tabs::-webkit-scrollbar { display: none; }
     .gender-tab {
       flex: 1;
       display: flex;
@@ -547,6 +553,7 @@
       cursor: pointer;
       transition: all .2s ease;
       text-transform: uppercase;
+      flex-shrink: 0;
     }
     .gender-tab:hover {
       color: var(--accent-deep);
@@ -555,6 +562,17 @@
       background: var(--surface);
       color: var(--accent-deep);
       box-shadow: 0 4px 16px rgba(62,38,34,.12);
+    }
+    .gender-tab.promo-tab {
+      background: #FFF0F4;
+      color: var(--accent-deep);
+      border: 1px dashed var(--accent);
+    }
+    .gender-tab.promo-tab.active {
+      background: var(--accent-deep);
+      color: #fff;
+      border: 1px solid var(--accent-deep);
+      box-shadow: 0 4px 16px rgba(168,58,87,.28);
     }
 
     /* Toast */
@@ -627,38 +645,12 @@
       box-shadow: 0 2px 5px rgba(168,58,87,0.4);
     }
     
-    /* MOBILE CATEGORY PILL BAR */
-    .mobile-cat-scroll {
-      display: none;
-      overflow-x: auto;
-      white-space: nowrap;
-      padding: 8px 16px;
-      gap: 7px;
-      scrollbar-width: none;
-      -webkit-overflow-scrolling: touch;
-      background: #FAF5F6;
-      border-bottom: 1px solid var(--line);
-    }
-    .mobile-cat-scroll::-webkit-scrollbar { display: none; }
-    .m-pill {
-      display: inline-flex;
+    /* SUBCATEGORY PILL BAR SCROLL (FOR CATALOG) */
+    .filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
       align-items: center;
-      gap: 5px;
-      padding: 6px 13px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-      border: 1px solid var(--line-strong);
-      background: #fff;
-      color: var(--ink);
-      cursor: pointer;
-      flex-shrink: 0;
-      transition: all .2s ease;
-    }
-    .m-pill.active {
-      background: var(--ink);
-      color: #fff;
-      border-color: var(--ink);
     }
 
     @media (max-width:1100px){ .grid{grid-template-columns:repeat(3,1fr);} }
@@ -673,7 +665,6 @@
       .nav{display:none !important;}
       .search{display:none !important;}
       .bottom-nav{display:flex;}
-      .mobile-cat-scroll{display:flex !important;}
       body{padding-bottom:68px !important;}
       .header-row{justify-content:space-between;gap:10px;}
     }
@@ -700,17 +691,17 @@
 
       .hero {
         grid-template-columns: 1fr;
-        gap: 22px;
-        padding: 22px 0 26px;
+        gap: 20px;
+        padding: 18px 0 24px;
       }
       .hero h1 {
-        font-size: 32px;
+        font-size: 30px;
         line-height: 1.05;
         margin: 8px 0 10px;
         max-width: 100%;
       }
       .hero p {
-        font-size: 14px;
+        font-size: 13.5px;
         margin-bottom: 16px;
         line-height: 1.45;
         max-width: 100%;
@@ -732,7 +723,7 @@
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 6px;
-        margin-top: 16px;
+        margin-top: 14px;
       }
       .hero-meta .m {
         background: #fff;
@@ -741,26 +732,86 @@
         border: 1px solid var(--line);
         text-align: center;
       }
-      .hero-meta .m b { font-size: 16.5px; }
+      .hero-meta .m b { font-size: 16px; }
       .hero-meta .m span { font-size: 7.5px; letter-spacing: 0.1em; margin-top: 2px; }
 
       .hero-visual {
-        overflow: hidden;
+        overflow: visible;
         border-radius: 20px;
+        position: relative;
       }
       .hero-card {
         border-radius: 20px;
         aspect-ratio: 1/1;
-        max-height: 280px;
+        max-height: 290px;
+        overflow: hidden;
       }
-      .hero-chip.a { left: 8px; bottom: 10px; padding: 7px 11px; }
-      .hero-chip.b { right: 8px; top: 10px; padding: 7px 11px; }
-      .hero-chip .ic { width: 28px; height: 28px; }
-      .hero-chip .t { font-size: 11px; }
-      .hero-chip .s { font-size: 9px; }
+      .hero-chip.a {
+        left: 10px;
+        top: 10px;
+        bottom: auto;
+        padding: 6px 10px;
+        z-index: 15;
+      }
+      .hero-chip.b {
+        right: 10px;
+        top: 10px;
+        bottom: auto;
+        padding: 6px 10px;
+        z-index: 15;
+      }
+      .hero-chip .ic { width: 24px; height: 24px; border-radius: 8px; }
+      .hero-chip .ic svg { width: 14px; height: 14px; }
+      .hero-chip .t { font-size: 10px; }
+      .hero-chip .s { font-size: 8px; }
 
-      .shop-bar { margin-bottom: 16px; }
-      .filters { display: none; } /* On mobile, the top scroll pill bar handles filtering cleanly */
+      .hero-brand-overlay {
+        bottom: 10px;
+        left: 10px;
+        right: 10px;
+        padding: 8px 12px;
+        gap: 8px;
+        z-index: 12;
+      }
+      .hero-brand-overlay img {
+        height: 28px !important;
+        width: 28px !important;
+      }
+      .hero-brand-overlay b {
+        font-size: 11px;
+      }
+      .hero-brand-overlay span {
+        font-size: 7px;
+      }
+
+      .shop-bar {
+        margin-bottom: 16px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+      .filters {
+        display: flex !important;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        white-space: nowrap;
+        gap: 7px;
+        width: 100%;
+        padding: 4px 2px 8px;
+        margin: 0;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+      }
+      .filters::-webkit-scrollbar { display: none; }
+      .filters .chip {
+        flex-shrink: 0;
+        font-size: 12px;
+        padding: 8px 14px;
+        border-radius: 999px;
+      }
+      .sort {
+        align-self: flex-end;
+      }
       
       .grid {
         grid-template-columns: repeat(2, 1fr);
@@ -886,8 +937,8 @@
         <span class="wm"><b>RS STORE</b><span>ROPA · ESTILO · TÚ</span></span>
       </a>
       <nav class="nav" aria-label="Principal">
-        <a href="#tienda">Tienda</a>
-        <a href="#editorial">Ofertas</a>
+        <a href="#tienda">Catálogo</a>
+        <a href="javascript:void(0)" onclick="goToPromociones()">🔥 Promociones</a>
         <a href="javascript:void(0)" onclick="openCart()">Ver Carrito</a>
       </nav>
       <span class="hspace"></span>
@@ -901,17 +952,6 @@
       </button>
     </div>
   </header>
-
-  <!-- BARRA DE CATEGORÍAS TIPO APP PARA MÓVIL -->
-  <div class="mobile-cat-scroll" aria-label="Categorías Móvil">
-    <button type="button" class="m-pill active" onclick="setFilter('all', this)">✨ Todo</button>
-    <button type="button" class="m-pill" onclick="setFilter('ropa', this)">👗 Ropa & Vestidos</button>
-    <button type="button" class="m-pill" onclick="setFilter('calzado', this)">👠 Calzado</button>
-    <button type="button" class="m-pill" onclick="setFilter('accesorios', this)">👜 Accesorios</button>
-    <button type="button" class="m-pill" onclick="setFilter('belleza', this)">💄 Belleza & Skincare</button>
-    <button type="button" class="m-pill" onclick="setFilter('hogar', this)">🕯️ Velas & Hogar</button>
-    <button type="button" class="m-pill" onclick="setFilter('regalos', this)">🎁 Sets de Regalo</button>
-  </div>
 
   <main>
     <!-- HERO -->
@@ -976,7 +1016,7 @@
           <div><span class="eyebrow">Catálogo Conectado a Base de Datos</span><h2>Nuestra Colección</h2></div>
         </div>
 
-        <!-- PESTAÑAS PRINCIPALES POR GÉNERO / DEPARTAMENTO -->
+        <!-- PESTAÑAS PRINCIPALES POR GÉNERO / DEPARTAMENTO & PROMOCIONES -->
         <div class="gender-nav-container">
           <div class="gender-nav-tabs" role="tablist">
             <button type="button" class="gender-tab active" data-gender="MUJER" onclick="setGender('MUJER', this)">
@@ -987,6 +1027,9 @@
             </button>
             <button type="button" class="gender-tab" data-gender="NINOS" onclick="setGender('NINOS', this)">
               <span>🧸</span> <span>Niños</span>
+            </button>
+            <button type="button" class="gender-tab promo-tab" data-gender="PROMOS" onclick="setGender('PROMOS', this)">
+              <span>🔥</span> <span>Promociones</span>
             </button>
             <button type="button" class="gender-tab" data-gender="TODOS" onclick="setGender('TODOS', this)">
               <span>✨</span> <span>Todos</span>
@@ -1021,18 +1064,52 @@
       </div>
     </section>
 
-    <!-- EDITORIAL -->
-    <section id="editorial">
-      <div class="editorial">
-        <div class="row">
+    <!-- APARTADO EXCLUSIVO DE PROMOCIONES & OFERTAS (STANDALONE) -->
+    <section class="block" id="promociones" style="background:linear-gradient(180deg, var(--canvas) 0%, #FFF3F6 40%, var(--canvas) 100%);padding:60px 0 80px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);">
+      <div class="wrap">
+        <div class="sec-head" style="margin-bottom:28px;">
           <div>
-            <span class="eyebrow" style="color:#F0B7C6;">Descuento Especial</span>
-            <h2>−20% en tu primera compra</h2>
-            <p>Aplica el código en tu compra online o menciónalo en caja al facturar en nuestro local de Guayaquil.</p>
-            <a class="btn btn-primary" href="#tienda" style="background:#fff;color:var(--ink);">Ver Productos</a>
+            <span class="eyebrow" style="color:var(--accent-deep);">🔥 Zona de Descuentos &amp; Ofertas Exclusivas</span>
+            <h2 style="color:var(--ink);">Apartado de Promociones</h2>
+            <p>Prendas seleccionadas con precios rebajados y cupones de descuento activos por tiempo limitado.</p>
           </div>
-          <div>
-            <div class="code-box"><code>RSSTYLE20</code><button type="button" onclick="copyPromoCode('RSSTYLE20')">Copiar</button></div>
+          <button type="button" class="btn btn-primary" onclick="goToPromociones()" style="background:var(--accent-deep);color:#fff;">
+            ⚡ Ver Todas las Promociones
+          </button>
+        </div>
+
+        <!-- Tarjeta Central de Promoción y Cupón -->
+        <div class="editorial" style="margin:0 0 36px 0;">
+          <div class="row">
+            <div>
+              <span class="eyebrow" style="color:#F0B7C6;">🎟️ Cupón de Bienvenida</span>
+              <h2>−20% OFF en tu compra</h2>
+              <p>Aplica el código en tu compra online o menciónalo en caja al facturar en nuestro local de Guayaquil.</p>
+              <div style="margin-top:14px;">
+                <button type="button" class="btn btn-primary" onclick="goToPromociones()" style="background:#fff;color:var(--ink);">
+                  Explorar Promociones →
+                </button>
+              </div>
+            </div>
+            <div>
+              <div class="code-box"><code>RSSTYLE20</code><button type="button" onclick="copyPromoCode('RSSTYLE20')">Copiar</button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mini Grid de Productos con Descuento Directo -->
+        <div style="background:#fff;border-radius:22px;padding:24px;border:1px solid var(--line);box-shadow:0 10px 30px -15px rgba(62,38,34,0.08);">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
+            <div>
+              <h3 style="font-family:var(--serif);font-size:26px;margin:0;color:var(--ink);">Prendas en Promoción Directa</h3>
+              <div style="font-size:12.5px;color:var(--muted);">Productos con precio especial de liquidación y descuento inmediato.</div>
+            </div>
+            <button type="button" class="btn btn-outline btn-sm" onclick="goToPromociones()" style="font-size:12px;padding:7px 14px;">
+              Ver Todos en Tienda →
+            </button>
+          </div>
+          <div class="grid" id="standalonePromoGrid" style="grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));gap:16px;">
+            <!-- Renderizado dinámico de productos en promoción -->
           </div>
         </div>
       </div>
@@ -1468,6 +1545,14 @@
         { id: 'calzado', label: '👟 Calzado Infantil' },
         { id: 'regalos', label: '🎁 Regalos & Detalles' }
       ],
+      'PROMOS': [
+        { id: 'all', label: '🔥 Todas las Ofertas' },
+        { id: 'descuentos', label: '🏷️ Con Descuento Directo' },
+        { id: 'ropa', label: '👗 Ropa en Oferta' },
+        { id: 'calzado', label: '👠 Calzado en Promo' },
+        { id: 'accesorios', label: '👜 Accesorios Rebajados' },
+        { id: 'belleza', label: '💄 Belleza & Skincare' }
+      ],
       'TODOS': [
         { id: 'all', label: '✨ Todo el Catálogo' },
         { id: 'ropa', label: '👗 Ropa' },
@@ -1497,11 +1582,23 @@
           document.getElementById('statProds').textContent = '+' + products.length;
           renderSubcategoryPills();
           renderProducts();
+          renderStandalonePromos();
         }
       } catch (err) {
         document.getElementById('productsGrid').innerHTML = '<p style="grid-column:1/-1;text-align:center;color:red;">Error al conectar con la base de datos.</p>';
       }
     }
+
+    window.goToPromociones = function() {
+      const promoTab = document.querySelector('.gender-tab[data-gender="PROMOS"]');
+      if (promoTab) {
+        setGender('PROMOS', promoTab);
+      }
+      const tienda = document.getElementById('tienda');
+      if (tienda) {
+        tienda.scrollIntoView({ behavior: 'smooth' });
+      }
+    };
 
     window.setGender = function(gender, el) {
       activeGender = (gender || 'MUJER').toUpperCase();
@@ -1517,20 +1614,11 @@
 
     function renderSubcategoryPills() {
       const desktopContainer = document.querySelector('.shop-bar .filters');
-      const mobileContainer = document.querySelector('.mobile-cat-scroll');
       const cats = SUB_CATEGORIES_BY_GENDER[activeGender] || SUB_CATEGORIES_BY_GENDER['TODOS'];
 
       if (desktopContainer) {
         desktopContainer.innerHTML = cats.map(c => `
           <button class="chip" data-cat="${c.id}" aria-pressed="${c.id === activeFilter ? 'true' : 'false'}" onclick="setFilter('${c.id}', this)">
-            ${c.label}
-          </button>
-        `).join('');
-      }
-
-      if (mobileContainer) {
-        mobileContainer.innerHTML = cats.map(c => `
-          <button type="button" class="m-pill ${c.id === activeFilter ? 'active' : ''}" onclick="setFilter('${c.id}', this)">
             ${c.label}
           </button>
         `).join('');
@@ -1542,7 +1630,6 @@
       document.querySelectorAll('.chip').forEach(b => {
         b.setAttribute('aria-pressed', (b.dataset.cat || 'all') === activeFilter ? 'true' : 'false');
       });
-      document.querySelectorAll('.m-pill').forEach(p => p.classList.remove('active'));
       if (el) el.classList.add('active');
       renderProducts();
       const tienda = document.getElementById('tienda');
@@ -1556,20 +1643,30 @@
       const q = (document.getElementById('searchInput') ? document.getElementById('searchInput').value : '').toLowerCase().trim();
       
       let list = products.filter(p => {
-        // 1. Filtrar por Género / Departamento
-        if (activeGender !== 'TODOS') {
+        // 1. Filtrar por Género / Departamento o Promociones
+        if (activeGender === 'PROMOS') {
+          const hasDiscount = (p.was_price && Number(p.was_price) > Number(p.price));
+          const badgeLower = (p.badge || '').toLowerCase();
+          const isPromoBadge = badgeLower.includes('sale') || badgeLower.includes('oferta') || badgeLower.includes('promo') || badgeLower.includes('descuento');
+          if (!hasDiscount && !isPromoBadge) return false;
+        } else if (activeGender !== 'TODOS') {
           const pGen = (p.genero || 'MUJER').toUpperCase();
           if (pGen !== activeGender && pGen !== 'UNISEX') return false;
         }
 
         // 2. Filtrar por Subcategoría
         if (activeFilter === 'all') return true;
+        if (activeFilter === 'descuentos') return (p.was_price && Number(p.was_price) > Number(p.price));
         if (p.cat === activeFilter) return true;
         const nameLower = (p.name || '').toLowerCase();
         const descLower = (p.desc || '').toLowerCase();
         if (activeFilter === 'vestidos' && (nameLower.includes('vestid') || descLower.includes('vestid'))) return true;
         if (activeFilter === 'blusas' && (nameLower.includes('blus') || nameLower.includes('top') || descLower.includes('blus'))) return true;
         if (activeFilter === 'pantalones' && (nameLower.includes('pant') || nameLower.includes('jean') || descLower.includes('pant'))) return true;
+        if (activeFilter === 'ropa' && (p.cat === 'ropa' || nameLower.includes('vestid') || nameLower.includes('blus') || nameLower.includes('pant') || nameLower.includes('camisa') || nameLower.includes('conjunto'))) return true;
+        if (activeFilter === 'calzado' && (p.cat === 'calzado' || nameLower.includes('sandalia') || nameLower.includes('zapato') || nameLower.includes('mocas') || nameLower.includes('zapatilla'))) return true;
+        if (activeFilter === 'accesorios' && (p.cat === 'accesorios' || nameLower.includes('bolso') || nameLower.includes('cartera') || nameLower.includes('arete') || nameLower.includes('collar'))) return true;
+        if (activeFilter === 'belleza' && (p.cat === 'belleza' || nameLower.includes('sérum') || nameLower.includes('serum') || nameLower.includes('crema') || nameLower.includes('labial'))) return true;
         return false;
       });
 
@@ -1693,6 +1790,47 @@
       }).join('');
 
       window.selectedSizesMap = selectedSizes;
+    }
+
+    function renderStandalonePromos() {
+      const promoGrid = document.getElementById('standalonePromoGrid');
+      if (!promoGrid) return;
+      const promoList = products.filter(p => (p.was_price && Number(p.was_price) > Number(p.price)) || (p.badge && /sale|oferta|promo/i.test(p.badge)));
+      if (!promoList.length) {
+        promoGrid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--muted);">Próximamente nuevas promociones de temporada.</div>';
+        return;
+      }
+      promoGrid.innerHTML = promoList.map(p => {
+        const isOut = p.stock <= 0;
+        const discountPct = p.was_price ? Math.round(((p.was_price - p.price) / p.was_price) * 100) : 20;
+        const imgUrl = (p.img && p.img.trim()) ? p.img : (BOUTIQUE_FALLBACK_IMAGES[p.name] || BOUTIQUE_FALLBACK_IMAGES[p.cat] || BOUTIQUE_FALLBACK_IMAGES.ropa);
+
+        return `
+          <article class="prod" onclick="openProductZoom(${p.id})" style="border:1.5px solid var(--accent-soft);box-shadow:0 8px 24px -12px rgba(168,58,87,0.18);">
+            <div class="media" style="background:${GRAD[p.cat] || GRAD.accesorios};cursor:pointer;position:relative;aspect-ratio:1/1.05;">
+              <img src="${imgUrl}" alt="${p.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover;">
+              <div class="badges">
+                <span class="badge sale" style="background:var(--accent-deep);font-weight:800;letter-spacing:0.04em;">🔥 −${discountPct}%</span>
+              </div>
+              <button class="fav" type="button" aria-label="Favoritos" onclick="event.stopPropagation(); toast('Guardado en favoritos')"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-9.2A3.8 3.8 0 0 1 12 8.4 3.8 3.8 0 0 1 19 10.8C19 15.6 12 20 12 20Z"/></svg></button>
+              <div class="add" onclick="event.stopPropagation();">
+                ${isOut ? '<button class="btn btn-outline" disabled style="width:100%;">Sin Stock</button>' : `<button class="btn btn-primary" onclick="event.stopPropagation(); addToCartWithSize(${p.id})">Agregar al Carrito</button>`}
+              </div>
+              <div style="position:absolute;bottom:10px;right:10px;background:rgba(30,20,23,0.65);color:#fff;border-radius:20px;padding:4px 9px;font-size:11px;font-weight:700;backdrop-filter:blur(6px);display:flex;align-items:center;gap:4px;pointer-events:none;border:1px solid rgba(255,255,255,0.2);">
+                🔍 Zoom
+              </div>
+            </div>
+            <div style="padding:14px;display:flex;flex-direction:column;gap:5px;">
+              <div style="font-size:10.5px;font-weight:800;color:var(--accent-deep);letter-spacing:0.06em;text-transform:uppercase;">🏷️ PRECIO DE OFERTA</div>
+              <h4 style="margin:0;font-size:14.5px;font-weight:700;color:var(--ink);">${p.name}</h4>
+              <div style="display:flex;align-items:baseline;gap:8px;margin-top:2px;">
+                <span style="font-family:var(--serif);font-size:20px;font-weight:700;color:var(--accent-deep);">${money(p.price)}</span>
+                ${p.was_price ? `<span style="font-size:12.5px;color:var(--muted);text-decoration:line-through;">${money(p.was_price)}</span>` : ''}
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
     }
 
     function selectSize(prodId, talla) {
@@ -2717,6 +2855,10 @@
     <a href="#tienda" class="b-nav-item" onclick="document.getElementById('tienda')?.scrollIntoView({behavior:'smooth'});">
       <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
       <span>Catálogo</span>
+    </a>
+    <a href="javascript:void(0)" onclick="goToPromociones()" class="b-nav-item" style="color:var(--accent-deep);">
+      <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+      <span>Promos</span>
     </a>
     <a href="https://wa.me/593968433458?text=Hola%20RS%20Store,%20deseo%20asesoría%20sobre%20sus%20prendas" target="_blank" rel="noopener" class="b-nav-item b-wa">
       <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
