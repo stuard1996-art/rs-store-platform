@@ -11,6 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     :root{
       --canvas:#FBF5F3;
@@ -1775,11 +1776,12 @@
 
       <!-- Botones de Redes Sociales -->
       <div class="social-login-grid">
-        <button type="button" class="btn-social-connect btn-google-connect" onclick="handleSocialLogin('GOOGLE')">
+        <div id="googleBtnContainer" style="width:100%;display:flex;justify-content:center;"></div>
+        <button type="button" class="btn-social-connect btn-google-connect" id="btnCustomGoogle" onclick="triggerGoogleLogin()">
           <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24Z"/><path fill="#FBBC05" d="M5.28 14.27a7.22 7.22 0 0 1 0-4.54V6.58H1.25a11.96 11.96 0 0 0 0 10.84l4.03-3.15Z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98Z"/></svg>
           <span>Continuar con Google</span>
         </button>
-        <button type="button" class="btn-social-connect btn-facebook-connect" onclick="handleSocialLogin('FACEBOOK')">
+        <button type="button" class="btn-social-connect btn-facebook-connect" onclick="triggerFacebookLogin()">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
           <span>Continuar con Facebook</span>
         </button>
@@ -1813,6 +1815,10 @@
           <span>Iniciar Sesión</span>
           <span style="font-size:16px;">→</span>
         </button>
+
+        <div style="text-align:center;margin-top:14px;">
+          <button type="button" onclick="quickGuestAccess()" style="background:none;border:none;color:rgba(255,255,255,0.45);font-size:11.5px;text-decoration:underline;cursor:pointer;">Acceso rápido de prueba (1 clic)</button>
+        </div>
       </form>
 
       <!-- FORMULARIO 2: CREAR CUENTA -->
@@ -3457,29 +3463,148 @@
       }
     }
 
-    async function handleSocialLogin(provider) {
+    function parseJwtPayload(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+      } catch(e) {
+        return null;
+      }
+    }
+
+    async function handleGoogleCredentialResponse(response) {
+      if (!response || !response.credential) return;
+      const payload = parseJwtPayload(response.credential);
+      if (!payload) return;
+
       const errBox = document.getElementById('clientAuthError');
       if (errBox) errBox.style.display = 'none';
-
-      // Diálogo amigable e interactivo para inicio rápido con Google / Facebook
-      const emailPrompt = prompt(
-        `Inicio de Sesión con ${provider}\n\nIngresa tu correo o confirma tu acceso:`,
-        currentClient ? currentClient.email : 'cliente@gmail.com'
-      );
-      if (!emailPrompt || !emailPrompt.trim()) return;
-
-      const cleanEmail = emailPrompt.trim().toLowerCase();
-      const nameGuess = cleanEmail.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 
       try {
         const res = await fetch('/api/auth/client-social', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            provider: provider,
-            social_id: `${provider.toLowerCase()}_${Date.now()}`,
-            email: cleanEmail,
-            nombre: nameGuess || 'Cliente RS Store',
+            provider: 'GOOGLE',
+            social_id: payload.sub,
+            email: payload.email,
+            nombre: payload.name,
+            avatarUrl: payload.picture
+          })
+        });
+        const data = await res.json();
+        if (data.success && data.token && data.client) {
+          localStorage.setItem('rs_client_token', data.token);
+          localStorage.setItem('rs_client_user', JSON.stringify(data.client));
+          currentClient = data.client;
+          updateClientHeaderUI(currentClient);
+          closeClientAuthModal();
+          toast(`¡Bienvenido/a, ${currentClient.razon_social}!`);
+          autofillCheckoutFromClient();
+        } else {
+          if (errBox) {
+            errBox.textContent = data.error || 'Error al autenticar con Google';
+            errBox.style.display = 'block';
+          }
+        }
+      } catch (e) {
+        if (errBox) {
+          errBox.textContent = 'Error de conexión con el servidor.';
+          errBox.style.display = 'block';
+        }
+      }
+    }
+
+    function initGoogleAuthGIS() {
+      const googleClientId = window.storeSettings?.google_client_id;
+      if (!googleClientId || !window.google || !window.google.accounts || !window.google.accounts.id) return;
+
+      try {
+        google.accounts.id.initialize({
+          client_id: googleClientId,
+          callback: handleGoogleCredentialResponse,
+          auto_select: false
+        });
+
+        const container = document.getElementById('googleBtnContainer');
+        const customBtn = document.getElementById('btnCustomGoogle');
+        if (container) {
+          google.accounts.id.renderButton(container, {
+            type: 'standard',
+            shape: 'pill',
+            theme: 'outline',
+            text: 'continue_with',
+            size: 'large',
+            width: '380'
+          });
+          if (customBtn) customBtn.style.display = 'none';
+        }
+      } catch (e) {
+        console.warn('Google GIS notice:', e);
+      }
+    }
+
+    function triggerGoogleLogin() {
+      const errBox = document.getElementById('clientAuthError');
+      if (errBox) errBox.style.display = 'none';
+
+      const googleClientId = window.storeSettings?.google_client_id;
+      if (window.google && window.google.accounts && window.google.accounts.id && googleClientId) {
+        try {
+          google.accounts.id.prompt((notification) => {
+            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+              document.getElementById('clientLogEmail')?.focus();
+            }
+          });
+          return;
+        } catch (e) {}
+      }
+
+      // Si aún no está vinculado un Client ID de Google oficial, avisar amigablemente en el formulario
+      if (errBox) {
+        errBox.innerHTML = `
+          <div style="font-size:12px;line-height:1.45;">
+            🔑 <b>Inicio con Google:</b> Para activar la ventana emergente directa de Google en tu dominio, ingresa el <i>Google Client ID</i> en Admin > Configuración.<br>
+            <span style="opacity:0.9;">Mientras tanto, puedes ingresar o registrarte directamente con tu correo abajo.</span>
+          </div>
+        `;
+        errBox.style.display = 'block';
+      }
+      document.getElementById('clientLogEmail')?.focus();
+    }
+
+    function triggerFacebookLogin() {
+      const errBox = document.getElementById('clientAuthError');
+      if (errBox) {
+        errBox.innerHTML = `
+          <div style="font-size:12px;line-height:1.45;">
+            👤 <b>Inicio con Redes Sociales:</b> Puedes ingresar directamente con tu correo o registrarte en 10 segundos en la pestaña Crear Cuenta.
+          </div>
+        `;
+        errBox.style.display = 'block';
+      }
+      document.getElementById('clientLogEmail')?.focus();
+    }
+
+    // Acceso instantáneo de prueba en 1 solo clic (sin pedir prompt ni confirmación)
+    async function quickGuestAccess() {
+      const randomId = Math.floor(Math.random() * 8999) + 1000;
+      const demoEmail = `cliente.invitado${randomId}@gmail.com`;
+      const demoName = `Cliente Invitado RS`;
+
+      try {
+        const res = await fetch('/api/auth/client-social', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            provider: 'GOOGLE',
+            social_id: `guest_${randomId}`,
+            email: demoEmail,
+            nombre: demoName,
             avatarUrl: ''
           })
         });
@@ -3490,19 +3615,11 @@
           currentClient = data.client;
           updateClientHeaderUI(currentClient);
           closeClientAuthModal();
-          toast(`¡Sesión iniciada con ${provider}! Hola ${currentClient.razon_social}`);
+          toast(`¡Bienvenido/a a RS Store, ${currentClient.razon_social}!`);
           autofillCheckoutFromClient();
-        } else {
-          if (errBox) {
-            errBox.textContent = data.error || 'Error al conectar con red social';
-            errBox.style.display = 'block';
-          }
         }
       } catch(e) {
-        if (errBox) {
-          errBox.textContent = 'Error de conexión con el servicio social.';
-          errBox.style.display = 'block';
-        }
+        toast('Error al iniciar acceso rápido');
       }
     }
 
@@ -3620,6 +3737,7 @@
     fetchProducts();
     fetchBannersAndSocialSettings();
     loadStoreBankSettings();
+    initGoogleAuthGIS();
   </script>
   <!-- BARRA DE NAVEGACIÓN INFERIOR FIJA TIPO APP MÓVIL -->
   <nav class="bottom-nav" aria-label="Navegación Móvil">
