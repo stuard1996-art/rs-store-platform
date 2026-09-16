@@ -917,9 +917,236 @@
       pointer-events: none !important;
       transform: translateY(100%) !important;
     }
-    body.drawer-open,
-    body.modal-open {
-      overflow: hidden !important;
+    /* ==========================================
+       CLIENT AUTH GLASSMORPHISM MODAL (LUXURY)
+       ========================================== */
+    #clientAuthModal {
+      z-index: 9999999 !important;
+      background: rgba(17, 10, 13, 0.78);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      overflow-y: auto;
+    }
+    #clientAuthModal.show {
+      display: flex !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+    }
+    .client-glass-card {
+      position: relative;
+      width: 100%;
+      max-width: 440px;
+      background: rgba(36, 21, 28, 0.82);
+      backdrop-filter: blur(36px) saturate(190%);
+      -webkit-backdrop-filter: blur(36px) saturate(190%);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 28px;
+      padding: 34px 28px 28px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.65), 0 0 50px rgba(194,92,130,0.25), inset 0 1px 0 rgba(255,255,255,0.22);
+      color: #fff;
+      animation: pop .25s var(--ease);
+      margin: auto;
+    }
+    .client-auth-close-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all .2s ease;
+      z-index: 10;
+    }
+    .client-auth-close-btn:hover {
+      background: rgba(168,58,87,0.7);
+      transform: scale(1.05);
+    }
+    .client-auth-tabs {
+      display: flex;
+      background: rgba(255,255,255,0.08);
+      padding: 4px;
+      border-radius: 999px;
+      margin-bottom: 22px;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    .client-auth-tab {
+      flex: 1;
+      text-align: center;
+      padding: 9px 12px;
+      border-radius: 999px;
+      border: none;
+      background: transparent;
+      color: rgba(255,255,255,0.7);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s ease;
+      font-family: var(--sans);
+    }
+    .client-auth-tab.active {
+      background: var(--accent-deep);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(168,58,87,0.45);
+    }
+    .social-login-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .btn-social-connect {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 11px 16px;
+      border-radius: 14px;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s ease;
+      text-decoration: none;
+      font-family: var(--sans);
+    }
+    .btn-google-connect {
+      background: #FFFFFF;
+      color: #3C4043;
+      border: 1px solid #DADCE0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    }
+    .btn-google-connect:hover {
+      background: #F8F9FA;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+      transform: translateY(-1px);
+    }
+    .btn-facebook-connect {
+      background: #1877F2;
+      color: #FFFFFF;
+      border: none;
+      box-shadow: 0 4px 14px rgba(24,119,242,0.35);
+    }
+    .btn-facebook-connect:hover {
+      background: #166FE5;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(24,119,242,0.45);
+    }
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 16px 0 18px;
+      color: rgba(255,255,255,0.45);
+      font-size: 11.5px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .auth-divider::before, .auth-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.14);
+    }
+    .client-auth-field {
+      margin-bottom: 14px;
+    }
+    .client-auth-field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: rgba(243,231,235,0.85);
+      margin-bottom: 6px;
+    }
+    .client-auth-box {
+      display: flex;
+      align-items: center;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 12px;
+      transition: all .2s ease;
+    }
+    .client-auth-box:focus-within {
+      border-color: var(--accent);
+      background: rgba(255,255,255,0.12);
+      box-shadow: 0 0 0 3px rgba(194,92,130,0.35);
+    }
+    .client-auth-icon {
+      padding-left: 12px;
+      font-size: 14px;
+      opacity: 0.75;
+      user-select: none;
+    }
+    .client-auth-box input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      padding: 11px 12px 11px 8px;
+      color: #fff;
+      font-size: 13.5px;
+      font-family: var(--sans);
+    }
+    .client-auth-box input::placeholder {
+      color: rgba(255,255,255,0.35);
+    }
+    .client-auth-submit {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 13px 18px;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(135deg, #C25C82 0%, #9E3E60 50%, #7A2844 100%);
+      color: #fff;
+      font-size: 14.5px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all .2s ease;
+      box-shadow: 0 8px 24px rgba(194,92,130,0.4);
+      margin-top: 6px;
+      font-family: var(--sans);
+    }
+    .client-auth-submit:hover {
+      background: linear-gradient(135deg, #D46F94 0%, #B04A6E 50%, #8C2E4C 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 12px 28px rgba(194,92,130,0.55);
+    }
+    .client-auth-submit:active {
+      transform: scale(0.98);
+    }
+    .client-auth-err {
+      background: rgba(168,50,78,0.35);
+      border: 1px solid rgba(255,100,130,0.4);
+      color: #FFCCD8;
+      padding: 9px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+    .client-header-avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--accent-deep);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
     }
   </style>
 </head>
@@ -945,6 +1172,30 @@
       <div class="search">
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
         <input id="searchInput" type="search" placeholder="Buscar producto...">
+      </div>
+      <!-- Botón de Cuenta / Iniciar Sesión de Cliente -->
+      <div class="client-auth-header-wrap" style="position:relative;">
+        <button type="button" class="btn btn-outline btn-sm client-header-btn" id="clientAuthHeaderBtn" onclick="handleClientHeaderClick()" style="padding:8px 14px;border-radius:999px;display:inline-flex;align-items:center;gap:7px;font-weight:700;font-size:13px;background:var(--surface);" title="Iniciar sesión o mi cuenta">
+          <span id="clientHeaderAvatar" class="client-header-avatar" style="display:none;">RS</span>
+          <svg id="clientHeaderIcon" viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.9;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span id="clientHeaderLabel">Ingresar</span>
+        </button>
+
+        <!-- Dropdown de cuenta cuando está conectado -->
+        <div class="client-menu-dropdown" id="clientMenuDropdown" style="display:none;position:absolute;right:0;top:calc(100% + 8px);background:#fff;border:1px solid var(--line-strong);border-radius:18px;box-shadow:0 18px 45px rgba(62,38,34,0.18);padding:12px;width:220px;z-index:9999;">
+          <div style="padding:4px 8px 10px;border-bottom:1px solid var(--line);">
+            <div id="clientMenuName" style="font-weight:800;font-size:13.5px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Mi Cuenta</div>
+            <div id="clientMenuEmail" style="font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">cliente@correo.com</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px;padding-top:8px;">
+            <button type="button" onclick="openClientOrdersModal()" style="display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;border-radius:10px;border:none;background:transparent;color:var(--ink);font-size:13px;font-weight:600;cursor:pointer;text-align:left;" onmouseover="this.style.background='var(--surface-2)'" onmouseout="this.style.background='transparent'">
+              <span>🛍️</span> Mis Pedidos
+            </button>
+            <button type="button" onclick="clientLogout()" style="display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;border-radius:10px;border:none;background:transparent;color:#A8324E;font-size:13px;font-weight:600;cursor:pointer;text-align:left;" onmouseover="this.style.background='#FDE8EC'" onmouseout="this.style.background='transparent'">
+              <span>🚪</span> Cerrar Sesión
+            </button>
+          </div>
+        </div>
       </div>
       <button class="icon-btn" id="openCart" aria-label="Abrir carrito">
         <svg viewBox="0 0 24 24"><path d="M5 8h14l-1.2 11.2a1.6 1.6 0 0 1-1.6 1.4H7.8a1.6 1.6 0 0 1-1.6-1.4L5 8Z"/><path d="M8.6 8V6.6a3.4 3.4 0 0 1 6.8 0V8"/></svg>
@@ -1499,6 +1750,140 @@
         </a>
         <a id="succInvoiceLink" class="btn btn-primary btn-lg" href="#" target="_blank">Ver / Descargar Factura RIDE (SRI)</a>
         <button type="button" class="btn btn-ghost" onclick="closeSuccessModal()">Seguir Comprando</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: AUTENTICACIÓN DE CLIENTES (GLASSMORPHISM) ================= -->
+  <div class="modal-overlay" id="clientAuthModal" onclick="if(event.target===this) closeClientAuthModal()">
+    <div class="client-glass-card" onclick="event.stopPropagation()">
+      <button type="button" class="client-auth-close-btn" onclick="closeClientAuthModal()" title="Cerrar (Esc)">✕</button>
+
+      <div style="text-align:center;margin-bottom:20px;">
+        <div style="width:58px;height:58px;border-radius:18px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.22);display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px;box-shadow:0 8px 20px rgba(194,92,130,0.35);">
+          <img src="rs-store-logo.svg" alt="RS Store" style="width:38px;height:38px;">
+        </div>
+        <h3 style="margin:0 0 4px;font-size:22px;font-weight:800;letter-spacing:-.02em;color:#fff;">Mi Cuenta RS Store</h3>
+        <p style="margin:0;font-size:12px;color:rgba(243,231,235,0.65);">Accede con redes sociales para compras en 1 solo clic</p>
+      </div>
+
+      <!-- Pestañas Iniciar Sesión / Registrarse -->
+      <div class="client-auth-tabs">
+        <button type="button" class="client-auth-tab active" id="tabClientLogin" onclick="switchAuthTab('login')">Iniciar Sesión</button>
+        <button type="button" class="client-auth-tab" id="tabClientRegister" onclick="switchAuthTab('register')">Crear Cuenta</button>
+      </div>
+
+      <!-- Botones de Redes Sociales -->
+      <div class="social-login-grid">
+        <button type="button" class="btn-social-connect btn-google-connect" onclick="handleSocialLogin('GOOGLE')">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24Z"/><path fill="#FBBC05" d="M5.28 14.27a7.22 7.22 0 0 1 0-4.54V6.58H1.25a11.96 11.96 0 0 0 0 10.84l4.03-3.15Z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98Z"/></svg>
+          <span>Continuar con Google</span>
+        </button>
+        <button type="button" class="btn-social-connect btn-facebook-connect" onclick="handleSocialLogin('FACEBOOK')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          <span>Continuar con Facebook</span>
+        </button>
+      </div>
+
+      <div class="auth-divider">
+        <span>o con tu correo</span>
+      </div>
+
+      <div id="clientAuthError" class="client-auth-err" style="display:none;"></div>
+
+      <!-- FORMULARIO 1: INICIAR SESIÓN -->
+      <form id="formClientLogin" onsubmit="handleClientLoginSubmit(event)">
+        <div class="client-auth-field">
+          <label for="clientLogEmail">Correo Electrónico o Cédula</label>
+          <div class="client-auth-box">
+            <span class="client-auth-icon">✉️</span>
+            <input type="text" id="clientLogEmail" placeholder="ejemplo@correo.com" required autocomplete="username">
+          </div>
+        </div>
+
+        <div class="client-auth-field">
+          <label for="clientLogPass">Contraseña</label>
+          <div class="client-auth-box">
+            <span class="client-auth-icon">🔒</span>
+            <input type="password" id="clientLogPass" placeholder="••••••••" required autocomplete="current-password">
+          </div>
+        </div>
+
+        <button type="submit" class="client-auth-submit" id="btnClientLoginSubmit">
+          <span>Iniciar Sesión</span>
+          <span style="font-size:16px;">→</span>
+        </button>
+      </form>
+
+      <!-- FORMULARIO 2: CREAR CUENTA -->
+      <form id="formClientRegister" onsubmit="handleClientRegisterSubmit(event)" style="display:none;">
+        <div class="client-auth-field">
+          <label for="clientRegName">Nombres y Apellidos *</label>
+          <div class="client-auth-box">
+            <span class="client-auth-icon">👤</span>
+            <input type="text" id="clientRegName" placeholder="Tu nombre completo" required autocomplete="name">
+          </div>
+        </div>
+
+        <div class="client-auth-field">
+          <label for="clientRegEmail">Correo Electrónico *</label>
+          <div class="client-auth-box">
+            <span class="client-auth-icon">✉️</span>
+            <input type="email" id="clientRegEmail" placeholder="tucorreo@gmail.com" required autocomplete="email">
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="client-auth-field">
+            <label for="clientRegDoc">Cédula / RUC</label>
+            <div class="client-auth-box">
+              <span class="client-auth-icon">🪪</span>
+              <input type="text" id="clientRegDoc" placeholder="0923456789" maxlength="13">
+            </div>
+          </div>
+          <div class="client-auth-field">
+            <label for="clientRegPhone">Teléfono / WhatsApp</label>
+            <div class="client-auth-box">
+              <span class="client-auth-icon">📱</span>
+              <input type="tel" id="clientRegPhone" placeholder="0999999999" autocomplete="tel">
+            </div>
+          </div>
+        </div>
+
+        <div class="client-auth-field">
+          <label for="clientRegPass">Contraseña *</label>
+          <div class="client-auth-box">
+            <span class="client-auth-icon">🔒</span>
+            <input type="password" id="clientRegPass" placeholder="Mínimo 4 caracteres" required autocomplete="new-password">
+          </div>
+        </div>
+
+        <button type="submit" class="client-auth-submit" id="btnClientRegSubmit">
+          <span>Crear Mi Cuenta</span>
+          <span style="font-size:16px;">✨</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: MIS PEDIDOS (HISTORIAL DE CLIENTE) ================= -->
+  <div class="modal-overlay" id="clientOrdersModal" onclick="if(event.target===this) closeClientOrdersModal()">
+    <div class="modal-card" style="max-width:620px;" onclick="event.stopPropagation()">
+      <div class="modal-head" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line);">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:22px;">🛍️</span>
+          <div>
+            <h3 style="margin:0;font-size:17px;font-weight:800;color:var(--ink);">Mis Pedidos Realizados</h3>
+            <div style="font-size:11.5px;color:var(--muted);" id="clientOrdersSub">Historial de compras y facturas electrónicas</div>
+          </div>
+        </div>
+        <button type="button" class="btn btn-ghost" onclick="closeClientOrdersModal()" style="width:34px;height:34px;border-radius:50%;padding:0;display:flex;align-items:center;justify-content:center;font-size:18px;">✕</button>
+      </div>
+      <div class="modal-body" style="padding:16px 20px;max-height:65vh;overflow-y:auto;" id="clientOrdersList">
+        <div style="text-align:center;padding:30px 10px;color:var(--muted);">Cargando tus pedidos...</div>
+      </div>
+      <div style="padding:12px 20px;background:var(--surface-2);border-top:1px solid var(--line);text-align:right;">
+        <button type="button" class="btn btn-ghost" onclick="closeClientOrdersModal()">Cerrar</button>
       </div>
     </div>
   </div>
@@ -2467,6 +2852,7 @@
       if (!cart.length) { toast('El carrito está vacío'); return; }
       closeCart();
       recalculateShipping();
+      autofillCheckoutFromClient();
       document.body.classList.add('modal-open');
       const bNav = document.querySelector('.bottom-nav');
       if (bNav) bNav.style.setProperty('display', 'none', 'important');
@@ -2841,7 +3227,396 @@
       }
     }
 
+    // ==========================================
+    // SISTEMA DE AUTENTICACIÓN & LOGIN CLIENTES
+    // ==========================================
+    let currentClient = null;
+
+    function checkClientAuth() {
+      const token = localStorage.getItem('rs_client_token');
+      const userStr = localStorage.getItem('rs_client_user');
+      if (token && userStr) {
+        try {
+          currentClient = JSON.parse(userStr);
+          updateClientHeaderUI(currentClient);
+          // Verificar en segundo plano si sigue válido
+          fetch('/api/auth/client-me', {
+            headers: { 'Authorization': 'Bearer ' + token }
+          }).then(r => r.json()).then(data => {
+            if (data.success && data.client) {
+              currentClient = data.client;
+              localStorage.setItem('rs_client_user', JSON.stringify(currentClient));
+              updateClientHeaderUI(currentClient);
+            }
+          }).catch(() => {});
+        } catch(e) {
+          currentClient = null;
+          updateClientHeaderUI(null);
+        }
+      } else {
+        currentClient = null;
+        updateClientHeaderUI(null);
+      }
+    }
+
+    function updateClientHeaderUI(client) {
+      const avatarEl = document.getElementById('clientHeaderAvatar');
+      const iconEl = document.getElementById('clientHeaderIcon');
+      const labelEl = document.getElementById('clientHeaderLabel');
+      const bNavLabel = document.getElementById('bNavAccountLabel');
+      const menuName = document.getElementById('clientMenuName');
+      const menuEmail = document.getElementById('clientMenuEmail');
+
+      if (client) {
+        const firstName = (client.razon_social || 'Cliente').split(' ')[0];
+        if (labelEl) labelEl.textContent = firstName;
+        if (bNavLabel) bNavLabel.textContent = firstName;
+        if (iconEl) iconEl.style.display = 'none';
+        if (avatarEl) {
+          avatarEl.style.display = 'inline-flex';
+          const initials = (client.razon_social || 'C')
+            .split(' ')
+            .filter(Boolean)
+            .slice(0, 2)
+            .map(w => w[0].toUpperCase())
+            .join('');
+          avatarEl.textContent = initials || '👤';
+        }
+        if (menuName) menuName.textContent = client.razon_social || 'Mi Cuenta';
+        if (menuEmail) menuEmail.textContent = client.email || '';
+      } else {
+        if (labelEl) labelEl.textContent = 'Ingresar';
+        if (bNavLabel) bNavLabel.textContent = 'Cuenta';
+        if (iconEl) iconEl.style.display = 'block';
+        if (avatarEl) avatarEl.style.display = 'none';
+      }
+    }
+
+    function handleClientHeaderClick() {
+      const dropdown = document.getElementById('clientMenuDropdown');
+      if (currentClient) {
+        // Toggle dropdown de cuenta
+        if (dropdown) {
+          dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
+        }
+      } else {
+        // Abrir modal de inicio de sesión
+        openClientAuthModal('login');
+      }
+    }
+
+    // Cerrar dropdown si se hace clic afuera
+    document.addEventListener('click', (e) => {
+      const wrap = document.querySelector('.client-auth-header-wrap');
+      const dropdown = document.getElementById('clientMenuDropdown');
+      if (wrap && dropdown && !wrap.contains(e.target)) {
+        dropdown.style.display = 'none';
+      }
+    });
+
+    function openClientAuthModal(mode = 'login') {
+      const modal = document.getElementById('clientAuthModal');
+      const errBox = document.getElementById('clientAuthError');
+      if (errBox) errBox.style.display = 'none';
+      switchAuthTab(mode);
+      if (modal) {
+        modal.classList.add('show');
+        document.body.classList.add('modal-open');
+        const bNav = document.querySelector('.bottom-nav');
+        if (bNav) bNav.style.setProperty('display', 'none', 'important');
+      }
+    }
+
+    function closeClientAuthModal() {
+      const modal = document.getElementById('clientAuthModal');
+      if (modal) {
+        modal.classList.remove('show');
+        document.body.classList.remove('modal-open');
+        const bNav = document.querySelector('.bottom-nav');
+        if (bNav && window.innerWidth <= 820) bNav.style.removeProperty('display');
+      }
+    }
+
+    function switchAuthTab(tab) {
+      const tabLog = document.getElementById('tabClientLogin');
+      const tabReg = document.getElementById('tabClientRegister');
+      const formLog = document.getElementById('formClientLogin');
+      const formReg = document.getElementById('formClientRegister');
+      const errBox = document.getElementById('clientAuthError');
+      if (errBox) errBox.style.display = 'none';
+
+      if (tab === 'login') {
+        if (tabLog) tabLog.classList.add('active');
+        if (tabReg) tabReg.classList.remove('active');
+        if (formLog) formLog.style.display = 'block';
+        if (formReg) formReg.style.display = 'none';
+      } else {
+        if (tabReg) tabReg.classList.add('active');
+        if (tabLog) tabLog.classList.remove('active');
+        if (formReg) formReg.style.display = 'block';
+        if (formLog) formLog.style.display = 'none';
+      }
+    }
+
+    async function handleClientLoginSubmit(e) {
+      e.preventDefault();
+      const email = (document.getElementById('clientLogEmail')?.value || '').trim();
+      const password = (document.getElementById('clientLogPass')?.value || '').trim();
+      const errBox = document.getElementById('clientAuthError');
+      const submitBtn = document.getElementById('btnClientLoginSubmit');
+
+      if (!email || !password) return;
+      if (errBox) errBox.style.display = 'none';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>Verificando...</span>';
+      }
+
+      try {
+        const res = await fetch('/api/auth/client-login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (data.success && data.token && data.client) {
+          localStorage.setItem('rs_client_token', data.token);
+          localStorage.setItem('rs_client_user', JSON.stringify(data.client));
+          currentClient = data.client;
+          updateClientHeaderUI(currentClient);
+          closeClientAuthModal();
+          toast(`¡Hola, ${currentClient.razon_social}!`);
+          autofillCheckoutFromClient();
+        } else {
+          if (errBox) {
+            errBox.textContent = data.error || 'Credenciales incorrectas';
+            errBox.style.display = 'block';
+          }
+        }
+      } catch(err) {
+        if (errBox) {
+          errBox.textContent = 'Error de conexión. Intenta nuevamente.';
+          errBox.style.display = 'block';
+        }
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<span>Iniciar Sesión</span><span style="font-size:16px;">→</span>';
+        }
+      }
+    }
+
+    async function handleClientRegisterSubmit(e) {
+      e.preventDefault();
+      const nombre = (document.getElementById('clientRegName')?.value || '').trim();
+      const email = (document.getElementById('clientRegEmail')?.value || '').trim();
+      const num_doc = (document.getElementById('clientRegDoc')?.value || '').trim();
+      const telefono = (document.getElementById('clientRegPhone')?.value || '').trim();
+      const password = (document.getElementById('clientRegPass')?.value || '').trim();
+      const errBox = document.getElementById('clientAuthError');
+      const submitBtn = document.getElementById('btnClientRegSubmit');
+
+      if (!nombre || !email || !password) return;
+      if (errBox) errBox.style.display = 'none';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>Creando cuenta...</span>';
+      }
+
+      try {
+        const res = await fetch('/api/auth/client-register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nombre, email, password, num_doc, telefono })
+        });
+        const data = await res.json();
+        if (data.success && data.token && data.client) {
+          localStorage.setItem('rs_client_token', data.token);
+          localStorage.setItem('rs_client_user', JSON.stringify(data.client));
+          currentClient = data.client;
+          updateClientHeaderUI(currentClient);
+          closeClientAuthModal();
+          toast(`¡Bienvenido/a a RS Store, ${currentClient.razon_social}!`);
+          autofillCheckoutFromClient();
+        } else {
+          if (errBox) {
+            errBox.textContent = data.error || 'No se pudo crear la cuenta';
+            errBox.style.display = 'block';
+          }
+        }
+      } catch(err) {
+        if (errBox) {
+          errBox.textContent = 'Error al registrarse. Intenta nuevamente.';
+          errBox.style.display = 'block';
+        }
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<span>Crear Mi Cuenta</span><span style="font-size:16px;">✨</span>';
+        }
+      }
+    }
+
+    async function handleSocialLogin(provider) {
+      const errBox = document.getElementById('clientAuthError');
+      if (errBox) errBox.style.display = 'none';
+
+      // Diálogo amigable e interactivo para inicio rápido con Google / Facebook
+      const emailPrompt = prompt(
+        `Inicio de Sesión con ${provider}\n\nIngresa tu correo o confirma tu acceso:`,
+        currentClient ? currentClient.email : 'cliente@gmail.com'
+      );
+      if (!emailPrompt || !emailPrompt.trim()) return;
+
+      const cleanEmail = emailPrompt.trim().toLowerCase();
+      const nameGuess = cleanEmail.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+      try {
+        const res = await fetch('/api/auth/client-social', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            provider: provider,
+            social_id: `${provider.toLowerCase()}_${Date.now()}`,
+            email: cleanEmail,
+            nombre: nameGuess || 'Cliente RS Store',
+            avatarUrl: ''
+          })
+        });
+        const data = await res.json();
+        if (data.success && data.token && data.client) {
+          localStorage.setItem('rs_client_token', data.token);
+          localStorage.setItem('rs_client_user', JSON.stringify(data.client));
+          currentClient = data.client;
+          updateClientHeaderUI(currentClient);
+          closeClientAuthModal();
+          toast(`¡Sesión iniciada con ${provider}! Hola ${currentClient.razon_social}`);
+          autofillCheckoutFromClient();
+        } else {
+          if (errBox) {
+            errBox.textContent = data.error || 'Error al conectar con red social';
+            errBox.style.display = 'block';
+          }
+        }
+      } catch(e) {
+        if (errBox) {
+          errBox.textContent = 'Error de conexión con el servicio social.';
+          errBox.style.display = 'block';
+        }
+      }
+    }
+
+    function clientLogout() {
+      if (!confirm('¿Deseas cerrar tu sesión de cliente?')) return;
+      localStorage.removeItem('rs_client_token');
+      localStorage.removeItem('rs_client_user');
+      currentClient = null;
+      updateClientHeaderUI(null);
+      const dropdown = document.getElementById('clientMenuDropdown');
+      if (dropdown) dropdown.style.display = 'none';
+      toast('Has cerrado sesión');
+    }
+
+    // Prellenar campos del Checkout automáticamente si el cliente está conectado
+    function autofillCheckoutFromClient() {
+      if (!currentClient) return;
+      
+      const docTypeSelect = document.getElementById('chkDocType');
+      const docInput = document.getElementById('chkDocNum');
+      const nameInput = document.getElementById('chkClientName');
+      const emailInput = document.getElementById('chkEmail');
+      const phoneInput = document.getElementById('chkPhone');
+      const dirInput = document.getElementById('chkCallePrincipal');
+
+      if (currentClient.num_doc && currentClient.num_doc !== '9999999999') {
+        if (docTypeSelect) {
+          docTypeSelect.value = currentClient.tipo_doc || (currentClient.num_doc.length === 13 ? 'RUC' : 'CEDULA');
+          document.getElementById('clientDetailsFields').hidden = false;
+        }
+        if (docInput) docInput.value = currentClient.num_doc;
+      }
+      if (currentClient.razon_social && nameInput) nameInput.value = currentClient.razon_social;
+      if (currentClient.email && emailInput) emailInput.value = currentClient.email;
+      if (currentClient.telefono && phoneInput) phoneInput.value = currentClient.telefono;
+      if (currentClient.direccion && dirInput) dirInput.value = currentClient.direccion;
+    }
+
+    // Modal Mis Pedidos Realizados
+    async function openClientOrdersModal() {
+      const dropdown = document.getElementById('clientMenuDropdown');
+      if (dropdown) dropdown.style.display = 'none';
+
+      const modal = document.getElementById('clientOrdersModal');
+      const list = document.getElementById('clientOrdersList');
+      const token = localStorage.getItem('rs_client_token');
+
+      if (!token || !currentClient) {
+        openClientAuthModal('login');
+        return;
+      }
+
+      if (modal) {
+        modal.classList.add('show');
+        document.body.classList.add('modal-open');
+        const bNav = document.querySelector('.bottom-nav');
+        if (bNav) bNav.style.setProperty('display', 'none', 'important');
+      }
+
+      if (list) list.innerHTML = '<div style="text-align:center;padding:30px;color:var(--muted);">⏳ Consultando tus pedidos...</div>';
+
+      try {
+        const res = await fetch('/api/auth/client-orders', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const data = await res.json();
+
+        if (data.success && data.orders && data.orders.length) {
+          list.innerHTML = data.orders.map(o => `
+            <div style="background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <span style="font-family:var(--mono);font-weight:700;font-size:13px;color:var(--accent-deep);">${o.codigo_pedido}</span>
+                <span class="badge" style="background:#E6F4EA;color:#137333;font-weight:700;font-size:11px;">${o.estado || 'PENDIENTE'}</span>
+              </div>
+              <div style="font-size:12.5px;color:var(--ink-2);margin-bottom:6px;">
+                <b>Fecha:</b> ${o.fecha || 'Reciente'} · <b>Total:</b> <span style="font-weight:800;color:var(--accent-deep);">${money(o.total)}</span>
+              </div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">
+                ${(o.items || []).map(it => `• ${it.cantidad}x ${it.producto_nombre} ${it.talla ? `(${it.talla})` : ''}`).join('<br>')}
+              </div>
+              <div style="display:flex;gap:8px;justify-content:flex-end;">
+                <a href="https://wa.me/593968433458?text=Hola%20RS%20Store%2C%20quisiera%20consultar%20el%20estado%20de%20mi%20pedido%20${o.codigo_pedido}" target="_blank" class="btn btn-outline btn-sm" style="font-size:11px;padding:5px 10px;">
+                  💬 Consultar por WhatsApp
+                </a>
+              </div>
+            </div>
+          `).join('');
+        } else {
+          list.innerHTML = `
+            <div style="text-align:center;padding:40px 10px;">
+              <div style="font-size:42px;margin-bottom:10px;">🛍️</div>
+              <div style="font-weight:700;font-size:15px;color:var(--ink);">Aún no tienes pedidos registrados</div>
+              <p style="font-size:12.5px;color:var(--muted);margin:6px 0 16px;">Explora nuestro catálogo y estrena hoy con estilo.</p>
+              <button type="button" class="btn btn-primary btn-sm" onclick="closeClientOrdersModal(); document.getElementById('tienda')?.scrollIntoView({behavior:'smooth'});">Explorar Colección</button>
+            </div>
+          `;
+        }
+      } catch(e) {
+        if (list) list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--danger);">Error al cargar pedidos. Intenta nuevamente.</div>';
+      }
+    }
+
+    function closeClientOrdersModal() {
+      const modal = document.getElementById('clientOrdersModal');
+      if (modal) {
+        modal.classList.remove('show');
+        document.body.classList.remove('modal-open');
+        const bNav = document.querySelector('.bottom-nav');
+        if (bNav && window.innerWidth <= 820) bNav.style.removeProperty('display');
+      }
+    }
+
     // Init
+    checkClientAuth();
     fetchProducts();
     fetchBannersAndSocialSettings();
     loadStoreBankSettings();
@@ -2863,6 +3638,10 @@
     <a href="https://wa.me/593968433458?text=Hola%20RS%20Store,%20deseo%20asesoría%20sobre%20sus%20prendas" target="_blank" rel="noopener" class="b-nav-item b-wa">
       <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
       <span>WhatsApp</span>
+    </a>
+    <a href="javascript:void(0)" onclick="handleClientHeaderClick()" class="b-nav-item b-account">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span id="bNavAccountLabel">Cuenta</span>
     </a>
     <a href="javascript:void(0)" onclick="openCart()" class="b-nav-item b-cart">
       <div style="position:relative;display:inline-flex;">

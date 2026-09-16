@@ -503,6 +503,249 @@
         grid-template-columns: 1fr !important;
       }
     }
+
+    /* ==========================================
+       ADMIN AUTH GLASSMORPHISM OVERLAY
+       ========================================== */
+    .admin-auth-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999999;
+      background: #110A0D;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow: hidden;
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.4s cubic-bezier(0.32,0.72,0,1), visibility 0.4s ease;
+    }
+    .admin-auth-overlay.hidden {
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+
+    /* Ambient glowing orbs */
+    .auth-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .orb-1 {
+      width: 380px;
+      height: 380px;
+      background: radial-gradient(circle, rgba(194,92,130,0.55) 0%, rgba(158,62,96,0.15) 70%, transparent 100%);
+      top: -60px;
+      left: 10%;
+      animation: floatOrb 12s ease-in-out infinite alternate;
+    }
+    .orb-2 {
+      width: 440px;
+      height: 440px;
+      background: radial-gradient(circle, rgba(168,58,87,0.5) 0%, rgba(85,38,53,0.2) 70%, transparent 100%);
+      bottom: -100px;
+      right: 8%;
+      animation: floatOrb 15s ease-in-out infinite alternate-reverse;
+    }
+    .orb-3 {
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle, rgba(243,175,194,0.22) 0%, transparent 70%);
+      top: 45%;
+      left: 48%;
+      transform: translate(-50%, -50%);
+    }
+    @keyframes floatOrb {
+      0% { transform: translateY(0) scale(1); }
+      100% { transform: translateY(35px) scale(1.08); }
+    }
+
+    /* Glass card */
+    .auth-glass-card {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 440px;
+      background: rgba(36, 21, 28, 0.76);
+      backdrop-filter: blur(32px) saturate(180%);
+      -webkit-backdrop-filter: blur(32px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 28px;
+      padding: 38px 32px 32px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.65), 0 0 50px rgba(194,92,130,0.25), inset 0 1px 0 rgba(255,255,255,0.25);
+      color: #fff;
+      animation: popAuth .35s var(--ease);
+    }
+    @keyframes popAuth {
+      from { transform: scale(0.95) translateY(16px); opacity: 0; }
+      to { transform: none; opacity: 1; }
+    }
+
+    .auth-brand-header {
+      text-align: center;
+      margin-bottom: 26px;
+    }
+    .auth-logo-badge {
+      width: 72px;
+      height: 72px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.1);
+      border: 1.5px solid rgba(255,255,255,0.25);
+      backdrop-filter: blur(16px);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+      box-shadow: 0 12px 30px rgba(194,92,130,0.3);
+    }
+    .auth-logo-img {
+      height: 48px;
+      width: 48px;
+      object-fit: contain;
+    }
+    .auth-title {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin: 0 0 6px;
+      color: #fff;
+    }
+    .auth-subtitle {
+      font-size: 12.5px;
+      color: rgba(243,231,235,0.65);
+      margin: 0;
+    }
+
+    .auth-field {
+      margin-bottom: 18px;
+    }
+    .auth-lbl {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: rgba(243,231,235,0.85);
+      margin-bottom: 7px;
+    }
+    .auth-input-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 14px;
+      transition: all 0.2s ease;
+    }
+    .auth-input-box:focus-within {
+      border-color: var(--accent);
+      background: rgba(255,255,255,0.12);
+      box-shadow: 0 0 0 3px rgba(194,92,130,0.35);
+    }
+    .auth-input-icon {
+      font-size: 15px;
+      padding-left: 14px;
+      opacity: 0.7;
+      user-select: none;
+    }
+    .auth-inp {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      padding: 13px 14px 13px 10px;
+      color: #fff;
+      font-family: var(--sans);
+      font-size: 14px;
+    }
+    .auth-inp::placeholder {
+      color: rgba(255,255,255,0.35);
+    }
+    .auth-eye-btn {
+      background: transparent;
+      border: none;
+      color: rgba(255,255,255,0.7);
+      cursor: pointer;
+      padding: 8px 14px;
+      font-size: 16px;
+    }
+    .auth-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
+      font-size: 12.5px;
+      color: rgba(243,231,235,0.8);
+    }
+    .auth-remember {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .auth-remember input {
+      accent-color: var(--accent);
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
+    }
+    .auth-error-msg {
+      background: rgba(168,50,78,0.35);
+      border: 1px solid rgba(255,100,130,0.4);
+      color: #FFCCD8;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 12.5px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .auth-btn-submit {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 20px;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(135deg, #C25C82 0%, #9E3E60 50%, #7A2844 100%);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 800;
+      font-family: var(--sans);
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(194,92,130,0.45);
+      transition: all 0.22s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .auth-btn-submit:hover {
+      background: linear-gradient(135deg, #D46F94 0%, #B04A6E 50%, #8C2E4C 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 14px 30px rgba(194,92,130,0.55);
+    }
+    .auth-btn-submit:active {
+      transform: scale(0.98);
+    }
+    .auth-arrow {
+      font-size: 18px;
+      transition: transform 0.2s ease;
+    }
+    .auth-btn-submit:hover .auth-arrow {
+      transform: translateX(4px);
+    }
+    .auth-footer-hint {
+      margin-top: 22px;
+      text-align: center;
+      font-size: 11px;
+      color: rgba(255,255,255,0.45);
+    }
   </style>
 
 <script>
@@ -560,6 +803,61 @@
 </head>
 <body>
 
+  <!-- ================= OVERLAY DE AUTENTICACIÓN ADMIN (GLASSMORPHISM) ================= -->
+  <div class="admin-auth-overlay" id="adminAuthOverlay">
+    <div class="auth-orb orb-1"></div>
+    <div class="auth-orb orb-2"></div>
+    <div class="auth-orb orb-3"></div>
+
+    <div class="auth-glass-card">
+      <div class="auth-brand-header">
+        <div class="auth-logo-badge">
+          <img src="rs-store-logo.svg" alt="RS Store" class="auth-logo-img">
+        </div>
+        <h1 class="auth-title">RS Store</h1>
+        <p class="auth-subtitle">Acceso Exclusivo al Panel de Administración</p>
+      </div>
+
+      <div id="adminAuthError" class="auth-error-msg" style="display:none;"></div>
+
+      <form id="adminLoginForm" onsubmit="handleAdminLogin(event)">
+        <div class="auth-field">
+          <label class="auth-lbl" for="adminAuthUser">Usuario o Cédula</label>
+          <div class="auth-input-box">
+            <span class="auth-input-icon">👤</span>
+            <input type="text" id="adminAuthUser" class="auth-inp" placeholder="admin o tu cédula" required autocomplete="username">
+          </div>
+        </div>
+
+        <div class="auth-field">
+          <label class="auth-lbl" for="adminAuthPass">Contraseña</label>
+          <div class="auth-input-box">
+            <span class="auth-input-icon">🔒</span>
+            <input type="password" id="adminAuthPass" class="auth-inp" placeholder="••••••••" required autocomplete="current-password">
+            <button type="button" class="auth-eye-btn" onclick="toggleAuthPassVisibility('adminAuthPass', this)" title="Ver contraseña">👁️</button>
+          </div>
+        </div>
+
+        <div class="auth-options">
+          <label class="auth-remember">
+            <input type="checkbox" id="adminRememberMe" checked>
+            <span>Recordar sesión</span>
+          </label>
+          <span style="font-size:11px;color:rgba(255,255,255,0.45);">Protegido con SHA-256</span>
+        </div>
+
+        <button type="submit" class="auth-btn-submit" id="adminLoginSubmitBtn">
+          <span>Iniciar Sesión</span>
+          <span class="auth-arrow">→</span>
+        </button>
+
+        <div class="auth-footer-hint">
+          <span>Sistema de Facturación Electrónica SRI · RS Store</span>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <div class="app">
     <!-- ================= SIDEBAR ================= -->
     <aside class="sidebar">
@@ -604,9 +902,15 @@
       </nav>
 
       <div class="side-foot">
-        <div class="side-user">
-          <span class="avatar">RS</span>
-          <div><div style="font-weight:700;font-size:13px;">RS Boutique</div><div style="font-size:11px;color:rgba(255,255,255,.6);">Administradora</div></div>
+        <div class="side-user" style="display:flex;align-items:center;gap:10px;padding:6px 4px;">
+          <span class="avatar" id="sideUserAvatar" style="flex-shrink:0;">RS</span>
+          <div style="flex:1;min-width:0;">
+            <div id="sideUserName" style="font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff;">RS Boutique</div>
+            <div id="sideUserRole" style="font-size:11px;color:rgba(255,255,255,.6);">Administrador</div>
+          </div>
+          <button type="button" onclick="adminLogout()" title="Cerrar Sesión" style="background:rgba(255,255,255,0.12);border:none;color:#fff;border-radius:8px;width:30px;height:30px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .2s ease;flex-shrink:0;" onmouseover="this.style.background='rgba(168,50,78,0.65)'" onmouseout="this.style.background='rgba(255,255,255,0.12)'">
+            <svg style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+          </button>
         </div>
       </div>
     </aside>
@@ -6220,8 +6524,184 @@
       }
     }
 
-    // Initial load safely
-    async function initAdminApp() {
+    // ==========================================
+    // SISTEMA DE AUTENTICACIÓN ADMIN
+    // ==========================================
+    function toggleAuthPassVisibility(inputId, btn) {
+      const inp = document.getElementById(inputId);
+      if (!inp) return;
+      if (inp.type === 'password') {
+        inp.type = 'text';
+        btn.textContent = '🙈';
+        btn.title = 'Ocultar contraseña';
+      } else {
+        inp.type = 'password';
+        btn.textContent = '👁️';
+        btn.title = 'Ver contraseña';
+      }
+    }
+
+    async function checkAdminAuth() {
+      const overlay = document.getElementById('adminAuthOverlay');
+      const token = localStorage.getItem('rs_admin_token');
+      const userStr = localStorage.getItem('rs_admin_user');
+
+      if (!token) {
+        if (overlay) {
+          overlay.classList.remove('hidden');
+          document.body.style.overflow = 'hidden';
+          setTimeout(() => document.getElementById('adminAuthUser')?.focus(), 250);
+        }
+        return false;
+      }
+
+      try {
+        const res = await fetch('/api/auth/admin-verify', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify({ token })
+        });
+        const data = await res.json();
+        if (data.success && data.user) {
+          // Sesión activa y válida
+          applyAdminUserData(data.user);
+          if (overlay) {
+            overlay.classList.add('hidden');
+            document.body.style.overflow = '';
+          }
+          return true;
+        } else {
+          // Token vencido o revocado
+          localStorage.removeItem('rs_admin_token');
+          localStorage.removeItem('rs_admin_user');
+          if (overlay) {
+            overlay.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+          }
+          return false;
+        }
+      } catch (e) {
+        // En caso de corte temporal de red pero con sesión guardada localmente
+        if (userStr) {
+          try {
+            applyAdminUserData(JSON.parse(userStr));
+            if (overlay) {
+              overlay.classList.add('hidden');
+              document.body.style.overflow = '';
+            }
+            return true;
+          } catch(err) {}
+        }
+        if (overlay) overlay.classList.remove('hidden');
+        return false;
+      }
+    }
+
+    function applyAdminUserData(user) {
+      if (!user) return;
+      const nameEl = document.getElementById('sideUserName');
+      const roleEl = document.getElementById('sideUserRole');
+      const avatarEl = document.getElementById('sideUserAvatar');
+
+      if (nameEl) nameEl.textContent = user.nombre || user.username || 'Administrador';
+      if (roleEl) roleEl.textContent = (user.rol || 'ADMIN').toUpperCase();
+      if (avatarEl) {
+        const initials = (user.nombre || user.username || 'RS')
+          .split(' ')
+          .filter(Boolean)
+          .slice(0, 2)
+          .map(w => w[0].toUpperCase())
+          .join('');
+        avatarEl.textContent = initials || 'RS';
+      }
+    }
+
+    async function handleAdminLogin(event) {
+      event.preventDefault();
+      const errBox = document.getElementById('adminAuthError');
+      const submitBtn = document.getElementById('adminLoginSubmitBtn');
+      const userVal = (document.getElementById('adminAuthUser')?.value || '').trim();
+      const passVal = (document.getElementById('adminAuthPass')?.value || '').trim();
+      const rememberVal = document.getElementById('adminRememberMe')?.checked ?? true;
+
+      if (!userVal || !passVal) {
+        if (errBox) {
+          errBox.textContent = 'Por favor ingresa usuario y contraseña.';
+          errBox.style.display = 'block';
+        }
+        return;
+      }
+
+      if (errBox) errBox.style.display = 'none';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>Verificando...</span>';
+      }
+
+      try {
+        const res = await fetch('/api/auth/admin-login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: userVal,
+            password: passVal,
+            rememberMe: rememberVal
+          })
+        });
+        const data = await res.json();
+
+        if (data.success && data.token) {
+          localStorage.setItem('rs_admin_token', data.token);
+          localStorage.setItem('rs_admin_user', JSON.stringify(data.user));
+          applyAdminUserData(data.user);
+
+          const overlay = document.getElementById('adminAuthOverlay');
+          if (overlay) {
+            overlay.classList.add('hidden');
+            document.body.style.overflow = '';
+          }
+
+          toast(`¡Bienvenido/a, ${data.user?.nombre || 'Administrador'}!`);
+          
+          // Cargar datos administrativos
+          runAllAdminTasks();
+        } else {
+          if (errBox) {
+            errBox.textContent = data.error || 'Credenciales incorrectas.';
+            errBox.style.display = 'block';
+          }
+        }
+      } catch (e) {
+        if (errBox) {
+          errBox.textContent = 'Error de conexión con el servidor. Intenta de nuevo.';
+          errBox.style.display = 'block';
+        }
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<span>Iniciar Sesión</span><span class="auth-arrow">→</span>';
+        }
+      }
+    }
+
+    function adminLogout() {
+      if (!confirm('¿Estás seguro/a de que deseas cerrar sesión?')) return;
+      localStorage.removeItem('rs_admin_token');
+      localStorage.removeItem('rs_admin_user');
+      const overlay = document.getElementById('adminAuthOverlay');
+      const passInp = document.getElementById('adminAuthPass');
+      if (passInp) passInp.value = '';
+      if (overlay) {
+        overlay.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      }
+      toast('Has cerrado sesión correctamente.');
+    }
+
+    async function runAllAdminTasks() {
       const tasks = [
         () => loadStats(),
         () => loadInvoices(),
@@ -6238,6 +6718,14 @@
       ];
       for (const fn of tasks) {
         try { await fn(); } catch (err) { console.warn('Init task warning:', err); }
+      }
+    }
+
+    // Initial load safely
+    async function initAdminApp() {
+      const isAuth = await checkAdminAuth();
+      if (isAuth) {
+        runAllAdminTasks();
       }
     }
     if (document.readyState === 'loading') {

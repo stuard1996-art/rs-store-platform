@@ -1370,6 +1370,312 @@ app.post('/api/settings/telegram/test', async (req, res) => {
 });
 
 // ==========================================
+// 8.5. AUTENTICACIÓN & LOGIN (ADMIN & CLIENTES)
+// ==========================================
+
+const crypto = require('node:crypto');
+const AUTH_SECRET = process.env.AUTH_SECRET || 'rs-store-luxury-auth-secret-2026';
+
+function createAuthToken(payload, expiresInMs = 7 * 24 * 60 * 60 * 1000) {
+  const exp = Date.now() + expiresInMs;
+  const data = JSON.stringify({ ...payload, exp });
+  const b64 = Buffer.from(data).toString('base64url');
+  const sig = crypto.createHmac('sha256', AUTH_SECRET).update(b64).digest('base64url');
+  return `${b64}.${sig}`;
+}
+
+function verifyAuthToken(token) {
+  if (!token || typeof token !== 'string') return null;
+  const clean = token.startsWith('Bearer ') ? token.slice(7).trim() : token.trim();
+  const parts = clean.split('.');
+  if (parts.length !== 2) return null;
+  const [b64, sig] = parts;
+  const expectedSig = crypto.createHmac('sha256', AUTH_SECRET).update(b64).digest('base64url');
+  if (sig !== expectedSig) return null;
+  try {
+    const data = JSON.parse(Buffer.from(b64, 'base64url').toString('utf8'));
+    if (data.exp && Date.now() > data.exp) return null; // Expirado
+    return data;
+  } catch(e) {
+    return null;
+  }
+}
+
+function hashPassword(plain) {
+  return crypto.createHash('sha256').update(String(plain || '').trim()).digest('hex');
+}
+
+// 1. ADMIN LOGIN
+app.post('/api/auth/admin-login', (req, res) => {
+  try {
+    const { username, password, rememberMe } = req.body;
+    if (!username || !password) {
+      return res.status(400).json({ success: false, error: 'Ingresa tu usuario y contraseña de administrador.' });
+    }
+
+    const cleanUser = String(username).trim().toLowerCase();
+    const cleanPass = String(password).trim();
+
+    // Buscar en usuarios activos por username, cedula o email
+    const user = db.prepare(`
+      SELECT * FROM usuarios 
+      WHERE (LOWER(username) = ? OR num_doc = ? OR LOWER(email) = ?) 
+        AND activo = 1
+    `).get(cleanUser, cleanUser, cleanUser);
+
+    if (!user) {
+      return res.status(401).json({ success: false, error: 'Credenciales inválidas o usuario inactivo.' });
+    }
+
+    // Comparar contraseña (soporta texto plano o sha256)
+    const passMatches = (user.password === cleanPass) || (user.password === hashPassword(cleanPass));
+    if (!passMatches) {
+      return res.status(401).json({ success: false, error: 'Contraseña incorrecta. Verifica tus datos.' });
+    }
+
+    const duration = rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000;
+    const token = createAuthToken({
+      userId: user.id,
+      username: user.username,
+      nombre: user.nombre,
+      rol: user.rol,
+      type: 'ADMIN'
+    }, duration);
+
+    res.json({
+      success: true,
+      message: `¡Bienvenido al sistema, ${user.nombre}!`,
+      token,
+      user: {
+        id: user.id,
+        nombre: user.nombre,
+        username: user.username,
+        rol: user.rol,
+        email: user.email,
+        telefono: user.telefono
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 2. VERIFICAR SESIÓN ADMIN
+app.post('/api/auth/admin-verify', (req, res) => {
+  try {
+    const authHeader = req.headers.authorization || req.body.token;
+    const decoded = verifyAuthToken(authHeader);
+    if (!decoded || decoded.type !== 'ADMIN') {
+      return res.status(401).json({ success: false, error: 'Sesión expirada o no autorizada.' });
+    }
+
+    const user = db.prepare('SELECT id, nombre, num_doc, username, rol, email, telefono, activo FROM usuarios WHERE id = ?').get(decoded.userId);
+    if (!user || !user.activo) {
+      return res.status(401).json({ success: false, error: 'El usuario ya no está activo en el sistema.' });
+    }
+
+    res.json({ success: true, user });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 3. REGISTRO DE CLIENTE
+app.post('/api/auth/client-register', (req, res) => {
+  try {
+    const { nombre, email, password, telefono = '', num_doc = '', direccion = '' } = req.body;
+    if (!nombre || !email || !password) {
+      return res.status(400).json({ success: false, error: 'Nombre, correo electrónico y contraseña son obligatorios.' });
+    }
+
+    const cleanEmail = String(email).trim().toLowerCase();
+    const existing = db.prepare('SELECT id FROM clientes WHERE LOWER(email) = ?').get(cleanEmail);
+    if (existing) {
+      return res.status(400).json({ success: false, error: 'Este correo ya tiene una cuenta registrada. Por favor inicia sesión.' });
+    }
+
+    const pHash = hashPassword(password);
+    const stmt = db.prepare(`
+      INSERT INTO clientes (tipo_doc, num_doc, razon_social, email, password_hash, telefono, direccion, auth_provider)
+      VALUES (?, ?, ?, ?, ?, ?, ?, 'LOCAL')
+    `);
+    const result = stmt.run(
+      num_doc.length === 13 ? 'RUC' : (num_doc ? 'CEDULA' : 'CONSUMIDOR_FINAL'),
+      num_doc || '9999999999',
+      nombre.trim(),
+      cleanEmail,
+      pHash,
+      telefono.trim(),
+      direccion.trim()
+    );
+
+    const newClient = db.prepare('SELECT id, tipo_doc, num_doc, razon_social, email, telefono, direccion, avatar_url, auth_provider FROM clientes WHERE id = ?').get(result.lastInsertRowid);
+    const token = createAuthToken({ clientId: newClient.id, email: newClient.email, type: 'CLIENT' });
+
+    res.status(201).json({
+      success: true,
+      message: '¡Cuenta creada con éxito!',
+      token,
+      client: newClient
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 4. LOGIN DE CLIENTE
+app.post('/api/auth/client-login', (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ success: false, error: 'Ingresa tu correo o cédula y contraseña.' });
+    }
+
+    const clean = String(email).trim().toLowerCase();
+    const client = db.prepare(`
+      SELECT * FROM clientes 
+      WHERE LOWER(email) = ? OR num_doc = ?
+    `).get(clean, clean);
+
+    if (!client) {
+      return res.status(401).json({ success: false, error: 'No encontramos una cuenta con ese correo o cédula.' });
+    }
+
+    const pHash = hashPassword(password);
+    if (client.password_hash && client.password_hash !== pHash && client.password_hash !== password) {
+      return res.status(401).json({ success: false, error: 'Contraseña incorrecta.' });
+    }
+
+    const token = createAuthToken({ clientId: client.id, email: client.email, type: 'CLIENT' });
+    res.json({
+      success: true,
+      message: `¡Bienvenido/a de nuevo, ${client.razon_social}!`,
+      token,
+      client: {
+        id: client.id,
+        tipo_doc: client.tipo_doc,
+        num_doc: client.num_doc,
+        razon_social: client.razon_social,
+        email: client.email,
+        telefono: client.telefono,
+        direccion: client.direccion,
+        avatar_url: client.avatar_url,
+        auth_provider: client.auth_provider
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 5. LOGIN SOCIAL / GOOGLE DE CLIENTE
+app.post('/api/auth/client-social', (req, res) => {
+  try {
+    const { provider = 'GOOGLE', providerId, email, nombre, avatarUrl } = req.body;
+    if (!email && !providerId) {
+      return res.status(400).json({ success: false, error: 'Datos de proveedor social incompletos.' });
+    }
+
+    const cleanEmail = (email || '').trim().toLowerCase();
+    let client = null;
+
+    if (cleanEmail) {
+      client = db.prepare('SELECT * FROM clientes WHERE LOWER(email) = ?').get(cleanEmail);
+    }
+    if (!client && providerId) {
+      client = db.prepare('SELECT * FROM clientes WHERE google_id = ?').get(providerId);
+    }
+
+    if (client) {
+      db.prepare(`
+        UPDATE clientes 
+        SET google_id = COALESCE(NULLIF(google_id, ''), ?),
+            avatar_url = COALESCE(NULLIF(avatar_url, ''), ?),
+            auth_provider = ?
+        WHERE id = ?
+      `).run(providerId || '', avatarUrl || '', provider, client.id);
+      client = db.prepare('SELECT * FROM clientes WHERE id = ?').get(client.id);
+    } else {
+      const stmt = db.prepare(`
+        INSERT INTO clientes (tipo_doc, num_doc, razon_social, email, google_id, avatar_url, auth_provider)
+        VALUES ('CONSUMIDOR_FINAL', '9999999999', ?, ?, ?, ?, ?)
+      `);
+      const result = stmt.run(
+        (nombre || 'Cliente Google').trim(),
+        cleanEmail,
+        providerId || '',
+        avatarUrl || '',
+        provider
+      );
+      client = db.prepare('SELECT * FROM clientes WHERE id = ?').get(result.lastInsertRowid);
+    }
+
+    const token = createAuthToken({ clientId: client.id, email: client.email, type: 'CLIENT' });
+    res.json({
+      success: true,
+      message: `¡Sesión iniciada con ${provider}, hola ${client.razon_social}!`,
+      token,
+      client: {
+        id: client.id,
+        tipo_doc: client.tipo_doc,
+        num_doc: client.num_doc,
+        razon_social: client.razon_social,
+        email: client.email,
+        telefono: client.telefono,
+        direccion: client.direccion,
+        avatar_url: client.avatar_url,
+        auth_provider: client.auth_provider
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 6. DATOS DEL CLIENTE AUTENTICADO
+app.get('/api/auth/client-me', (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const decoded = verifyAuthToken(authHeader);
+    if (!decoded || decoded.type !== 'CLIENT') {
+      return res.status(401).json({ success: false, error: 'No autorizado' });
+    }
+
+    const client = db.prepare('SELECT id, tipo_doc, num_doc, razon_social, email, telefono, direccion, avatar_url, auth_provider FROM clientes WHERE id = ?').get(decoded.clientId);
+    if (!client) {
+      return res.status(404).json({ success: false, error: 'Cliente no encontrado' });
+    }
+
+    res.json({ success: true, client });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 7. PEDIDOS DEL CLIENTE AUTENTICADO
+app.get('/api/auth/client-orders', (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const decoded = verifyAuthToken(authHeader);
+    if (!decoded || decoded.type !== 'CLIENT') {
+      return res.status(401).json({ success: false, error: 'No autorizado' });
+    }
+
+    const orders = db.prepare(`
+      SELECT p.*, f.secuencial as factura_secuencial, f.clave_acceso as factura_clave
+      FROM pedidos p
+      LEFT JOIN facturas f ON f.pedido_id = p.id
+      WHERE p.cliente_id = ?
+      ORDER BY p.id DESC
+    `).all(decoded.clientId);
+
+    res.json({ success: true, data: orders });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ==========================================
 // 9. GESTIÓN DE USUARIOS & EQUIPO ADMIN
 // ==========================================
 

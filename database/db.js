@@ -295,6 +295,12 @@ function initSchema() {
   try { db.exec(`ALTER TABLE pedidos ADD COLUMN gps_lng REAL;`); } catch(e) {}
   try { db.exec(`ALTER TABLE pedidos ADD COLUMN gps_maps_url TEXT;`); } catch(e) {}
 
+  // Columnas para autenticación de clientes y login social
+  try { db.exec(`ALTER TABLE clientes ADD COLUMN password_hash TEXT DEFAULT '';`); } catch(e) {}
+  try { db.exec(`ALTER TABLE clientes ADD COLUMN google_id TEXT DEFAULT '';`); } catch(e) {}
+  try { db.exec(`ALTER TABLE clientes ADD COLUMN avatar_url TEXT DEFAULT '';`); } catch(e) {}
+  try { db.exec(`ALTER TABLE clientes ADD COLUMN auth_provider TEXT DEFAULT 'LOCAL';`); } catch(e) {}
+
   // Sembrar usuario administrador inicial si no existe
   try {
     const checkAdmin = db.prepare(`SELECT id FROM usuarios WHERE username = 'admin'`).get();
