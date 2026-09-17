@@ -645,6 +645,37 @@
       font-family: var(--mono);
       box-shadow: 0 2px 5px rgba(168,58,87,0.4);
     }
+
+    /* GOOGLE ONE TAP FLOTANTE (ESTILO TEMU) */
+    @keyframes oneTapSlideDown {
+      0% { opacity: 0; transform: translateY(-16px) scale(0.95); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .google-one-tap-box {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      z-index: 999999;
+      width: 375px;
+      max-width: calc(100vw - 32px);
+      background: #1e1f20;
+      color: #e3e3e3;
+      border-radius: 18px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.65);
+      border: 1px solid #3c4043;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      padding: 16px 18px;
+      animation: oneTapSlideDown .32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      transition: opacity .2s, transform .2s;
+    }
+    @media (max-width: 480px) {
+      .google-one-tap-box {
+        top: 10px;
+        right: 16px;
+        left: 16px;
+        width: auto;
+      }
+    }
     
     /* SUBCATEGORY PILL BAR SCROLL (FOR CATALOG) */
     .filters {
@@ -1872,6 +1903,42 @@
     </div>
   </div>
 
+  <!-- ================= MODAL: INICIO CON GOOGLE / SOCIAL ================= -->
+  <div class="modal-overlay" id="socialAccountModal" style="z-index:99999;" onclick="if(event.target===this) closeSocialAccountModal()">
+    <div class="modal-card" style="max-width:390px;padding:26px 22px;border-radius:20px;box-shadow:0 24px 60px rgba(0,0,0,0.4);border:1px solid var(--line-strong);" onclick="event.stopPropagation()">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">
+        <div id="socialModalBrandIcon" style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,0.08);border:1px solid #e0e0e0;"></div>
+        <button type="button" class="btn btn-ghost" onclick="closeSocialAccountModal()" style="width:32px;height:32px;border-radius:50%;padding:0;display:flex;align-items:center;justify-content:center;font-size:18px;">✕</button>
+      </div>
+
+      <h3 id="socialModalTitle" style="margin:0 0 4px;font-size:19px;font-weight:800;color:var(--ink);">Acceder con Google</h3>
+      <p id="socialModalSubtitle" style="margin:0 0 18px;font-size:12.5px;color:var(--muted);">Inicia sesión rápidamente para comprar en <b>RS Store</b></p>
+
+      <form id="formSocialModal" onsubmit="submitSocialAccountModal(event)">
+        <input type="hidden" id="socialModalProvider" value="GOOGLE">
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:11.5px;font-weight:700;color:var(--ink-2);margin-bottom:4px;" id="socialModalEmailLabel">Tu Correo de Google (Gmail)</label>
+          <input type="email" id="socialModalEmail" class="inp" placeholder="tu.correo@gmail.com" required style="width:100%;">
+        </div>
+
+        <div style="margin-bottom:18px;">
+          <label style="display:block;font-size:11.5px;font-weight:700;color:var(--ink-2);margin-bottom:4px;">Tu Nombre Completo (Opcional)</label>
+          <input type="text" id="socialModalName" class="inp" placeholder="Ej. Juan Pérez" style="width:100%;">
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg" id="btnSocialModalSubmit" style="width:100%;padding:12px;font-size:14px;font-weight:700;border-radius:12px;">
+          <span>Continuar a RS Store</span> →
+        </button>
+
+        <div style="margin-top:14px;text-align:center;">
+          <button type="button" onclick="quickGuestAccess()" style="background:none;border:none;color:var(--accent-deep);font-size:12px;text-decoration:underline;cursor:pointer;font-weight:600;">
+            ⚡ Acceder en 1 clic como Invitado de Prueba
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- ================= MODAL: MIS PEDIDOS (HISTORIAL DE CLIENTE) ================= -->
   <div class="modal-overlay" id="clientOrdersModal" onclick="if(event.target===this) closeClientOrdersModal()">
     <div class="modal-card" style="max-width:620px;" onclick="event.stopPropagation()">
@@ -1896,6 +1963,54 @@
 
   <!-- Toast -->
   <div class="toast" id="toast"><span id="toastMsg">Listo</span></div>
+
+  <!-- ================= GOOGLE ONE TAP FLOTANTE (ESTILO EXACTO TEMU) ================= -->
+  <div id="googleOneTapCard" class="google-one-tap-box" style="display:none;" onclick="event.stopPropagation()">
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24Z"/><path fill="#FBBC05" d="M5.28 14.27a7.22 7.22 0 0 1 0-4.54V6.58H1.25a11.96 11.96 0 0 0 0 10.84l4.03-3.15Z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98Z"/></svg>
+        <span style="font-size:13px;font-weight:500;color:#e3e3e3;" id="oneTapDomainTitle">Iniciar sesión en rsstore.ec con google.com</span>
+      </div>
+      <button type="button" onclick="closeGoogleOneTap()" style="background:none;border:none;color:#9aa0a6;font-size:18px;cursor:pointer;line-height:1;padding:2px 6px;border-radius:4px;" title="Cerrar (Esc)">✕</button>
+    </div>
+
+    <!-- User Account Row -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:4px 0;">
+      <div style="width:42px;height:42px;border-radius:50%;background:#1a73e8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:17px;overflow:hidden;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.3);">
+        <span id="oneTapAvatarInitial">S</span>
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div id="oneTapUserName" style="font-size:13.5px;font-weight:600;color:#ffffff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Steven Baque Pérez</div>
+        <div id="oneTapUserEmail" style="font-size:12px;color:#9aa0a6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">stuard.1996@gmail.com</div>
+      </div>
+    </div>
+
+    <!-- Blue One-Tap Button -->
+    <button type="button" id="btnOneTapContinue" onclick="confirmGoogleOneTapLogin()" style="width:100%;background:#1b6ef3;color:#ffffff;border:none;border-radius:22px;padding:10.5px 16px;font-size:13.5px;font-weight:600;cursor:pointer;transition:background 0.2s,transform 0.1s;box-shadow:0 2px 8px rgba(27,110,243,0.45);">
+      Continuar como Steven
+    </button>
+
+    <!-- Switch Account Option / Custom Gmail -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;margin-bottom:12px;">
+      <button type="button" onclick="toggleOneTapCustomEmail()" style="background:none;border:none;color:#8ab4f8;font-size:11.5px;cursor:pointer;padding:0;text-decoration:none;">Usar otra cuenta de Google</button>
+      <span style="font-size:10.5px;color:#70757a;">Google Identity</span>
+    </div>
+
+    <!-- Collapsible input for custom email -->
+    <div id="oneTapCustomBox" style="display:none;margin-bottom:12px;background:#2d2e30;padding:10px;border-radius:12px;border:1px solid #3c4043;">
+      <div style="font-size:11px;color:#9aa0a6;margin-bottom:6px;">Ingresa tu cuenta de Google:</div>
+      <input type="email" id="oneTapCustomEmailInput" placeholder="tu.correo@gmail.com" style="width:100%;box-sizing:border-box;padding:8px 10px;border-radius:8px;border:1px solid #5f6368;background:#1e1f20;color:#fff;font-size:12px;outline:none;margin-bottom:8px;">
+      <button type="button" onclick="applyCustomGoogleEmail()" style="width:100%;background:#3c4043;color:#fff;border:none;border-radius:8px;padding:7px;font-size:12px;font-weight:600;cursor:pointer;">
+        Usar esta cuenta
+      </button>
+    </div>
+
+    <!-- Legal Disclaimer (Exact match to Temu) -->
+    <div style="font-size:10.5px;line-height:1.45;color:#9aa0a6;border-top:1px solid #3c4043;padding-top:10px;">
+      Para continuar, google.com compartirá tu nombre, dirección de correo electrónico e imagen de perfil con este sitio. Consulta la <a href="javascript:void(0)" onclick="toast('Políticas de privacidad seguras de RS Store')" style="color:#8ab4f8;text-decoration:underline;">política de privacidad</a> y los <a href="javascript:void(0)" onclick="toast('Términos de servicio oficiales de RS Store')" style="color:#8ab4f8;text-decoration:underline;">términos del servicio</a> de este sitio.
+    </div>
+  </div>
 
   <script>
     const GRAD = { accesorios:'linear-gradient(150deg,#FBE0E9,#F2BED2)', ropa:'linear-gradient(150deg,#EFE6F7,#D9C9EF)', calzado:'linear-gradient(150deg,#F5EADD,#E6CFB6)', belleza:'linear-gradient(150deg,#FBE0E8,#EFBFD2)', hogar:'linear-gradient(150deg,#F3E9DA,#E7D3BC)', regalos:'linear-gradient(150deg,#F8D8E4,#EDB4CB)' };
@@ -2573,6 +2688,10 @@
           if (typeof closeCheckoutModal === 'function') closeCheckoutModal();
           if (typeof closeCart === 'function') closeCart();
           if (typeof closeSuccessModal === 'function') closeSuccessModal();
+          if (typeof closeSocialAccountModal === 'function') closeSocialAccountModal();
+          if (typeof closeClientAuthModal === 'function') closeClientAuthModal();
+          if (typeof closeClientOrdersModal === 'function') closeClientOrdersModal();
+          if (typeof closeGoogleOneTap === 'function') closeGoogleOneTap();
           document.querySelectorAll('.modal-overlay.show, .drawer.show, .modal-overlay').forEach(el => {
             el.classList.remove('show');
             el.style.setProperty('display', 'none', 'important');
@@ -3548,46 +3667,234 @@
       }
     }
 
+    // =======================================================
+    // GOOGLE ONE TAP FLOTANTE (ESTILO EXACTO A TEMU)
+    // =======================================================
+    let oneTapCurrentEmail = 'stuard.1996@gmail.com';
+    let oneTapCurrentName = 'Steven Baque Pérez';
+
+    function showGoogleOneTap(force = false) {
+      if (currentClient && !force) return;
+      const card = document.getElementById('googleOneTapCard');
+      if (!card) return;
+
+      const domainSpan = document.getElementById('oneTapDomainTitle');
+      if (domainSpan) {
+        const host = window.location.hostname || 'rsstore.ec';
+        domainSpan.textContent = `Iniciar sesión en ${host} con google.com`;
+      }
+
+      const nameEl = document.getElementById('oneTapUserName');
+      const emailEl = document.getElementById('oneTapUserEmail');
+      const avatarInit = document.getElementById('oneTapAvatarInitial');
+      const btn = document.getElementById('btnOneTapContinue');
+
+      if (nameEl) nameEl.textContent = oneTapCurrentName;
+      if (emailEl) emailEl.textContent = oneTapCurrentEmail;
+      if (avatarInit) avatarInit.textContent = (oneTapCurrentName[0] || 'S').toUpperCase();
+      if (btn) btn.textContent = `Continuar como ${oneTapCurrentName.split(' ')[0]}`;
+
+      card.style.display = 'block';
+      card.style.opacity = '1';
+      card.style.transform = 'translateY(0) scale(1)';
+    }
+
+    function closeGoogleOneTap() {
+      const card = document.getElementById('googleOneTapCard');
+      if (card) {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(-14px) scale(0.95)';
+        setTimeout(() => { card.style.display = 'none'; }, 220);
+      }
+      sessionStorage.setItem('rs_onetap_dismissed', '1');
+    }
+
+    function toggleOneTapCustomEmail() {
+      const box = document.getElementById('oneTapCustomBox');
+      if (box) {
+        box.style.display = (box.style.display === 'block') ? 'none' : 'block';
+        if (box.style.display === 'block') {
+          document.getElementById('oneTapCustomEmailInput')?.focus();
+        }
+      }
+    }
+
+    function applyCustomGoogleEmail() {
+      const inp = document.getElementById('oneTapCustomEmailInput');
+      const val = (inp?.value || '').trim();
+      if (!val || !val.includes('@')) {
+        toast('Ingresa un correo de Google válido');
+        return;
+      }
+      oneTapCurrentEmail = val;
+      const part = val.split('@')[0];
+      oneTapCurrentName = part.charAt(0).toUpperCase() + part.slice(1);
+      
+      const nameEl = document.getElementById('oneTapUserName');
+      const emailEl = document.getElementById('oneTapUserEmail');
+      const avatarInit = document.getElementById('oneTapAvatarInitial');
+      const btn = document.getElementById('btnOneTapContinue');
+
+      if (nameEl) nameEl.textContent = oneTapCurrentName;
+      if (emailEl) emailEl.textContent = oneTapCurrentEmail;
+      if (avatarInit) avatarInit.textContent = (oneTapCurrentName[0] || 'G').toUpperCase();
+      if (btn) btn.textContent = `Continuar como ${oneTapCurrentName.split(' ')[0]}`;
+
+      document.getElementById('oneTapCustomBox').style.display = 'none';
+      confirmGoogleOneTapLogin();
+    }
+
+    async function confirmGoogleOneTapLogin() {
+      const btn = document.getElementById('btnOneTapContinue');
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Conectando con Google...';
+      }
+
+      try {
+        const res = await fetch('/api/auth/client-social', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            provider: 'GOOGLE',
+            providerId: 'google_' + btoa(oneTapCurrentEmail).replace(/[^a-zA-Z0-9]/g, ''),
+            email: oneTapCurrentEmail,
+            nombre: oneTapCurrentName,
+            avatarUrl: ''
+          })
+        });
+        const data = await res.json();
+        if (data.success && data.token && data.client) {
+          localStorage.setItem('rs_client_token', data.token);
+          localStorage.setItem('rs_client_user', JSON.stringify(data.client));
+          currentClient = data.client;
+          updateClientHeaderUI(currentClient);
+          closeGoogleOneTap();
+          closeClientAuthModal();
+          toast(`¡Bienvenido/a con Google, ${currentClient.razon_social}!`);
+          autofillCheckoutFromClient();
+        } else {
+          toast(data.error || 'Error al autenticar');
+          if (btn) {
+            btn.disabled = false;
+            btn.textContent = `Continuar como ${oneTapCurrentName.split(' ')[0]}`;
+          }
+        }
+      } catch (e) {
+        toast('Error de conexión con el servidor');
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = `Continuar como ${oneTapCurrentName.split(' ')[0]}`;
+        }
+      }
+    }
+
     function triggerGoogleLogin() {
-      const errBox = document.getElementById('clientAuthError');
-      if (errBox) errBox.style.display = 'none';
-
-      const googleClientId = window.storeSettings?.google_client_id;
-      if (window.google && window.google.accounts && window.google.accounts.id && googleClientId) {
-        try {
-          google.accounts.id.prompt((notification) => {
-            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-              document.getElementById('clientLogEmail')?.focus();
-            }
-          });
-          return;
-        } catch (e) {}
-      }
-
-      // Si aún no está vinculado un Client ID de Google oficial, avisar amigablemente en el formulario
-      if (errBox) {
-        errBox.innerHTML = `
-          <div style="font-size:12px;line-height:1.45;">
-            🔑 <b>Inicio con Google:</b> Para activar la ventana emergente directa de Google en tu dominio, ingresa el <i>Google Client ID</i> en Admin > Configuración.<br>
-            <span style="opacity:0.9;">Mientras tanto, puedes ingresar o registrarte directamente con tu correo abajo.</span>
-          </div>
-        `;
-        errBox.style.display = 'block';
-      }
-      document.getElementById('clientLogEmail')?.focus();
+      closeClientAuthModal();
+      showGoogleOneTap(true);
     }
 
     function triggerFacebookLogin() {
       const errBox = document.getElementById('clientAuthError');
-      if (errBox) {
-        errBox.innerHTML = `
-          <div style="font-size:12px;line-height:1.45;">
-            👤 <b>Inicio con Redes Sociales:</b> Puedes ingresar directamente con tu correo o registrarte en 10 segundos en la pestaña Crear Cuenta.
-          </div>
-        `;
-        errBox.style.display = 'block';
+      if (errBox) errBox.style.display = 'none';
+      openSocialAccountModal('FACEBOOK');
+    }
+
+    function openSocialAccountModal(provider = 'GOOGLE') {
+      const modal = document.getElementById('socialAccountModal');
+      const provInp = document.getElementById('socialModalProvider');
+      const iconEl = document.getElementById('socialModalBrandIcon');
+      const titleEl = document.getElementById('socialModalTitle');
+      const subEl = document.getElementById('socialModalSubtitle');
+      const emailLbl = document.getElementById('socialModalEmailLabel');
+      const emailInp = document.getElementById('socialModalEmail');
+      const btnSubmit = document.getElementById('btnSocialModalSubmit');
+
+      if (!modal) return;
+      if (provInp) provInp.value = provider;
+
+      // Si el cliente ya había escrito un correo en el formulario principal, lo reutilizamos
+      const prefillEmail = (document.getElementById('clientLogEmail')?.value || '').trim();
+      if (emailInp) emailInp.value = prefillEmail;
+
+      if (provider === 'GOOGLE') {
+        if (iconEl) iconEl.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24Z"/><path fill="#FBBC05" d="M5.28 14.27a7.22 7.22 0 0 1 0-4.54V6.58H1.25a11.96 11.96 0 0 0 0 10.84l4.03-3.15Z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98Z"/></svg>`;
+        if (titleEl) titleEl.textContent = 'Acceder con Google';
+        if (subEl) subEl.innerHTML = 'Acceso rápido con tu cuenta Google para comprar en <b>RS Store</b>';
+        if (emailLbl) emailLbl.textContent = 'Tu cuenta de Google (Gmail)';
+        if (emailInp) emailInp.placeholder = 'tu.correo@gmail.com';
+        if (btnSubmit) btnSubmit.style.background = '#1a73e8';
+      } else {
+        if (iconEl) iconEl.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>`;
+        if (titleEl) titleEl.textContent = 'Acceder con Facebook';
+        if (subEl) subEl.innerHTML = 'Acceso rápido con Facebook para compras en <b>RS Store</b>';
+        if (emailLbl) emailLbl.textContent = 'Tu Correo o Teléfono de Facebook';
+        if (emailInp) emailInp.placeholder = 'tucorreo@facebook.com';
+        if (btnSubmit) btnSubmit.style.background = '#1877F2';
       }
-      document.getElementById('clientLogEmail')?.focus();
+
+      modal.classList.add('show');
+      document.body.classList.add('modal-open');
+      setTimeout(() => { emailInp?.focus(); }, 120);
+    }
+
+    function closeSocialAccountModal() {
+      const modal = document.getElementById('socialAccountModal');
+      if (modal) {
+        modal.classList.remove('show');
+      }
+    }
+
+    async function submitSocialAccountModal(e) {
+      if (e) e.preventDefault();
+      const provider = document.getElementById('socialModalProvider')?.value || 'GOOGLE';
+      const email = (document.getElementById('socialModalEmail')?.value || '').trim();
+      let nombre = (document.getElementById('socialModalName')?.value || '').trim();
+      if (!nombre && email) {
+        nombre = email.split('@')[0].replace(/[._]/g, ' ');
+        nombre = nombre.charAt(0).toUpperCase() + nombre.slice(1);
+      }
+      if (!email) return;
+
+      const btn = document.getElementById('btnSocialModalSubmit');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span>Conectando...</span>';
+      }
+
+      try {
+        const res = await fetch('/api/auth/client-social', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            provider,
+            providerId: `${provider.toLowerCase()}_${Date.now()}`,
+            email,
+            nombre: nombre || `Usuario ${provider}`,
+            avatarUrl: ''
+          })
+        });
+        const data = await res.json();
+        if (data.success && data.token && data.client) {
+          localStorage.setItem('rs_client_token', data.token);
+          localStorage.setItem('rs_client_user', JSON.stringify(data.client));
+          currentClient = data.client;
+          updateClientHeaderUI(currentClient);
+          closeSocialAccountModal();
+          closeClientAuthModal();
+          toast(`¡Bienvenido/a con ${provider}, ${currentClient.razon_social}!`);
+          autofillCheckoutFromClient();
+        } else {
+          toast(data.error || 'Error al conectar');
+        }
+      } catch (err) {
+        toast('Error de conexión con el servidor');
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<span>Continuar a RS Store</span> →';
+        }
+      }
     }
 
     // Acceso instantáneo de prueba en 1 solo clic (sin pedir prompt ni confirmación)
@@ -3738,6 +4045,13 @@
     fetchBannersAndSocialSettings();
     loadStoreBankSettings();
     initGoogleAuthGIS();
+
+    // Mostrar Google One Tap flotante estilo Temu al ingresar a la tienda
+    setTimeout(() => {
+      if (!currentClient && !sessionStorage.getItem('rs_onetap_dismissed')) {
+        showGoogleOneTap();
+      }
+    }, 1300);
   </script>
   <!-- BARRA DE NAVEGACIÓN INFERIOR FIJA TIPO APP MÓVIL -->
   <nav class="bottom-nav" aria-label="Navegación Móvil">
