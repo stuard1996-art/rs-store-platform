@@ -62,16 +62,16 @@ app.use((req, res, next) => {
 
 // Rutas amigables multi-empresa
 app.get('/t/:tenantSlug', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile('index.html', { root: path.join(__dirname, 'public') });
 });
 app.get('/t/:tenantSlug/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+  res.sendFile('admin.html', { root: path.join(__dirname, 'public') });
 });
 app.get('/t/:tenantSlug/admin.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+  res.sendFile('admin.html', { root: path.join(__dirname, 'public') });
 });
 app.get('/superadmin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'superadmin.html'));
+  res.sendFile('superadmin.html', { root: path.join(__dirname, 'public') });
 });
 
 // Serve static frontend files with no-cache for HTML files
@@ -818,6 +818,42 @@ app.post('/api/settings', (req, res) => {
       updateStmt.run(k, String(v));
     }
     db.exec('COMMIT;');
+
+    // Sync visual branding & company info to masterDb.empresas
+    if (req.tenantSlug) {
+      try {
+        const b = req.body;
+        tenantManager.masterDb.prepare(`
+          UPDATE empresas SET
+            nombre_comercial = COALESCE(?, nombre_comercial),
+            slogan = COALESCE(?, slogan),
+            color_primario = COALESCE(?, color_primario),
+            color_secundario = COALESCE(?, color_secundario),
+            color_suave = COALESCE(?, color_suave),
+            hero_titulo = COALESCE(?, hero_titulo),
+            hero_subtitulo = COALESCE(?, hero_subtitulo),
+            hero_imagen = COALESCE(?, hero_imagen),
+            rubro = COALESCE(?, rubro),
+            ciudad_matriz = COALESCE(?, ciudad_matriz),
+            provincia_matriz = COALESCE(?, provincia_matriz)
+          WHERE slug = ?
+        `).run(
+          b.nombre_tienda || null,
+          b.slogan || null,
+          b.color_primario || null,
+          b.color_secundario || null,
+          b.color_suave || null,
+          b.hero_titulo || null,
+          b.hero_subtitulo || null,
+          b.hero_imagen || null,
+          b.rubro || null,
+          b.ciudad_matriz || null,
+          b.provincia_matriz || null,
+          req.tenantSlug
+        );
+      } catch (e) {}
+    }
+
     res.json({ success: true, message: 'Configuración actualizada exitosamente' });
   } catch (err) {
     db.exec('ROLLBACK;');
@@ -2326,6 +2362,15 @@ app.get('/api/tenant/current', (req, res) => {
     const configMap = {};
     for (const r of configRows) configMap[r.clave] = r.valor;
 
+    let parsedCats = [];
+    try {
+      if (ctx.tenant?.categorias) {
+        parsedCats = typeof ctx.tenant.categorias === 'string' ? JSON.parse(ctx.tenant.categorias) : ctx.tenant.categorias;
+      } else if (configMap.categorias) {
+        parsedCats = JSON.parse(configMap.categorias);
+      }
+    } catch(e) {}
+
     res.json({
       success: true,
       data: {
@@ -2334,6 +2379,15 @@ app.get('/api/tenant/current', (req, res) => {
         razon_social: ctx.tenant?.razon_social || configMap.razon_social || '',
         ruc: ctx.tenant?.ruc || configMap.ruc_emisor || '',
         dominio_personalizado: ctx.tenant?.dominio_personalizado || '',
+        rubro: ctx.tenant?.rubro || configMap.rubro || 'MODA',
+        slogan: ctx.tenant?.slogan || configMap.slogan || 'ESTILO · CALIDAD · ATENCIÓN',
+        color_primario: ctx.tenant?.color_primario || configMap.color_primario || '#A8324E',
+        color_secundario: ctx.tenant?.color_secundario || configMap.color_secundario || '#7B113A',
+        color_suave: ctx.tenant?.color_suave || configMap.color_suave || '#FAF5F6',
+        hero_titulo: ctx.tenant?.hero_titulo || configMap.hero_titulo || '',
+        hero_subtitulo: ctx.tenant?.hero_subtitulo || configMap.hero_subtitulo || '',
+        hero_imagen: ctx.tenant?.hero_imagen || configMap.hero_imagen || '',
+        categorias: parsedCats,
         provincia_matriz: ctx.tenant?.provincia_matriz || configMap.provincia_matriz || 'Guayas',
         ciudad_matriz: ctx.tenant?.ciudad_matriz || configMap.ciudad_matriz || 'Guayaquil',
         ciudades_zona_local: ctx.tenant?.ciudades_zona_local || configMap.ciudades_zona_local || 'Guayaquil',
@@ -2352,6 +2406,14 @@ app.get('/api/tenant/current', (req, res) => {
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
+});
+
+// Presets de Rubros / Industrias
+app.get('/api/superadmin/rubro-presets', (req, res) => {
+  res.json({
+    success: true,
+    data: tenantManager.RUBRO_PRESETS
+  });
 });
 
 // Reactivar licencia con clave

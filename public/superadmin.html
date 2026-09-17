@@ -538,6 +538,50 @@
             </div>
           </div>
 
+          <!-- SELECCIÓN DE RUBRO / INDUSTRIA & COLORES -->
+          <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:14px;">
+            <div style="font-weight:700;font-size:12.5px;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:6px;">
+              <span>🎨</span> Rubro del Negocio, Colores &amp; Identidad Visual
+            </div>
+            <div class="f-row">
+              <div>
+                <label class="f-label">Rubro / Giro de Negocio *</label>
+                <select class="f-input" id="newRubro" onchange="onRubroSelectChange()">
+                  <option value="JOYERIA">💎 Joyería, Relojes &amp; Accesorios Finos</option>
+                  <option value="TECNOLOGIA">💻 Tecnología, Computación &amp; Celulares</option>
+                  <option value="CALZADO">👟 Calzado, Zapatos &amp; Sneakers</option>
+                  <option value="MODA">👗 Moda &amp; Ropa Boutique</option>
+                  <option value="BELLEZA">💄 Belleza, Cosméticos &amp; Skincare</option>
+                  <option value="ALIMENTOS">🍕 Alimentos, Bebidas &amp; Delicatessen</option>
+                  <option value="GENERAL" selected>🛒 Tienda General / Multirubro</option>
+                </select>
+                <div class="f-help">Auto-configura slogan, fotos hero, categorías y colores sugeridos.</div>
+              </div>
+              <div>
+                <label class="f-label">Color Primario de Marca</label>
+                <div style="display:flex;gap:8px;align-items:center;">
+                  <input type="color" id="newColorPicker" value="#0D9488" style="width:46px;height:38px;border-radius:8px;border:1px solid var(--border-strong);background:var(--surface);cursor:pointer;padding:2px;" oninput="document.getElementById('newColorHex').value=this.value">
+                  <input class="f-input" id="newColorHex" value="#0D9488" placeholder="#0D9488" style="font-family:var(--font-mono);font-size:12px;text-transform:uppercase;" oninput="document.getElementById('newColorPicker').value=this.value">
+                </div>
+              </div>
+            </div>
+
+            <div class="f-group" style="margin-top:8px;">
+              <label class="f-label">Slogan o Lema Comercial</label>
+              <input class="f-input" id="newSlogan" placeholder="VARIEDAD · CALIDAD · ATENCIÓN">
+            </div>
+
+            <div class="f-group">
+              <label class="f-label">Título de Portada (Hero Banner)</label>
+              <input class="f-input" id="newHeroTitulo" placeholder="Los mejores productos para tu estilo de vida.">
+            </div>
+
+            <div class="f-group" style="margin-bottom:0;">
+              <label class="f-label">Descripción del Banner Hero</label>
+              <textarea class="f-input" id="newHeroSubtitulo" style="resize:vertical;min-height:50px;font-size:12.5px;" placeholder="Encuentra variedad, precios justos y envíos rápidos a todo Ecuador."></textarea>
+            </div>
+          </div>
+
           <div class="f-group">
             <label class="f-label">Dominio Personalizado (Opcional para Marca Blanca)</label>
             <input class="f-input" id="newDominio" placeholder="Ej. www.editec.ec o tienda.editec.com">
@@ -631,6 +675,34 @@
     </div>
   </div>
 
+  <!-- MODAL: TARJETA DE BIENVENIDA WHATSAPP -->
+  <div class="modal-overlay" id="whatsappCardModal" onclick="if(event.target===this) closeWhatsappCardModal()">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3 id="waModalTitle">📲 Tarjeta de Bienvenida para el Cliente</h3>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeWhatsappCardModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:12px;">
+          Copia este mensaje listo para enviar a tu cliente por WhatsApp. Contiene el enlace a su tienda, su enlace exclusivo al <b>Panel Administrativo</b> y sus credenciales:
+        </p>
+        <textarea class="f-input" id="waMessageText" readonly style="height:190px;font-family:var(--font-mono);font-size:12px;line-height:1.5;background:#111827;color:#F3F4F6;"></textarea>
+        
+        <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-primary" style="flex:1;" onclick="copyWaCard()">
+            📋 Copiar Mensaje para WhatsApp
+          </button>
+          <a id="btnSendDirectWa" href="#" target="_blank" class="btn btn-secondary" style="background:#16a34a;color:#fff;border-color:#16a34a;text-decoration:none;">
+            💬 Abrir en WhatsApp ↗
+          </a>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-secondary" onclick="closeWhatsappCardModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
   <div id="toast"></div>
 
   <script>
@@ -646,8 +718,18 @@
 
     async function loadTenants() {
       try {
-        const res = await fetch('/api/superadmin/tenants');
-        const json = await res.json();
+        const [tenantsRes, presetsRes] = await Promise.all([
+          fetch('/api/superadmin/tenants'),
+          fetch('/api/superadmin/rubro-presets').catch(() => null)
+        ]);
+        const json = await tenantsRes.json();
+        if (presetsRes) {
+          try {
+            const pJson = await presetsRes.json();
+            if (pJson.success) window.RUBRO_PRESETS = pJson.data;
+          } catch(e) {}
+        }
+
         if (json.success) {
           tenantsList = json.data;
           renderTenants(tenantsList);
@@ -669,6 +751,26 @@
       document.getElementById('kpiStorage').textContent = (totalBytes / (1024 * 1024)).toFixed(2) + ' MB';
     }
 
+    const rubroIcons = {
+      JOYERIA: '💎',
+      TECNOLOGIA: '💻',
+      CALZADO: '👟',
+      MODA: '👗',
+      BELLEZA: '💄',
+      ALIMENTOS: '🍕',
+      GENERAL: '🛒'
+    };
+
+    const rubroLabels = {
+      JOYERIA: '💎 Joyería',
+      TECNOLOGIA: '💻 Tecnología',
+      CALZADO: '👟 Calzado',
+      MODA: '👗 Ropa / Moda',
+      BELLEZA: '💄 Belleza',
+      ALIMENTOS: '🍕 Gourmet',
+      GENERAL: '🛒 General'
+    };
+
     function renderTenants(list) {
       const tbody = document.getElementById('tenantsTableBody');
       if (!list.length) {
@@ -681,19 +783,24 @@
         if (t.computedStatus === 'EXPIRADA') badgeClass = 'badge-expired';
         else if (t.computedStatus === 'SUSPENDIDA') badgeClass = 'badge-suspended';
 
-        const storeUrl = `/t/${t.slug}`;
-        const adminUrl = `/t/${t.slug}/admin`;
+        const storeUrl = t.dominio_personalizado ? `https://${t.dominio_personalizado}` : `/t/${t.slug}`;
+        const adminUrl = t.dominio_personalizado ? `https://${t.dominio_personalizado}/admin` : `/t/${t.slug}/admin`;
 
         return `
           <tr>
             <td>
               <div style="display:flex;align-items:center;gap:10px;">
-                <div style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:18px;">
-                  🏢
+                <div style="width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:20px;">
+                  ${rubroIcons[t.rubro] || '🏢'}
                 </div>
                 <div>
                   <b style="font-size:14.5px;color:#fff;display:block;">${escapeHtml(t.nombre_comercial)}</b>
-                  <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">${t.slug}</span>
+                  <div style="display:flex;align-items:center;gap:6px;margin-top:2px;">
+                    <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">${t.slug}</span>
+                    <span class="badge" style="background:rgba(255,255,255,0.07);font-size:10px;color:#cbd5e1;padding:1px 6px;">
+                      ${rubroLabels[t.rubro] || t.rubro || 'General'}
+                    </span>
+                  </div>
                 </div>
               </div>
             </td>
@@ -730,7 +837,16 @@
               <span style="font-size:11px;color:var(--text-muted);">${t.slug}.sqlite</span>
             </td>
             <td style="text-align:right;">
-              <div class="actions" style="justify-content:flex-end;">
+              <div class="actions" style="justify-content:flex-end;gap:4px;">
+                <a href="${adminUrl}" target="_blank" class="btn btn-secondary btn-sm" title="Abrir Panel Administrativo del Cliente" style="color:#6366F1;font-weight:700;">
+                  ⚙️ Admin ↗
+                </a>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="copyAdminLink('${t.slug}', '${t.dominio_personalizado || ''}')" title="Copiar enlace del panel admin para el cliente">
+                  🔗 Link
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="openWaCard('${t.slug}')" title="Tarjeta de bienvenida para WhatsApp" style="color:#10B981;font-weight:700;">
+                  📲 WA
+                </button>
                 <button type="button" class="btn btn-secondary btn-sm" onclick="quickRenew('${t.slug}', 15)" title="Dar 15 días de prueba">
                   🎁 +15d
                 </button>
@@ -740,9 +856,6 @@
                 <button type="button" class="btn btn-secondary btn-sm" onclick="quickRenew('${t.slug}', 365)" title="Renovar 1 año">
                   🏆 +1 Año
                 </button>
-                <a href="${adminUrl}" target="_blank" class="btn btn-secondary btn-sm" title="Abrir Panel Administrativo del Cliente">
-                  ⚙️ Admin
-                </a>
                 <button type="button" class="btn btn-secondary btn-sm" onclick="openLicenseModal('${t.slug}')" title="Clave y Gestión de Licencia">
                   🔑 Clave
                 </button>
@@ -759,6 +872,79 @@
       }).join('');
     }
 
+    function copyAdminLink(slug, customDomain) {
+      const origin = window.location.origin;
+      const adminUrl = customDomain ? `https://${customDomain}/admin` : `${origin}/t/${slug}/admin`;
+      navigator.clipboard.writeText(adminUrl).then(() => {
+        toast(`¡Enlace del panel admin copiado al portapapeles! (${adminUrl})`);
+      });
+    }
+
+    function openWaCard(slug, rawPass) {
+      const tenant = tenantsList.find(t => t.slug === slug);
+      if (!tenant) return;
+
+      const origin = window.location.origin;
+      const storeUrl = tenant.dominio_personalizado ? `https://${tenant.dominio_personalizado}` : `${origin}/t/${tenant.slug}`;
+      const adminUrl = tenant.dominio_personalizado ? `https://${tenant.dominio_personalizado}/admin` : `${origin}/t/${tenant.slug}/admin`;
+      const passText = rawPass || 'admin123';
+
+      const planName = tenant.licencia_tipo === 'PRUEBA' ? 'Prueba Gratuita (15 días)' : (tenant.licencia_tipo === 'MENSUAL' ? 'Suscripción Mensual' : (tenant.licencia_tipo === 'ANUAL' ? 'Licencia Anual' : 'Vitalicia'));
+
+      const msg = `🌟 ¡Hola! Bienvenido a tu plataforma y tienda online:
+
+🏢 *Empresa:* ${tenant.nombre_comercial}
+🛍️ *Tu Tienda Online:* ${storeUrl}
+⚙️ *Tu Panel Administrativo:* ${adminUrl}
+
+👤 *Usuario:* admin
+🔑 *Contraseña Inicial:* ${passText}
+
+🎁 *Plan de Acceso:* ${planName}
+📅 *Fecha de Vigencia:* ${tenant.licencia_fin}
+
+_En tu panel administrativo puedes subir tus productos, inventario, gestionar clientes y emitir facturación electrónica legal SRI._`;
+
+      document.getElementById('waModalTitle').textContent = `📲 Tarjeta de Bienvenida · ${tenant.nombre_comercial}`;
+      document.getElementById('waMessageText').value = msg;
+      document.getElementById('btnSendDirectWa').href = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+      document.getElementById('whatsappCardModal').classList.add('show');
+    }
+
+    function closeWhatsappCardModal() {
+      document.getElementById('whatsappCardModal').classList.remove('show');
+    }
+
+    function copyWaCard() {
+      const txt = document.getElementById('waMessageText').value;
+      navigator.clipboard.writeText(txt).then(() => {
+        toast('¡Mensaje para WhatsApp copiado al portapapeles!');
+      });
+    }
+
+    const DEFAULT_RUBRO_PRESETS = {
+      MODA: { slogan: 'ROPA · ESTILO · TÚ', hero_titulo: 'Ropa y accesorios con <em>estilo propio.</em>', hero_subtitulo: 'Prendas, calzado, belleza y detalles elegidos uno por uno. Calidad garantizada, facturación electrónica legal y envíos a todo Ecuador.', color_primario: '#A8324E' },
+      JOYERIA: { slogan: 'BRILLO · ELEGANCIA · EXCLUSIVIDAD', hero_titulo: 'Joyas y accesorios que <em>resaltan tu esencia.</em>', hero_subtitulo: 'Diseños exclusivos en plata 925, oro laminado, acero inoxidable y pedrería fina. Calidad garantizada y envíos seguros a todo Ecuador.', color_primario: '#9D174D' },
+      TECNOLOGIA: { slogan: 'INNOVACIÓN · RENDIMIENTO · GARANTÍA', hero_titulo: 'Tecnología y dispositivos al <em>mejor precio del mercado.</em>', hero_subtitulo: 'Equipos de alta gama, laptops, smartphones, audio y periféricos con garantía oficial, servicio técnico y envíos express a todo el país.', color_primario: '#2563EB' },
+      CALZADO: { slogan: 'CONFORT · ESTILO · DURABILIDAD', hero_titulo: 'Calzado diseñado para <em>acompañar cada paso.</em>', hero_subtitulo: 'Zapatos deportivos, casuales y formales para toda la familia. Diseños anatómicos, máximo confort y acabados de primera calidad.', color_primario: '#D97706' },
+      BELLEZA: { slogan: 'CUIDADO · BELLEZA · BIENESTAR', hero_titulo: 'Cosméticos y cuidado facial para <em>tu rutina diaria.</em>', hero_subtitulo: 'Productos dermatológicamente comprobados, maquillaje profesional, fragancias exclusivas y cuidado capilar con entrega inmediata.', color_primario: '#DB2777' },
+      ALIMENTOS: { slogan: 'SABOR · FRESCURA · CALIDAD', hero_titulo: 'Sabores seleccionados preparados con <em>ingredientes frescos.</em>', hero_subtitulo: 'Disfruta de la mejor selección de productos gourmet, café de especialidad, postres y bebidas entregadas directamente en tu puerta.', color_primario: '#EA580C' },
+      GENERAL: { slogan: 'VARIEDAD · CALIDAD · ATENCIÓN', hero_titulo: 'Los mejores productos para <em>tu hogar y estilo de vida.</em>', hero_subtitulo: 'Encuentra variedad, precios justos, atención personalizada y entregas rápidas y garantizadas en todo el territorio nacional.', color_primario: '#0D9488' }
+    };
+
+    function onRubroSelectChange() {
+      const rubro = document.getElementById('newRubro').value;
+      const presets = window.RUBRO_PRESETS || DEFAULT_RUBRO_PRESETS;
+      const p = presets[rubro];
+      if (!p) return;
+
+      document.getElementById('newSlogan').value = p.slogan || '';
+      document.getElementById('newHeroTitulo').value = p.hero_titulo || '';
+      document.getElementById('newHeroSubtitulo').value = p.hero_subtitulo || '';
+      document.getElementById('newColorPicker').value = p.color_primario || '#0D9488';
+      document.getElementById('newColorHex').value = p.color_primario || '#0D9488';
+    }
+
     function filterTenants() {
       const q = document.getElementById('searchInput').value.trim().toLowerCase();
       if (!q) {
@@ -769,6 +955,7 @@
         (t.nombre_comercial || '').toLowerCase().includes(q) ||
         (t.slug || '').toLowerCase().includes(q) ||
         (t.ruc || '').toLowerCase().includes(q) ||
+        (t.rubro || '').toLowerCase().includes(q) ||
         (t.ciudad_matriz || '').toLowerCase().includes(q)
       );
       renderTenants(filtered);
@@ -797,6 +984,7 @@
       document.getElementById('newDuracionDias').value = 365;
       document.getElementById('newAdminUser').value = 'admin';
       document.getElementById('newAdminPass').value = 'admin123';
+      onRubroSelectChange();
       document.getElementById('createModal').classList.add('show');
     }
     function closeCreateModal() {
@@ -817,6 +1005,11 @@
         provincia_matriz: document.getElementById('newProvincia').value,
         ciudad_matriz: document.getElementById('newCiudad').value.trim(),
         dominio_personalizado: document.getElementById('newDominio').value.trim(),
+        rubro: document.getElementById('newRubro').value,
+        color_primario: document.getElementById('newColorHex').value.trim(),
+        slogan: document.getElementById('newSlogan').value.trim(),
+        hero_titulo: document.getElementById('newHeroTitulo').value.trim(),
+        hero_subtitulo: document.getElementById('newHeroSubtitulo').value.trim(),
         licencia_tipo: document.getElementById('newLicenciaTipo').value,
         duracion_dias: document.getElementById('newDuracionDias').value,
         admin_user: document.getElementById('newAdminUser').value.trim(),
@@ -836,7 +1029,8 @@
         if (json.success) {
           closeCreateModal();
           toast(`¡Empresa "${payload.nombre_comercial}" creada con éxito!`);
-          loadTenants();
+          await loadTenants();
+          openWaCard(payload.slug, payload.admin_pass);
         } else {
           alert('Error: ' + (json.error || 'No se pudo crear la empresa'));
         }

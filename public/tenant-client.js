@@ -242,9 +242,192 @@
           if (bannerHtml && !document.getElementById('agTrialBanner')) {
             document.body.insertAdjacentHTML('afterbegin', bannerHtml);
           }
+        } else {
+          // Rehidratar identidad visual de la tienda en storefront
+          rehydrateStorefrontBrand(t);
         }
       }
     } catch(e) {}
+  }
+
+  function rehydrateStorefrontBrand(t) {
+    if (!t) return;
+
+    // 1. Inyectar colores de marca
+    if (t.color_primario) {
+      document.documentElement.style.setProperty('--accent', t.color_primario);
+      document.documentElement.style.setProperty('--accent-deep', t.color_secundario || t.color_primario);
+      document.documentElement.style.setProperty('--accent-soft', t.color_suave || '#FDF2F8');
+      document.documentElement.style.setProperty('--primary', t.color_primario);
+    }
+
+    const adminUrl = (t.slug && t.slug !== 'rs-store') ? `/t/${t.slug}/admin` : '/admin';
+
+    // 2. Si no es RS Store, personalizar logotipo y textos
+    if (t.slug !== 'rs-store') {
+      // Navbar Logo watermark
+      const wm = document.querySelector('.logo .wm');
+      if (wm) {
+        wm.innerHTML = `<b>${escapeHtml(t.nombre_comercial)}</b><span>${escapeHtml(t.slogan || 'TIENDA OFICIAL')}</span>`;
+      }
+
+      // Logotipo dinámico o monograma en caso de no tener imagen
+      const logoImgs = document.querySelectorAll('.store-dyn-logo');
+      const initials = (t.nombre_comercial || 'ST')
+        .split(' ')
+        .map(w => w[0])
+        .filter(Boolean)
+        .slice(0, 2)
+        .join('')
+        .toUpperCase();
+
+      const monogramSvg = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="26" fill="${encodeURIComponent(t.color_secundario || '#7B113A')}"/><text x="50%" y="54%" font-family="system-ui,sans-serif" font-weight="900" font-size="38" fill="%23ffffff" dominant-baseline="middle" text-anchor="middle">${initials}</text></svg>`;
+
+      logoImgs.forEach(img => {
+        if (!img.src || img.src.includes('rs-store-logo.svg')) {
+          img.src = monogramSvg;
+        }
+        img.alt = t.nombre_comercial;
+      });
+
+      // Announcement Bar
+      const announce = document.querySelector('.announce span');
+      if (announce) {
+        const envioMin = t.envio_gratis_desde || '50';
+        const ciudad = t.ciudad_matriz || 'Ecuador';
+        announce.innerHTML = `Envío <b>gratis</b> en compras desde $${envioMin} · Retiro en tienda en <b>${escapeHtml(ciudad)}</b> · Facturación legal SRI`;
+      }
+
+      // Hero Eyebrow
+      const eyebrow = document.querySelector('.hero .eyebrow');
+      if (eyebrow) {
+        eyebrow.textContent = `Catálogo 2026 · ${t.nombre_comercial}`;
+      }
+
+      // Hero Title
+      const heroH1 = document.querySelector('.hero h1');
+      if (heroH1 && t.hero_titulo) {
+        heroH1.innerHTML = t.hero_titulo;
+      } else if (heroH1) {
+        heroH1.innerHTML = `${escapeHtml(t.nombre_comercial)} con <em>estilo y calidad.</em>`;
+      }
+
+      // Hero Subtitle
+      const heroP = document.querySelector('.hero p');
+      if (heroP && t.hero_subtitulo) {
+        heroP.textContent = t.hero_subtitulo;
+      }
+
+      // Hero Background Photo
+      const heroBgPhoto = document.getElementById('heroBgPhoto');
+      if (heroBgPhoto && t.hero_imagen) {
+        heroBgPhoto.src = t.hero_imagen;
+        heroBgPhoto.alt = `${t.nombre_comercial} Catálogo`;
+      }
+
+      // Hero Card Overlay
+      const heroOverlay = document.querySelector('.hero-brand-overlay');
+      if (heroOverlay) {
+        const b = heroOverlay.querySelector('b');
+        const span = heroOverlay.querySelector('span');
+        if (b) b.textContent = t.nombre_comercial.toUpperCase();
+        if (span) span.textContent = (t.slogan || 'COLECCIÓN EXCLUSIVA 2026').toUpperCase();
+      }
+
+      // Footer brand details
+      const footBrandP = document.querySelector('.foot-brand p');
+      if (footBrandP && t.hero_subtitulo) {
+        footBrandP.textContent = `${t.nombre_comercial} · ${t.hero_subtitulo}`;
+      }
+
+      const footContact = document.querySelector('.foot-col:last-child');
+      if (footContact) {
+        footContact.innerHTML = `
+          <h4>Contacto</h4>
+          <a href="#">${escapeHtml(t.ciudad_matriz || 'Guayaquil')}, Ecuador</a>
+          <a href="mailto:${t.email_contacto || 'ventas@tienda.ec'}">${escapeHtml(t.email_contacto || 'ventas@tienda.ec')}</a>
+          <a href="https://wa.me/${(t.telefono_contacto || '').replace(/[^0-9]/g, '')}" target="_blank">${escapeHtml(t.telefono_contacto || '+593 99 999 9999')}</a>
+        `;
+      }
+
+      // Reset default activeGender to TODOS for non-clothing store and hide clothing chips
+      if (t.rubro && t.rubro !== 'MODA') {
+        window.activeGender = 'TODOS';
+        const shopFilters = document.querySelector('.shop-bar .filters');
+        if (shopFilters) shopFilters.style.display = 'none';
+      }
+
+      // Rehydrate Category Tabs
+      if (t.categorias && Array.isArray(t.categorias) && t.categorias.length) {
+        const catNav = document.querySelector('.gender-nav-tabs');
+        if (catNav) {
+          let tabsHtml = `<button type="button" class="gender-tab active" data-cat="all" onclick="handleTenantCatClick('all', this)">TODOS</button>`;
+          t.categorias.forEach(cat => {
+            tabsHtml += `<button type="button" class="gender-tab" data-cat="${escapeHtml(cat)}" onclick="handleTenantCatClick('${escapeHtml(cat)}', this)">${escapeHtml(cat.toUpperCase())}</button>`;
+          });
+          tabsHtml += `<button type="button" class="gender-tab promo-tab" data-cat="OFERTAS" onclick="handleTenantCatClick('OFERTAS', this)">🔥 OFERTAS</button>`;
+          catNav.innerHTML = tabsHtml;
+        }
+      }
+    }
+
+    // 3. Footer Copyright & Acceso Administrador (Visible y elegante en el pie)
+    const footBottom = document.querySelector('.foot-bottom');
+    if (footBottom && !document.getElementById('agAdminAccessLink')) {
+      const copySpan = footBottom.querySelector('span:first-child');
+      if (copySpan) {
+        copySpan.innerHTML = `© 2026 <b>${escapeHtml(t.nombre_comercial)}</b> · Facturación SRI`;
+      }
+
+      const adminBtn = document.createElement('a');
+      adminBtn.id = 'agAdminAccessLink';
+      adminBtn.href = adminUrl;
+      adminBtn.target = '_blank';
+      adminBtn.style.cssText = `
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 5px 14px; border-radius: 999px;
+        background: rgba(255,255,255,0.08);
+        color: var(--accent-deep, #7B113A); font-size: 11.5px; font-weight: 800;
+        text-decoration: none; border: 1px solid var(--accent, #A8324E);
+        transition: all 0.2s ease; cursor: pointer;
+      `;
+      adminBtn.innerHTML = `<span>🔒</span> Panel Administrativo (${escapeHtml(t.nombre_comercial)}) ↗`;
+      adminBtn.onmouseover = function() { this.style.transform = 'scale(1.04)'; };
+      adminBtn.onmouseout = function() { this.style.transform = 'scale(1)'; };
+      footBottom.appendChild(adminBtn);
+    }
+
+    // 4. Agregar enlace Admin en el menú de cuenta de cliente si existe
+    const clientMenuDropdown = document.getElementById('clientMenuDropdown');
+    if (clientMenuDropdown && !document.getElementById('agMenuAdminLink')) {
+      const listContainer = clientMenuDropdown.querySelector('div:last-child');
+      if (listContainer) {
+        const menuAdmin = document.createElement('a');
+        menuAdmin.id = 'agMenuAdminLink';
+        menuAdmin.href = adminUrl;
+        menuAdmin.target = '_blank';
+        menuAdmin.style.cssText = `
+          display: flex; align-items: center; gap: 8px; width: 100%;
+          padding: 8px 10px; border-radius: 10px; text-decoration: none;
+          background: rgba(99,102,241,0.08); color: #4F46E5;
+          font-size: 12.5px; font-weight: 700; margin-top: 4px;
+        `;
+        menuAdmin.innerHTML = `<span>⚙️</span> Panel de Dueño / Admin ↗`;
+        listContainer.appendChild(menuAdmin);
+      }
+    }
+  }
+
+  window.handleTenantCatClick = function(cat, el) {
+    if (window.setCategoryFilter) {
+      window.setCategoryFilter(cat, el);
+    } else if (window.setFilter) {
+      window.setFilter(cat, el);
+    }
+  };
+
+  function escapeHtml(s) {
+    return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
   if (document.readyState === 'loading') {

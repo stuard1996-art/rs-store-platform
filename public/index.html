@@ -1385,7 +1385,7 @@
         <div style="background:#fff;border-radius:22px;padding:24px;border:1px solid var(--line);box-shadow:0 10px 30px -15px rgba(62,38,34,0.08);">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
             <div>
-              <h3 style="font-family:var(--serif);font-size:26px;margin:0;color:var(--ink);">Prendas en Promoción Directa</h3>
+              <h3 style="font-family:var(--serif);font-size:26px;margin:0;color:var(--ink);">Productos en Promoción Directa</h3>
               <div style="font-size:12.5px;color:var(--muted);">Productos con precio especial de liquidación y descuento inmediato.</div>
             </div>
             <button type="button" class="btn btn-outline btn-sm" onclick="goToPromociones()" style="font-size:12px;padding:7px 14px;">
@@ -1997,6 +1997,45 @@
       regalos:'<path d="M10 20h28v18H10z"/><path d="M10 20h28M24 20v18"/>'
     };
 
+    const RUBRO_FALLBACK_IMAGES = {
+      TECNOLOGIA: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=85',
+      JOYERIA: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=800&q=85',
+      CALZADO: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=800&q=85',
+      BELLEZA: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=85',
+      ALIMENTOS: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=85',
+      GENERAL: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=800&q=85',
+      MODA: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=800&q=85'
+    };
+
+    const BOUTIQUE_FALLBACK_IMAGES = {
+      'Aretes Lucía': 'https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&w=800&q=85',
+      'Bolso Mimosa': 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=800&q=85',
+      'Blusa Brisa': 'https://images.unsplash.com/photo-1618244972963-dbee1a7edc95?auto=format&fit=crop&w=800&q=85',
+      'Vestido Aurora': 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=85',
+      'Sandalias Nube': 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=800&q=85',
+      'Sérum Pétalo': 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=800&q=85',
+      'Vela Jardín': 'https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=800&q=85',
+      'Set Regalo Dulce': 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=800&q=85',
+      'Camisa Lino Classic': 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=800&q=85',
+      'Mocasines Cuero Habana': 'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?auto=format&fit=crop&w=800&q=85',
+      'Conjunto Pastel Safari': 'https://images.unsplash.com/photo-1519457431-44ccd64a579b?auto=format&fit=crop&w=800&q=85',
+      'Zapatillas Mini Confort': 'https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&w=800&q=85',
+      'accesorios': 'https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&w=800&q=85',
+      'ropa': 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=85',
+      'calzado': 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=800&q=85',
+      'belleza': 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=800&q=85',
+      'hogar': 'https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=800&q=85',
+      'regalos': 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=800&q=85'
+    };
+
+    function getProductImage(p) {
+      if (p && p.img && p.img.trim()) return p.img.trim();
+      const tenantRubro = (window.__TENANT_DATA__ && window.__TENANT_DATA__.rubro) || 'MODA';
+      const defaultRubroImg = RUBRO_FALLBACK_IMAGES[tenantRubro] || RUBRO_FALLBACK_IMAGES.GENERAL;
+      if (!p) return defaultRubroImg;
+      return BOUTIQUE_FALLBACK_IMAGES[p.name] || BOUTIQUE_FALLBACK_IMAGES[p.cat] || defaultRubroImg;
+    }
+
     let products = [];
     let cart = [];
     let activeGender = 'MUJER';
@@ -2045,6 +2084,9 @@
     };
 
     function money(n) { return '$' + Number(n || 0).toFixed(2); }
+    function escapeHtml(s) {
+      return (s || '').toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
     function toast(msg) {
       const t = document.getElementById('toast');
       document.getElementById('toastMsg').textContent = msg;
@@ -2058,13 +2100,14 @@
         const res = await fetch('/api/products?onlyVisible=true');
         const json = await res.json();
         if (json.success) {
-          products = json.data;
+          products = json.data || [];
           document.getElementById('statProds').textContent = '+' + products.length;
-          renderSubcategoryPills();
-          renderProducts();
-          renderStandalonePromos();
+          try { renderSubcategoryPills(); } catch(e) { console.error('Pills error:', e); }
+          try { renderProducts(); } catch(e) { console.error('Render prods error:', e); }
+          try { renderStandalonePromos(); } catch(e) { console.error('Standalone promos error:', e); }
         }
       } catch (err) {
+        console.error('fetchProducts error:', err);
         document.getElementById('productsGrid').innerHTML = '<p style="grid-column:1/-1;text-align:center;color:red;">Error al conectar con la base de datos.</p>';
       }
     }
@@ -2094,15 +2137,21 @@
 
     function renderSubcategoryPills() {
       const desktopContainer = document.querySelector('.shop-bar .filters');
-      const cats = SUB_CATEGORIES_BY_GENDER[activeGender] || SUB_CATEGORIES_BY_GENDER['TODOS'];
-
-      if (desktopContainer) {
-        desktopContainer.innerHTML = cats.map(c => `
-          <button class="chip" data-cat="${c.id}" aria-pressed="${c.id === activeFilter ? 'true' : 'false'}" onclick="setFilter('${c.id}', this)">
-            ${c.label}
-          </button>
-        `).join('');
+      if (!desktopContainer) return;
+      
+      const isCustomRubro = window.__TENANT_DATA__ && window.__TENANT_DATA__.rubro && window.__TENANT_DATA__.rubro !== 'MODA';
+      if (isCustomRubro) {
+        desktopContainer.style.display = 'none';
+        return;
       }
+      desktopContainer.style.display = 'flex';
+
+      const cats = SUB_CATEGORIES_BY_GENDER[activeGender] || SUB_CATEGORIES_BY_GENDER['TODOS'];
+      desktopContainer.innerHTML = cats.map(c => `
+        <button class="chip" data-cat="${c.id}" aria-pressed="${c.id === activeFilter ? 'true' : 'false'}" onclick="setFilter('${c.id}', this)">
+          ${c.label}
+        </button>
+      `).join('');
     }
 
     window.setFilter = function(cat, el) {
@@ -2111,6 +2160,22 @@
         b.setAttribute('aria-pressed', (b.dataset.cat || 'all') === activeFilter ? 'true' : 'false');
       });
       if (el) el.classList.add('active');
+      renderProducts();
+      const tienda = document.getElementById('tienda');
+      if (tienda && window.innerWidth <= 768) {
+        tienda.scrollIntoView({ behavior: 'smooth' });
+      }
+    };
+
+    window.setCategoryFilter = function(cat, el) {
+      activeGender = 'TODOS';
+      activeFilter = (cat || 'all').trim();
+
+      document.querySelectorAll('.gender-nav-tabs .gender-tab').forEach(b => {
+        b.classList.remove('active');
+      });
+      if (el) el.classList.add('active');
+
       renderProducts();
       const tienda = document.getElementById('tienda');
       if (tienda && window.innerWidth <= 768) {
@@ -2134,21 +2199,36 @@
           if (pGen !== activeGender && pGen !== 'UNISEX') return false;
         }
 
-        // 2. Filtrar por Subcategoría
+        // 2. Filtrar por Subcategoría / Categoría Multi-Rubro
         if (activeFilter === 'all') return true;
-        if (activeFilter === 'descuentos') return (p.was_price && Number(p.was_price) > Number(p.price));
-        if (p.cat === activeFilter) return true;
+        if (activeFilter === 'descuentos' || activeFilter === 'ofertas' || activeFilter === 'OFERTAS') {
+          return (p.was_price && Number(p.was_price) > Number(p.price));
+        }
+
+        const pCat = (p.cat || '').toLowerCase().trim();
+        const filt = (activeFilter || '').toLowerCase().trim();
+        if (pCat === filt) return true;
+
+        // Búsqueda inteligente por palabras clave de categoría
+        const filtWords = filt.split(/[\s,&+/]+/).filter(w => w.length > 2);
+        if (filtWords.some(w => pCat.includes(w))) return true;
+
         const nameLower = (p.name || '').toLowerCase();
         const descLower = (p.desc || '').toLowerCase();
-        if (activeFilter === 'vestidos' && (nameLower.includes('vestid') || descLower.includes('vestid'))) return true;
-        if (activeFilter === 'blusas' && (nameLower.includes('blus') || nameLower.includes('top') || descLower.includes('blus'))) return true;
-        if (activeFilter === 'pantalones' && (nameLower.includes('pant') || nameLower.includes('jean') || descLower.includes('pant'))) return true;
-        if (activeFilter === 'ropa' && (p.cat === 'ropa' || nameLower.includes('vestid') || nameLower.includes('blus') || nameLower.includes('pant') || nameLower.includes('camisa') || nameLower.includes('conjunto'))) return true;
-        if (activeFilter === 'calzado' && (p.cat === 'calzado' || nameLower.includes('sandalia') || nameLower.includes('zapato') || nameLower.includes('mocas') || nameLower.includes('zapatilla'))) return true;
-        if (activeFilter === 'accesorios' && (p.cat === 'accesorios' || nameLower.includes('bolso') || nameLower.includes('cartera') || nameLower.includes('arete') || nameLower.includes('collar'))) return true;
-        if (activeFilter === 'belleza' && (p.cat === 'belleza' || nameLower.includes('sérum') || nameLower.includes('serum') || nameLower.includes('crema') || nameLower.includes('labial'))) return true;
+        if (filtWords.some(w => nameLower.includes(w) || descLower.includes(w))) return true;
+
+        // Reglas de compatibilidad para ropa si es MODA
+        if (filt === 'vestidos' && (nameLower.includes('vestid') || descLower.includes('vestid'))) return true;
+        if (filt === 'blusas' && (nameLower.includes('blus') || nameLower.includes('top') || descLower.includes('blus'))) return true;
+        if (filt === 'pantalones' && (nameLower.includes('pant') || nameLower.includes('jean') || descLower.includes('pant'))) return true;
+        if (filt === 'ropa' && (pCat === 'ropa' || nameLower.includes('vestid') || nameLower.includes('blus') || nameLower.includes('pant') || nameLower.includes('camisa') || nameLower.includes('conjunto'))) return true;
+        if (filt === 'calzado' && (pCat === 'calzado' || nameLower.includes('sandalia') || nameLower.includes('zapato') || nameLower.includes('mocas') || nameLower.includes('zapatilla'))) return true;
+        if (filt === 'accesorios' && (pCat === 'accesorios' || nameLower.includes('bolso') || nameLower.includes('cartera') || nameLower.includes('arete') || nameLower.includes('collar'))) return true;
+        if (filt === 'belleza' && (pCat === 'belleza' || nameLower.includes('sérum') || nameLower.includes('serum') || nameLower.includes('crema') || nameLower.includes('labial'))) return true;
         return false;
       });
+
+      window.renderProducts = renderProducts;
 
       if (q) list = list.filter(p => p.name.toLowerCase().includes(q) || (p.desc || '').toLowerCase().includes(q));
 
@@ -2163,35 +2243,15 @@
 
       let selectedSizes = {};
 
-      const BOUTIQUE_FALLBACK_IMAGES = {
-        'Aretes Lucía': 'https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&w=800&q=85',
-        'Bolso Mimosa': 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=800&q=85',
-        'Blusa Brisa': 'https://images.unsplash.com/photo-1618244972963-dbee1a7edc95?auto=format&fit=crop&w=800&q=85',
-        'Vestido Aurora': 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=85',
-        'Sandalias Nube': 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=800&q=85',
-        'Sérum Pétalo': 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=800&q=85',
-        'Vela Jardín': 'https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=800&q=85',
-        'Set Regalo Dulce': 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=800&q=85',
-        'Camisa Lino Classic': 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=800&q=85',
-        'Mocasines Cuero Habana': 'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?auto=format&fit=crop&w=800&q=85',
-        'Conjunto Pastel Safari': 'https://images.unsplash.com/photo-1519457431-44ccd64a579b?auto=format&fit=crop&w=800&q=85',
-        'Zapatillas Mini Confort': 'https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&w=800&q=85',
-        'accesorios': 'https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&w=800&q=85',
-        'ropa': 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=85',
-        'calzado': 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=800&q=85',
-        'belleza': 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=800&q=85',
-        'hogar': 'https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=800&q=85',
-        'regalos': 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=800&q=85'
-      };
-
       grid.innerHTML = list.map(p => {
         const isOut = p.stock <= 0;
         const badges = [];
         if (isOut) badges.push('<span class="badge out">Agotado</span>');
-        else if (p.badge === 'sale') badges.push('<span class="badge sale">Oferta</span>');
-        else if (p.badge === 'nuevo') badges.push('<span class="badge">Nuevo</span>');
+        else if (p.badge === 'sale' || p.badge === 'OFERTA') badges.push('<span class="badge sale">Oferta</span>');
+        else if (p.badge === 'nuevo' || p.badge === 'NUEVO') badges.push('<span class="badge">Nuevo</span>');
+        else if (p.badge) badges.push(`<span class="badge sale">${escapeHtml(p.badge)}</span>`);
 
-        const imgUrl = (p.img && p.img.trim()) ? p.img : (BOUTIQUE_FALLBACK_IMAGES[p.name] || BOUTIQUE_FALLBACK_IMAGES[p.cat] || BOUTIQUE_FALLBACK_IMAGES.ropa);
+        const imgUrl = getProductImage(p);
         const media = `<img src="${imgUrl}" alt="${p.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.4s ease;">`;
 
         let galleryCount = 1;
@@ -2283,7 +2343,7 @@
       promoGrid.innerHTML = promoList.map(p => {
         const isOut = p.stock <= 0;
         const discountPct = p.was_price ? Math.round(((p.was_price - p.price) / p.was_price) * 100) : 20;
-        const imgUrl = (p.img && p.img.trim()) ? p.img : (BOUTIQUE_FALLBACK_IMAGES[p.name] || BOUTIQUE_FALLBACK_IMAGES[p.cat] || BOUTIQUE_FALLBACK_IMAGES.ropa);
+        const imgUrl = getProductImage(p);
 
         return `
           <article class="prod" onclick="openProductZoom(${p.id})" style="border:1.5px solid var(--accent-soft);box-shadow:0 8px 24px -12px rgba(168,58,87,0.18);">
@@ -2391,7 +2451,7 @@
         modal.classList.add('show');
         document.body.classList.add('modal-open');
       }
-      const imgUrl = (p.img && p.img.trim()) ? p.img : (BOUTIQUE_FALLBACK_IMAGES[p.name] || BOUTIQUE_FALLBACK_IMAGES[p.cat] || BOUTIQUE_FALLBACK_IMAGES.ropa);
+      const imgUrl = getProductImage(p);
 
       const img = document.getElementById('zoomModalImg');
       const title = document.getElementById('zoomModalTitle');

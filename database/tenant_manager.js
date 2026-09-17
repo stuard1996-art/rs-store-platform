@@ -20,6 +20,100 @@ masterDb.exec(`PRAGMA journal_mode = WAL;`);
 // In-memory cache for open tenant DB connections
 const tenantDbCache = new Map();
 
+const RUBRO_PRESETS = {
+  MODA: {
+    id: 'MODA',
+    nombre: 'Moda & Ropa Boutique',
+    icono: '👗',
+    slogan: 'ROPA · ESTILO · TÚ',
+    color_primario: '#A8324E',
+    color_secundario: '#7B113A',
+    color_suave: '#FAF5F6',
+    hero_titulo: 'Ropa y accesorios con <em>estilo propio.</em>',
+    hero_subtitulo: 'Prendas, calzado, belleza y detalles elegidos uno por uno. Calidad garantizada, facturación electrónica legal y envíos a todo Ecuador.',
+    hero_imagen: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1000&q=85',
+    categorias: ['Mujer', 'Hombre', 'Calzado', 'Belleza & Accesorios', 'Ofertas']
+  },
+  JOYERIA: {
+    id: 'JOYERIA',
+    nombre: 'Joyería, Relojes & Accesorios Finos',
+    icono: '💎',
+    slogan: 'BRILLO · ELEGANCIA · EXCLUSIVIDAD',
+    color_primario: '#9D174D',
+    color_secundario: '#831843',
+    color_suave: '#FDF2F8',
+    hero_titulo: 'Joyas y accesorios que <em>resaltan tu esencia.</em>',
+    hero_subtitulo: 'Diseños exclusivos en plata 925, oro laminado, acero inoxidable y pedrería fina. Calidad garantizada y envíos seguros a todo Ecuador.',
+    hero_imagen: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=1000&q=85',
+    categorias: ['Collares', 'Pulseras', 'Anillos', 'Aretes', 'Relojes', 'Dijes', 'Sets de Regalo']
+  },
+  TECNOLOGIA: {
+    id: 'TECNOLOGIA',
+    nombre: 'Tecnología, Computación & Celulares',
+    icono: '💻',
+    slogan: 'INNOVACIÓN · RENDIMIENTO · GARANTÍA',
+    color_primario: '#2563EB',
+    color_secundario: '#1D4ED8',
+    color_suave: '#EFF6FF',
+    hero_titulo: 'Tecnología y dispositivos al <em>mejor precio del mercado.</em>',
+    hero_subtitulo: 'Equipos de alta gama, laptops, smartphones, audio y periféricos con garantía oficial, servicio técnico y envíos express a todo el país.',
+    hero_imagen: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1000&q=85',
+    categorias: ['Laptops', 'Celulares', 'Audio & Audífonos', 'Gaming', 'Accesorios PC', 'Smartwatches']
+  },
+  CALZADO: {
+    id: 'CALZADO',
+    nombre: 'Calzado, Zapatos & Sneakers',
+    icono: '👟',
+    slogan: 'CONFORT · ESTILO · DURABILIDAD',
+    color_primario: '#D97706',
+    color_secundario: '#B45309',
+    color_suave: '#FFFBEB',
+    hero_titulo: 'Calzado diseñado para <em>acompañar cada paso.</em>',
+    hero_subtitulo: 'Zapatos deportivos, casuales y formales para toda la familia. Diseños anatómicos, máximo confort y acabados de primera calidad.',
+    hero_imagen: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=1000&q=85',
+    categorias: ['Deportivo & Running', 'Casual & Sneakers', 'Formal & Cuero', 'Sandalias', 'Botas']
+  },
+  BELLEZA: {
+    id: 'BELLEZA',
+    nombre: 'Belleza, Cosméticos & Cuidado Personal',
+    icono: '💄',
+    slogan: 'CUIDADO · BELLEZA · BIENESTAR',
+    color_primario: '#DB2777',
+    color_secundario: '#BE185D',
+    color_suave: '#FDF2F8',
+    hero_titulo: 'Cosméticos y cuidado facial para <em>tu rutina diaria.</em>',
+    hero_subtitulo: 'Productos dermatológicamente comprobados, maquillaje profesional, fragancias exclusivas y cuidado capilar con entrega inmediata.',
+    hero_imagen: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=1000&q=85',
+    categorias: ['Skincare Facial', 'Maquillaje', 'Fragancias', 'Cuidado Capilar', 'Tratamientos']
+  },
+  ALIMENTOS: {
+    id: 'ALIMENTOS',
+    nombre: 'Alimentos, Bebidas & Delicatessen',
+    icono: '🍕',
+    slogan: 'SABOR · FRESCURA · CALIDAD',
+    color_primario: '#EA580C',
+    color_secundario: '#C2410C',
+    color_suave: '#FFF7ED',
+    hero_titulo: 'Sabores seleccionados preparados con <em>ingredientes frescos.</em>',
+    hero_subtitulo: 'Disfruta de la mejor selección de productos gourmet, café de especialidad, postres y bebidas entregadas directamente en tu puerta.',
+    hero_imagen: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1000&q=85',
+    categorias: ['Café & Bebidas', 'Gourmet & Snacks', 'Postres', 'Combos Especiales', 'Salados']
+  },
+  GENERAL: {
+    id: 'GENERAL',
+    nombre: 'Tienda General / Multirubro',
+    icono: '🛒',
+    slogan: 'VARIEDAD · CALIDAD · ATENCIÓN',
+    color_primario: '#0D9488',
+    color_secundario: '#0F766E',
+    color_suave: '#F0FDFA',
+    hero_titulo: 'Los mejores productos para <em>tu hogar y estilo de vida.</em>',
+    hero_subtitulo: 'Encuentra variedad, precios justos, atención personalizada y entregas rápidas y garantizadas en todo el territorio nacional.',
+    hero_imagen: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=1000&q=85',
+    categorias: ['Hogar & Deco', 'Tecnología', 'Cuidado Personal', 'Novedades', 'Ofertas']
+  }
+};
+
 /**
  * Initialize Master Database Schema
  */
@@ -43,9 +137,42 @@ function initMasterSchema() {
       licencia_fin TEXT NOT NULL,
       licencia_clave TEXT DEFAULT '',
       notas TEXT DEFAULT '',
+      rubro TEXT DEFAULT 'MODA',
+      slogan TEXT DEFAULT '',
+      color_primario TEXT DEFAULT '#A8324E',
+      color_secundario TEXT DEFAULT '#7B113A',
+      color_suave TEXT DEFAULT '#FAF5F6',
+      hero_titulo TEXT DEFAULT '',
+      hero_subtitulo TEXT DEFAULT '',
+      hero_imagen TEXT DEFAULT '',
+      categorias TEXT DEFAULT '[]',
       created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
     );
   `);
+
+  // Migration for existing table columns
+  const tableInfo = masterDb.prepare("PRAGMA table_info(empresas)").all();
+  const existingCols = new Set(tableInfo.map(c => c.name));
+  
+  const colsToAdd = [
+    ['rubro', "TEXT DEFAULT 'MODA'"],
+    ['slogan', "TEXT DEFAULT ''"],
+    ['color_primario', "TEXT DEFAULT '#A8324E'"],
+    ['color_secundario', "TEXT DEFAULT '#7B113A'"],
+    ['color_suave', "TEXT DEFAULT '#FAF5F6'"],
+    ['hero_titulo', "TEXT DEFAULT ''"],
+    ['hero_subtitulo', "TEXT DEFAULT ''"],
+    ['hero_imagen', "TEXT DEFAULT ''"],
+    ['categorias', "TEXT DEFAULT '[]'"]
+  ];
+
+  for (const [colName, colDef] of colsToAdd) {
+    if (!existingCols.has(colName)) {
+      try {
+        masterDb.exec(`ALTER TABLE empresas ADD COLUMN ${colName} ${colDef};`);
+      } catch (e) {}
+    }
+  }
 
   // Ensure 'rs-store' is registered as company #1 (Matriz con licencia vitalicia)
   const existingRs = masterDb.prepare("SELECT * FROM empresas WHERE slug = 'rs-store'").get();
@@ -53,21 +180,67 @@ function initMasterSchema() {
     const now = new Date();
     const future = new Date();
     future.setFullYear(now.getFullYear() + 50); // Licencia vitalicia para RS Store
+    const p = RUBRO_PRESETS.MODA;
 
     masterDb.prepare(`
       INSERT INTO empresas (
         slug, nombre_comercial, razon_social, ruc, dominio_personalizado,
         provincia_matriz, ciudad_matriz, ciudades_zona_local,
         email_contacto, telefono_contacto, estado, licencia_tipo,
-        licencia_inicio, licencia_fin, notas
+        licencia_inicio, licencia_fin, notas,
+        rubro, slogan, color_primario, color_secundario, color_suave,
+        hero_titulo, hero_subtitulo, hero_imagen, categorias
       ) VALUES (
         'rs-store', 'RS Store', 'RS STORE BOUTIQUE S.A.S.', '0992345678001', '',
         'Guayas', 'Guayaquil', 'Guayaquil, Samborondón, Durán, Daule',
         'ventas@rsstore.ec', '+593968433458', 'ACTIVA', 'VITALICIA',
-        ?, ?, 'Empresa matriz original'
+        ?, ?, 'Empresa matriz original',
+        'MODA', ?, ?, ?, ?,
+        ?, ?, ?, ?
       )
-    `).run(now.toISOString().split('T')[0], future.toISOString().split('T')[0]);
+    `).run(
+      now.toISOString().split('T')[0], future.toISOString().split('T')[0],
+      p.slogan, p.color_primario, p.color_secundario, p.color_suave,
+      p.hero_titulo, p.hero_subtitulo, p.hero_imagen, JSON.stringify(p.categorias)
+    );
   }
+
+  // Update existing tenants with their industry presets if missing
+  const applyPreset = (slug, rubroKey, customName) => {
+    const row = masterDb.prepare("SELECT * FROM empresas WHERE slug = ?").get(slug);
+    if (row && (!row.slogan || !row.hero_titulo || row.rubro !== rubroKey)) {
+      const p = RUBRO_PRESETS[rubroKey] || RUBRO_PRESETS.GENERAL;
+      masterDb.prepare(`
+        UPDATE empresas SET
+          rubro = ?,
+          slogan = ?,
+          color_primario = ?,
+          color_secundario = ?,
+          color_suave = ?,
+          hero_titulo = ?,
+          hero_subtitulo = ?,
+          hero_imagen = ?,
+          categorias = ?
+        WHERE slug = ?
+      `).run(
+        rubroKey,
+        p.slogan,
+        p.color_primario,
+        p.color_secundario,
+        p.color_suave,
+        p.hero_titulo,
+        p.hero_subtitulo,
+        p.hero_imagen,
+        JSON.stringify(p.categorias),
+        slug
+      );
+    }
+  };
+
+  applyPreset('jannella', 'JOYERIA');
+  applyPreset('editec', 'TECNOLOGIA');
+  applyPreset('rs-store', 'MODA');
+  applyPreset('zapateria-el-sol', 'CALZADO');
 
   // Ensure rs-store.sqlite file exists in tenants folder (copiar del original si falta)
   const rsTenantDbFile = path.join(tenantsDir, 'rs-store.sqlite');
@@ -394,6 +567,14 @@ function initSchemaOnDb(targetDb, companyInfo = {}) {
     ['slogan', companyInfo.slogan || 'ESTILO · CALIDAD · ATENCIÓN', 'Lema comercial'],
     ['ruc_emisor', companyInfo.ruc || '0999999999001', 'RUC de la empresa'],
     ['razon_social', companyInfo.razon_social || companyInfo.nombre_comercial || 'EMPRESA S.A.S.', 'Razón social'],
+    ['rubro', companyInfo.rubro || 'MODA', 'Rubro comercial de la tienda'],
+    ['color_primario', companyInfo.color_primario || '#A8324E', 'Color primario de la marca'],
+    ['color_secundario', companyInfo.color_secundario || '#7B113A', 'Color secundario de la marca'],
+    ['color_suave', companyInfo.color_suave || '#FAF5F6', 'Color suave de acento'],
+    ['hero_titulo', companyInfo.hero_titulo || '', 'Título principal del hero'],
+    ['hero_subtitulo', companyInfo.hero_subtitulo || '', 'Subtítulo o descripción del hero'],
+    ['hero_imagen', companyInfo.hero_imagen || '', 'URL de imagen de portada del hero'],
+    ['categorias', JSON.stringify(companyInfo.categorias || []), 'Categorías de la tienda'],
     ['direccion_matriz', companyInfo.direccion || `${companyInfo.ciudad_matriz || 'Guayaquil'}, Ecuador`, 'Dirección matriz'],
     ['provincia_matriz', companyInfo.provincia_matriz || 'Guayas', 'Provincia sede matriz'],
     ['ciudad_matriz', companyInfo.ciudad_matriz || 'Guayaquil', 'Ciudad sede matriz'],
@@ -546,7 +727,16 @@ function createTenant({
   duracion_dias = 365,
   admin_user = 'admin',
   admin_pass = 'admin123',
-  admin_nombre
+  admin_nombre,
+  rubro = 'MODA',
+  slogan,
+  color_primario,
+  color_secundario,
+  color_suave,
+  hero_titulo,
+  hero_subtitulo,
+  hero_imagen,
+  categorias
 }) {
   const cleanSlug = (slug || nombre_comercial).toLowerCase()
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
@@ -556,6 +746,17 @@ function createTenant({
 
   const existing = masterDb.prepare("SELECT id FROM empresas WHERE slug = ?").get(cleanSlug);
   if (existing) throw new Error(`Ya existe una empresa registrada con el identificador "${cleanSlug}".`);
+
+  // Presets resolution
+  const preset = RUBRO_PRESETS[rubro] || RUBRO_PRESETS.GENERAL;
+  const finalSlogan = slogan || preset.slogan;
+  const finalColorPrimario = color_primario || preset.color_primario;
+  const finalColorSecundario = color_secundario || preset.color_secundario;
+  const finalColorSuave = color_suave || preset.color_suave;
+  const finalHeroTitulo = hero_titulo || preset.hero_titulo;
+  const finalHeroSubtitulo = hero_subtitulo || preset.hero_subtitulo;
+  const finalHeroImagen = hero_imagen || preset.hero_imagen;
+  const finalCategorias = (categorias && Array.isArray(categorias) && categorias.length) ? categorias : preset.categorias;
 
   const now = new Date();
   const fin = new Date();
@@ -585,7 +786,16 @@ function createTenant({
     telefono_contacto,
     admin_user,
     admin_pass,
-    admin_nombre
+    admin_nombre,
+    rubro,
+    slogan: finalSlogan,
+    color_primario: finalColorPrimario,
+    color_secundario: finalColorSecundario,
+    color_suave: finalColorSuave,
+    hero_titulo: finalHeroTitulo,
+    hero_subtitulo: finalHeroSubtitulo,
+    hero_imagen: finalHeroImagen,
+    categorias: finalCategorias
   });
 
   // 3. Register in master.sqlite
@@ -594,8 +804,17 @@ function createTenant({
       slug, nombre_comercial, razon_social, ruc, dominio_personalizado,
       provincia_matriz, ciudad_matriz, ciudades_zona_local,
       email_contacto, telefono_contacto, estado, licencia_tipo,
-      licencia_inicio, licencia_fin, licencia_clave, notas
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'ACTIVA', ?, ?, ?, ?, ?)
+      licencia_inicio, licencia_fin, licencia_clave, notas,
+      rubro, slogan, color_primario, color_secundario, color_suave,
+      hero_titulo, hero_subtitulo, hero_imagen, categorias
+    ) VALUES (
+      ?, ?, ?, ?, ?,
+      ?, ?, ?,
+      ?, ?, 'ACTIVA', ?,
+      ?, ?, ?, ?,
+      ?, ?, ?, ?, ?,
+      ?, ?, ?, ?
+    )
   `).run(
     cleanSlug,
     nombre_comercial,
@@ -611,7 +830,16 @@ function createTenant({
     fechaInicio,
     fechaFin,
     claveLicencia,
-    `Empresa creada el ${fechaInicio}`
+    `Empresa creada el ${fechaInicio}`,
+    rubro,
+    finalSlogan,
+    finalColorPrimario,
+    finalColorSecundario,
+    finalColorSuave,
+    finalHeroTitulo,
+    finalHeroSubtitulo,
+    finalHeroImagen,
+    JSON.stringify(finalCategorias)
   );
 
   return {
@@ -620,6 +848,9 @@ function createTenant({
     fechaInicio,
     fechaFin,
     claveLicencia,
+    rubro,
+    slogan: finalSlogan,
+    color_primario: finalColorPrimario,
     dbPath: tenantDbFile
   };
 }
@@ -699,6 +930,7 @@ function listAllTenants() {
 
 module.exports = {
   masterDb,
+  RUBRO_PRESETS,
   getTenantDb,
   resolveTenant,
   createTenant,
