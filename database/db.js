@@ -536,4 +536,20 @@ function initSchema() {
 
 initSchema();
 
-module.exports = { db };
+const { AsyncLocalStorage } = require('node:async_hooks');
+const tenantStorage = new AsyncLocalStorage();
+const { getTenantDb } = require('./tenant_manager.js');
+
+const dbProxy = new Proxy({}, {
+  get(target, prop) {
+    const store = tenantStorage.getStore();
+    const activeDb = (store && store.db) ? store.db : getTenantDb('rs-store');
+    const val = activeDb[prop];
+    if (typeof val === 'function') {
+      return val.bind(activeDb);
+    }
+    return val;
+  }
+});
+
+module.exports = { db: dbProxy, tenantStorage, rawDb: db };

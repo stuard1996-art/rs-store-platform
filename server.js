@@ -2,7 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const path = require('node:path');
 const fs = require('node:fs');
-const { db } = require('./database/db.js');
+const { db, tenantStorage } = require('./database/db.js');
+const tenantManager = require('./database/tenant_manager.js');
 const { createInvoice, getInvoiceDetails, anularInvoice, getConfig } = require('./services/invoiceService.js');
 const { consultarSRIEnLinea, validarCedula } = require('./services/sriLookupService.js');
 const { generateInvoiceXml } = require('./services/sriXmlService.js');
@@ -20,6 +21,58 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Multi-Tenant Context & Physical Isolation Middleware
+app.use((req, res, next) => {
+  const tenantCtx = tenantManager.resolveTenant(req);
+  req.tenantCtx = tenantCtx;
+  req.tenantSlug = tenantCtx.slug;
+  req.tenantDb = tenantCtx.db;
+
+  res.setHeader('X-Tenant-Slug', tenantCtx.slug);
+  res.setHeader('X-Tenant-Name', encodeURIComponent(tenantCtx.tenant?.nombre_comercial || ''));
+
+  // Excepciones a la verificación de licencia
+  const isSuperadmin = req.path.startsWith('/api/superadmin') || req.path === '/superadmin.html' || req.path === '/superadmin';
+  const isLicenseApi = req.path.startsWith('/api/license');
+  const isAsset = req.path.startsWith('/uploads') || req.path.includes('.svg') || req.path.includes('.js') || req.path.includes('.css') || req.path.includes('.png') || req.path.includes('.jpg');
+
+  if (!tenantCtx.isLicensed && !isSuperadmin && !isLicenseApi && !isAsset) {
+    if (req.path.startsWith('/api/')) {
+      const lTipo = tenantCtx.tenant?.licencia_tipo || 'ANUAL';
+      const tipoNombre = lTipo === 'PRUEBA' ? 'de prueba de 15 días' : (lTipo === 'MENSUAL' ? 'mensual' : 'anual');
+      return res.status(403).json({
+        success: false,
+        error: 'LICENCIA_EXPIRADA',
+        licenseStatus: tenantCtx.licenseStatus,
+        licencia_tipo: lTipo,
+        empresa: tenantCtx.tenant?.nombre_comercial || 'Empresa',
+        slug: tenantCtx.slug,
+        expiracion: tenantCtx.tenant?.licencia_fin || '',
+        telefono_soporte: tenantCtx.tenant?.telefono_contacto || '+593968433458',
+        mensaje: `La licencia ${tipoNombre} de "${tenantCtx.tenant?.nombre_comercial || 'este sistema'}" se encuentra ${tenantCtx.licenseStatus}. Por favor comunícate con tu proveedor tecnológico para reactivar el servicio.`
+      });
+    }
+  }
+
+  tenantStorage.run({ tenant: tenantCtx, db: tenantCtx.db }, () => {
+    next();
+  });
+});
+
+// Rutas amigables multi-empresa
+app.get('/t/:tenantSlug', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+app.get('/t/:tenantSlug/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+});
+app.get('/t/:tenantSlug/admin.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+});
+app.get('/superadmin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'superadmin.html'));
+});
 
 // Serve static frontend files with no-cache for HTML files
 app.use((req, res, next) => {
@@ -2256,6 +2309,139 @@ app.delete('/api/banners/:id', (req, res) => {
   try {
     db.prepare('DELETE FROM banners WHERE id = ?').run(req.params.id);
     res.json({ success: true, message: 'Banner eliminado' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ==========================================
+// MULTI-TENANT & SUPERADMIN SAAS API
+// ==========================================
+
+// Info pública de la empresa actual (Tenant)
+app.get('/api/tenant/current', (req, res) => {
+  try {
+    const ctx = req.tenantCtx;
+    const configRows = db.prepare("SELECT clave, valor FROM configuracion").all();
+    const configMap = {};
+    for (const r of configRows) configMap[r.clave] = r.valor;
+
+    res.json({
+      success: true,
+      data: {
+        slug: ctx.slug,
+        nombre_comercial: ctx.tenant?.nombre_comercial || configMap.nombre_tienda || 'RS Store',
+        razon_social: ctx.tenant?.razon_social || configMap.razon_social || '',
+        ruc: ctx.tenant?.ruc || configMap.ruc_emisor || '',
+        dominio_personalizado: ctx.tenant?.dominio_personalizado || '',
+        provincia_matriz: ctx.tenant?.provincia_matriz || configMap.provincia_matriz || 'Guayas',
+        ciudad_matriz: ctx.tenant?.ciudad_matriz || configMap.ciudad_matriz || 'Guayaquil',
+        ciudades_zona_local: ctx.tenant?.ciudades_zona_local || configMap.ciudades_zona_local || 'Guayaquil',
+        tarifa_envio_local: configMap.tarifa_envio_local || '3.00',
+        tarifa_envio_nacional: configMap.tarifa_envio_nacional || '5.50',
+        tarifa_envio_especial: configMap.tarifa_envio_especial || '8.50',
+        envio_gratis_desde: configMap.envio_gratis_desde || '50.00',
+        email_contacto: ctx.tenant?.email_contacto || configMap.email_contacto || '',
+        telefono_contacto: ctx.tenant?.telefono_contacto || configMap.telefono_contacto || '',
+        licencia_tipo: ctx.tenant?.licencia_tipo || 'VITALICIA',
+        licencia_fin: ctx.tenant?.licencia_fin || '',
+        licenseStatus: ctx.licenseStatus,
+        isLicensed: ctx.isLicensed
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Reactivar licencia con clave
+app.post('/api/license/activate', (req, res) => {
+  try {
+    const { slug, clave } = req.body;
+    const targetSlug = slug || req.tenantSlug;
+    const result = tenantManager.renewTenantLicense(targetSlug, 365, clave);
+    res.json({
+      success: true,
+      message: `¡Licencia de ${targetSlug} reactivada con éxito hasta el ${result.newFinDate}!`,
+      data: result
+    });
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
+// Listar todas las empresas (Superadmin)
+app.get('/api/superadmin/tenants', (req, res) => {
+  try {
+    const tenants = tenantManager.listAllTenants();
+    res.json({ success: true, data: tenants });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Crear nueva empresa desde cero (Superadmin)
+app.post('/api/superadmin/tenants', (req, res) => {
+  try {
+    const newTenant = tenantManager.createTenant(req.body);
+    res.json({
+      success: true,
+      message: `¡Empresa "${newTenant.nombre_comercial}" creada con éxito!`,
+      data: newTenant
+    });
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
+// Renovar o extender licencia de empresa (Superadmin)
+app.put('/api/superadmin/tenants/:slug/renew', (req, res) => {
+  try {
+    const { duracion_dias, clave, licencia_tipo } = req.body;
+    const result = tenantManager.renewTenantLicense(req.params.slug, duracion_dias || 365, clave, licencia_tipo);
+    res.json({
+      success: true,
+      message: `Licencia (${result.licencia_tipo}) de ${req.params.slug} extendida hasta ${result.newFinDate}`,
+      data: result
+    });
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
+// Cambiar estado de empresa: ACTIVA / SUSPENDIDA (Superadmin)
+app.put('/api/superadmin/tenants/:slug/status', (req, res) => {
+  try {
+    const { estado } = req.body;
+    tenantManager.masterDb.prepare("UPDATE empresas SET estado = ? WHERE slug = ?").run(estado, req.params.slug);
+    res.json({
+      success: true,
+      message: `Estado de ${req.params.slug} actualizado a ${estado}`
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Descargar archivo de base de datos .sqlite de la empresa (Superadmin)
+app.get('/api/superadmin/tenants/:slug/backup', (req, res) => {
+  try {
+    const tenantFile = path.join(tenantManager.tenantsDir, `${req.params.slug}.sqlite`);
+    if (!fs.existsSync(tenantFile)) {
+      return res.status(404).json({ success: false, error: 'Base de datos no encontrada.' });
+    }
+    res.download(tenantFile, `${req.params.slug}-backup-${new Date().toISOString().split('T')[0]}.sqlite`);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Generar clave de licencia offline para el cliente (Superadmin)
+app.post('/api/superadmin/tenants/:slug/generate-key', (req, res) => {
+  try {
+    const { expiry_date } = req.body;
+    const key = tenantManager.generateLicenseKey(req.params.slug, expiry_date || '2027-12-31');
+    res.json({ success: true, key });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

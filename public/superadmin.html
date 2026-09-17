@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Superadmin Maestro · Gestión Multi-Empresa & Licencias SaaS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0B0F17;
+      --surface: #111827;
+      --surface-card: #182234;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.16);
+      --text: #F3F4F6;
+      --text-muted: #9CA3AF;
+      --primary: #6366F1;
+      --primary-hover: #4F46E5;
+      --primary-glow: rgba(99, 102, 241, 0.25);
+      --accent: #EC4899;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+      --font-sans: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      line-height: 1.5;
+      padding-bottom: 60px;
+    }
+
+    .wrap {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* HEADER */
+    header {
+      background: rgba(17, 24, 39, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .brand-badge {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #fff;
+      font-weight: 800;
+      font-size: 14px;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px var(--primary-glow);
+    }
+    .brand-text h1 {
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+    .brand-text span {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      display: block;
+      margin-top: -2px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 13.5px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), #4F46E5);
+      color: #fff;
+      box-shadow: 0 4px 14px var(--primary-glow);
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+    }
+    .btn-secondary {
+      background: var(--surface-card);
+      border: 1px solid var(--border-strong);
+      color: var(--text);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+      border-radius: 8px;
+    }
+
+    /* KPI CARDS */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin: 28px 0;
+    }
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), transparent);
+    }
+    .kpi-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .kpi-value {
+      font-size: 32px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      line-height: 1;
+    }
+    .kpi-sub {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* TOOLBAR */
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .search-box {
+      flex: 1;
+      max-width: 400px;
+      position: relative;
+    }
+    .search-box input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      padding: 10px 14px 10px 38px;
+      font-size: 13.5px;
+      color: var(--text);
+      outline: none;
+    }
+    .search-box input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    /* TABLE */
+    .table-container {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13.5px;
+    }
+    th {
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 18px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+    td {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.015);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+    }
+    .badge-active {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .badge-expired {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--danger);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    .badge-suspended {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--warning);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+    }
+    .modal-overlay.show {
+      display: flex;
+    }
+    .modal-card {
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+      animation: modalIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.96) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .modal-head {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-head h3 {
+      font-size: 18px;
+      font-weight: 800;
+    }
+    .modal-body {
+      padding: 24px;
+    }
+    .modal-foot {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      background: rgba(0, 0, 0, 0.2);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .f-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .f-group {
+      margin-bottom: 14px;
+    }
+    .f-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .f-input {
+      width: 100%;
+      background: var(--surface-card);
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 13.5px;
+      color: var(--text);
+      outline: none;
+    }
+    .f-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+    .f-help {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* TOAST */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--surface-card);
+      border: 1px solid var(--border-strong);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 999;
+    }
+    #toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="wrap header-content">
+      <a href="/superadmin" class="brand">
+        <div class="brand-badge">⚡</div>
+        <div class="brand-text">
+          <h1>Antigravity SaaS Master</h1>
+          <span>PLATAFORMA MULTI-EMPRESA &amp; LICENCIAS SRI</span>
+        </div>
+      </a>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <a href="/admin.html" target="_blank" class="btn btn-secondary btn-sm">
+          ⚙️ Ir al Panel RS Store
+        </a>
+        <button type="button" class="btn btn-primary" onclick="openCreateModal()">
+          ➕ Crear Nueva Empresa
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- METRICS -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-title"><span>Empresas Registradas</span> <span>🏢</span></div>
+        <div class="kpi-value" id="kpiTotal">0</div>
+        <div class="kpi-sub">Bases de datos independientes SQLite</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title"><span>Licencias Activas</span> <span>🟢</span></div>
+        <div class="kpi-value" id="kpiActive" style="color:var(--success);">0</div>
+        <div class="kpi-sub">En operación normal</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title"><span>Expiradas / Suspendidas</span> <span>⚠️</span></div>
+        <div class="kpi-value" id="kpiExpired" style="color:var(--danger);">0</div>
+        <div class="kpi-sub">Pendientes de renovación anual</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title"><span>Almacenamiento Total</span> <span>💾</span></div>
+        <div class="kpi-value" id="kpiStorage">0 MB</div>
+        <div class="kpi-sub">Espacio en disco de bases de datos</div>
+      </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Buscar empresa por nombre, RUC, slug..." oninput="filterTenants()">
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-secondary btn-sm" onclick="loadTenants()">
+          🔄 Actualizar Lista
+        </button>
+      </div>
+    </div>
+
+    <!-- TENANTS TABLE -->
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Empresa / Negocio</th>
+            <th>RUC &amp; Sede Matriz</th>
+            <th>Rutas &amp; Dominio</th>
+            <th>Vigencia Licencia</th>
+            <th>Base de Datos</th>
+            <th style="text-align:right;">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tenantsTableBody">
+          <tr>
+            <td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">
+              ⏳ Cargando empresas registradas...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- MODAL: CREAR NUEVA EMPRESA -->
+  <div class="modal-overlay" id="createModal" onclick="if(event.target===this) closeCreateModal()">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3>➕ Crear Nueva Empresa desde Cero</h3>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeCreateModal()">✕</button>
+      </div>
+      <form id="createTenantForm" onsubmit="handleCreateTenant(event)">
+        <div class="modal-body">
+          <div class="f-row">
+            <div>
+              <label class="f-label">Nombre Comercial de la Tienda *</label>
+              <input class="f-input" id="newNombre" required placeholder="Ej. Editec Soluciones" oninput="autoSlug()">
+            </div>
+            <div>
+              <label class="f-label">Identificador / Slug URL *</label>
+              <input class="f-input" id="newSlug" required placeholder="editec" style="font-family:var(--font-mono);">
+              <div class="f-help">Tu enlace será: /t/editec</div>
+            </div>
+          </div>
+
+          <div class="f-row">
+            <div>
+              <label class="f-label">Razón Social SRI</label>
+              <input class="f-input" id="newRazonSocial" placeholder="EDITEC S.A.S.">
+            </div>
+            <div>
+              <label class="f-label">RUC de la Empresa</label>
+              <input class="f-input" id="newRuc" placeholder="1792345678001" maxlength="13">
+            </div>
+          </div>
+
+          <div class="f-row">
+            <div>
+              <label class="f-label">Provincia Matriz (Origen Servientrega)</label>
+              <select class="f-input" id="newProvincia">
+                <option value="Pichincha">Pichincha</option>
+                <option value="Guayas" selected>Guayas</option>
+                <option value="Azuay">Azuay</option>
+                <option value="Manabí">Manabí</option>
+                <option value="Tungurahua">Tungurahua</option>
+                <option value="Loja">Loja</option>
+                <option value="El Oro">El Oro</option>
+                <option value="Imbabura">Imbabura</option>
+                <option value="Chimborazo">Chimborazo</option>
+                <option value="Santo Domingo de los Tsáchilas">Santo Domingo</option>
+                <option value="Santa Elena">Santa Elena</option>
+                <option value="Los Ríos">Los Ríos</option>
+                <option value="Cotopaxi">Cotopaxi</option>
+              </select>
+            </div>
+            <div>
+              <label class="f-label">Ciudad Matriz de Origen</label>
+              <input class="f-input" id="newCiudad" placeholder="Ej. Quito, Guayaquil, Cuenca..." required>
+            </div>
+          </div>
+
+          <div class="f-group">
+            <label class="f-label">Dominio Personalizado (Opcional para Marca Blanca)</label>
+            <input class="f-input" id="newDominio" placeholder="Ej. www.editec.ec o tienda.editec.com">
+            <div class="f-help">Si el cliente tiene su propio dominio, escríbelo aquí y apuntará directamente.</div>
+          </div>
+
+          <div class="f-row">
+            <div>
+              <label class="f-label">Tipo de Licencia</label>
+              <select class="f-input" id="newLicenciaTipo" onchange="adjustLicenseDays()">
+                <option value="ANUAL" selected>Licencia Anual (365 días)</option>
+                <option value="MENSUAL">Licencia Mensual (30 días)</option>
+                <option value="PRUEBA">Prueba Gratuita (15 días)</option>
+                <option value="VITALICIA">Vitalicia (Sin vencimiento)</option>
+              </select>
+            </div>
+            <div>
+              <label class="f-label">Duración en Días</label>
+              <input class="f-input" type="number" id="newDuracionDias" value="365" required>
+            </div>
+          </div>
+
+          <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:14px;margin-top:10px;">
+            <div style="font-weight:700;font-size:12.5px;color:var(--text);margin-bottom:8px;">
+              👤 Usuario Administrador Inicial para el Cliente
+            </div>
+            <div class="f-row" style="margin-bottom:0;">
+              <div>
+                <label class="f-label">Usuario de Acceso *</label>
+                <input class="f-input" id="newAdminUser" required placeholder="admin_editec" value="admin">
+              </div>
+              <div>
+                <label class="f-label">Contraseña Inicial *</label>
+                <input class="f-input" id="newAdminPass" required placeholder="clave_segura" value="admin123">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button type="button" class="btn btn-secondary" onclick="closeCreateModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btnSubmitCreate">🚀 Crear Empresa &amp; Base de Datos</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: GESTIÓN DE LICENCIA & RENOVACIÓN -->
+  <div class="modal-overlay" id="licenseModal" onclick="if(event.target===this) closeLicenseModal()">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3 id="licenseModalTitle">🔑 Licencia &amp; Renovación</h3>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeLicenseModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="licenseDetailsBox" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;font-size:13px;">
+          <!-- Injected via JS -->
+        </div>
+
+        <div style="font-weight:700;font-size:13px;margin-bottom:10px;">Opciones de Renovación:</div>
+        <div class="f-row">
+          <div>
+            <label class="f-label">Extender Período</label>
+            <select class="f-input" id="renewPeriodDays">
+              <option value="15">🎁 + 15 Días (Prueba / Extensión corta)</option>
+              <option value="30">💳 + 1 Mes (30 días - Mensualidad)</option>
+              <option value="90">💼 + 3 Meses (90 días - Trimestral)</option>
+              <option value="180">⭐ + 6 Meses (180 días - Semestral)</option>
+              <option value="365" selected>🏆 + 1 Año Completo (365 días - Licencia Anual)</option>
+              <option value="36500">👑 Licencia Vitalicia (Permanente)</option>
+            </select>
+          </div>
+          <div style="display:flex;align-items:flex-end;">
+            <button type="button" class="btn btn-primary" style="width:100%;" onclick="executeRenew()">
+              🔄 Aplicar Renovación
+            </button>
+          </div>
+        </div>
+
+        <div style="margin-top:16px;border-top:1px dashed var(--border);padding-top:14px;">
+          <label class="f-label">Clave de Activación Criptográfica (Para enviar por WhatsApp al cliente)</label>
+          <div style="display:flex;gap:8px;">
+            <input class="f-input" id="displayLicenseKey" readonly style="font-family:var(--font-mono);font-size:12px;color:var(--success);font-weight:700;">
+            <button type="button" class="btn btn-secondary" onclick="copyLicenseKey()">📋 Copiar</button>
+          </div>
+          <div class="f-help">Si el cliente tiene su propio servidor, envíale esta clave para que la ingrese en su pantalla de bloqueo.</div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-secondary" onclick="closeLicenseModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script>
+    let tenantsList = [];
+    let currentSelectedTenant = null;
+
+    function toast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3500);
+    }
+
+    async function loadTenants() {
+      try {
+        const res = await fetch('/api/superadmin/tenants');
+        const json = await res.json();
+        if (json.success) {
+          tenantsList = json.data;
+          renderTenants(tenantsList);
+          updateKpis(tenantsList);
+        } else {
+          toast('Error cargando empresas');
+        }
+      } catch (err) {
+        toast('Error al conectar con la API de Superadmin');
+      }
+    }
+
+    function updateKpis(list) {
+      document.getElementById('kpiTotal').textContent = list.length;
+      document.getElementById('kpiActive').textContent = list.filter(t => t.computedStatus === 'ACTIVA').length;
+      document.getElementById('kpiExpired').textContent = list.filter(t => t.computedStatus !== 'ACTIVA').length;
+      
+      const totalBytes = list.reduce((acc, t) => acc + (t.sizeBytes || 0), 0);
+      document.getElementById('kpiStorage').textContent = (totalBytes / (1024 * 1024)).toFixed(2) + ' MB';
+    }
+
+    function renderTenants(list) {
+      const tbody = document.getElementById('tenantsTableBody');
+      if (!list.length) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">No hay empresas encontradas.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(t => {
+        let badgeClass = 'badge-active';
+        if (t.computedStatus === 'EXPIRADA') badgeClass = 'badge-expired';
+        else if (t.computedStatus === 'SUSPENDIDA') badgeClass = 'badge-suspended';
+
+        const storeUrl = `/t/${t.slug}`;
+        const adminUrl = `/t/${t.slug}/admin`;
+
+        return `
+          <tr>
+            <td>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:18px;">
+                  🏢
+                </div>
+                <div>
+                  <b style="font-size:14.5px;color:#fff;display:block;">${escapeHtml(t.nombre_comercial)}</b>
+                  <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">${t.slug}</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div style="font-family:var(--font-mono);font-size:12px;">${t.ruc || 'Sin RUC'}</div>
+              <div style="font-size:11.5px;color:var(--text-muted);">${escapeHtml(t.ciudad_matriz || 'Guayaquil')}, ${escapeHtml(t.provincia_matriz || 'Guayas')}</div>
+            </td>
+            <td>
+              <div>
+                <a href="${storeUrl}" target="_blank" style="color:var(--primary);text-decoration:none;font-size:12.5px;font-weight:600;">
+                  🔗 ${storeUrl} ↗
+                </a>
+              </div>
+              ${t.dominio_personalizado ? `
+                <div style="font-size:11px;color:var(--success);margin-top:2px;">
+                  🌐 Dominio: <b>${escapeHtml(t.dominio_personalizado)}</b>
+                </div>
+              ` : `<span style="font-size:11px;color:var(--text-muted);">Subruta en plataforma</span>`}
+            </td>
+            <td>
+              <div>
+                <span class="badge ${badgeClass}">${t.computedStatus}</span>
+                ${t.licencia_tipo === 'PRUEBA' ? '<span class="badge" style="background:rgba(236,72,153,0.15);color:#EC4899;border:1px solid rgba(236,72,153,0.3);margin-left:4px;">🎁 PRUEBA 15D</span>' : ''}
+                ${t.licencia_tipo === 'MENSUAL' ? '<span class="badge" style="background:rgba(59,130,246,0.15);color:#3B82F6;border:1px solid rgba(59,130,246,0.3);margin-left:4px;">💳 MENSUAL</span>' : ''}
+                ${t.licencia_tipo === 'ANUAL' ? '<span class="badge" style="background:rgba(16,185,129,0.15);color:#10B981;border:1px solid rgba(16,185,129,0.3);margin-left:4px;">🏆 ANUAL</span>' : ''}
+                ${t.licencia_tipo === 'VITALICIA' ? '<span class="badge" style="background:rgba(245,158,11,0.15);color:#F59E0B;border:1px solid rgba(245,158,11,0.3);margin-left:4px;">👑 VITALICIA</span>' : ''}
+              </div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;font-family:var(--font-mono);">
+                ${t.licencia_tipo === 'VITALICIA' ? 'Vigencia Permanente' : 'Vence: ' + t.licencia_fin}
+              </div>
+            </td>
+            <td>
+              <div style="font-family:var(--font-mono);font-size:12px;font-weight:700;">${t.sizeFormatted}</div>
+              <span style="font-size:11px;color:var(--text-muted);">${t.slug}.sqlite</span>
+            </td>
+            <td style="text-align:right;">
+              <div class="actions" style="justify-content:flex-end;">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="quickRenew('${t.slug}', 15)" title="Dar 15 días de prueba">
+                  🎁 +15d
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="quickRenew('${t.slug}', 30)" title="Renovar 1 mes">
+                  💳 +1 Mes
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="quickRenew('${t.slug}', 365)" title="Renovar 1 año">
+                  🏆 +1 Año
+                </button>
+                <a href="${adminUrl}" target="_blank" class="btn btn-secondary btn-sm" title="Abrir Panel Administrativo del Cliente">
+                  ⚙️ Admin
+                </a>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="openLicenseModal('${t.slug}')" title="Clave y Gestión de Licencia">
+                  🔑 Clave
+                </button>
+                <a href="/api/superadmin/tenants/${t.slug}/backup" class="btn btn-secondary btn-sm" title="Descargar archivo físico .sqlite">
+                  📥 DB
+                </a>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="toggleTenantStatus('${t.slug}', '${t.estado}')" title="Activar/Pausar Empresa">
+                  ${t.estado === 'ACTIVA' ? '⏸️' : '▶️'}
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filterTenants() {
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      if (!q) {
+        renderTenants(tenantsList);
+        return;
+      }
+      const filtered = tenantsList.filter(t => 
+        (t.nombre_comercial || '').toLowerCase().includes(q) ||
+        (t.slug || '').toLowerCase().includes(q) ||
+        (t.ruc || '').toLowerCase().includes(q) ||
+        (t.ciudad_matriz || '').toLowerCase().includes(q)
+      );
+      renderTenants(filtered);
+    }
+
+    function autoSlug() {
+      const name = document.getElementById('newNombre').value;
+      const slugInput = document.getElementById('newSlug');
+      const clean = name.toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+      slugInput.value = clean;
+    }
+
+    function adjustLicenseDays() {
+      const type = document.getElementById('newLicenciaTipo').value;
+      const daysInput = document.getElementById('newDuracionDias');
+      if (type === 'ANUAL') daysInput.value = 365;
+      else if (type === 'MENSUAL') daysInput.value = 30;
+      else if (type === 'PRUEBA') daysInput.value = 15;
+      else if (type === 'VITALICIA') daysInput.value = 36500;
+    }
+
+    function openCreateModal() {
+      document.getElementById('createTenantForm').reset();
+      document.getElementById('newDuracionDias').value = 365;
+      document.getElementById('newAdminUser').value = 'admin';
+      document.getElementById('newAdminPass').value = 'admin123';
+      document.getElementById('createModal').classList.add('show');
+    }
+    function closeCreateModal() {
+      document.getElementById('createModal').classList.remove('show');
+    }
+
+    async function handleCreateTenant(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSubmitCreate');
+      btn.disabled = true;
+      btn.textContent = '⏳ Creando base de datos física...';
+
+      const payload = {
+        nombre_comercial: document.getElementById('newNombre').value.trim(),
+        slug: document.getElementById('newSlug').value.trim(),
+        razon_social: document.getElementById('newRazonSocial').value.trim(),
+        ruc: document.getElementById('newRuc').value.trim(),
+        provincia_matriz: document.getElementById('newProvincia').value,
+        ciudad_matriz: document.getElementById('newCiudad').value.trim(),
+        dominio_personalizado: document.getElementById('newDominio').value.trim(),
+        licencia_tipo: document.getElementById('newLicenciaTipo').value,
+        duracion_dias: document.getElementById('newDuracionDias').value,
+        admin_user: document.getElementById('newAdminUser').value.trim(),
+        admin_pass: document.getElementById('newAdminPass').value.trim()
+      };
+
+      try {
+        const res = await fetch('/api/superadmin/tenants', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const json = await res.json();
+        btn.disabled = false;
+        btn.textContent = '🚀 Crear Empresa & Base de Datos';
+
+        if (json.success) {
+          closeCreateModal();
+          toast(`¡Empresa "${payload.nombre_comercial}" creada con éxito!`);
+          loadTenants();
+        } else {
+          alert('Error: ' + (json.error || 'No se pudo crear la empresa'));
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = '🚀 Crear Empresa & Base de Datos';
+        alert('Error de conexión al crear empresa');
+      }
+    }
+
+    function openLicenseModal(slug) {
+      const tenant = tenantsList.find(t => t.slug === slug);
+      if (!tenant) return;
+      currentSelectedTenant = tenant;
+
+      document.getElementById('licenseModalTitle').textContent = `🔑 Licencia: ${tenant.nombre_comercial}`;
+      document.getElementById('displayLicenseKey').value = tenant.licencia_clave || 'Generando...';
+
+      document.getElementById('licenseDetailsBox').innerHTML = `
+        <div><b>Empresa:</b> ${escapeHtml(tenant.nombre_comercial)} (<code>${tenant.slug}</code>)</div>
+        <div><b>Estado:</b> <span class="badge ${tenant.computedStatus === 'ACTIVA' ? 'badge-active' : 'badge-expired'}">${tenant.computedStatus}</span></div>
+        <div><b>Tipo de Licencia:</b> ${tenant.licencia_tipo}</div>
+        <div><b>Fecha de Vencimiento:</b> <b style="color:var(--primary);">${tenant.licencia_fin}</b></div>
+        <div style="margin-top:4px;font-size:11.5px;color:var(--text-muted);">Base de datos física: <code>database/tenants/${tenant.slug}.sqlite</code></div>
+      `;
+
+      document.getElementById('licenseModal').classList.add('show');
+    }
+    function closeLicenseModal() {
+      document.getElementById('licenseModal').classList.remove('show');
+    }
+
+    async function executeRenew() {
+      if (!currentSelectedTenant) return;
+      const days = document.getElementById('renewPeriodDays').value;
+
+      try {
+        const res = await fetch(`/api/superadmin/tenants/${currentSelectedTenant.slug}/renew`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ duracion_dias: days })
+        });
+        const json = await res.json();
+        if (json.success) {
+          toast(`¡Licencia de ${currentSelectedTenant.nombre_comercial} renovada hasta ${json.data.newFinDate}!`);
+          document.getElementById('displayLicenseKey').value = json.data.newKey;
+          loadTenants();
+          openLicenseModal(currentSelectedTenant.slug);
+        } else {
+          alert('Error renovando licencia: ' + json.error);
+        }
+      } catch (err) {
+        alert('Error al conectar con servidor');
+      }
+    }
+
+    async function quickRenew(slug, days) {
+      const label = days === 15 ? '15 días de prueba' : (days === 30 ? '1 mes' : '1 año');
+      if (!confirm(`¿Extender la licencia de "${slug}" por ${label}?`)) return;
+      try {
+        const res = await fetch(`/api/superadmin/tenants/${slug}/renew`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ duracion_dias: days })
+        });
+        const json = await res.json();
+        if (json.success) {
+          toast(`¡Licencia extendida por ${label} hasta ${json.data.newFinDate}!`);
+          loadTenants();
+        } else {
+          alert('Error: ' + json.error);
+        }
+      } catch(e) {
+        alert('Error al renovar licencia');
+      }
+    }
+
+    function copyLicenseKey() {
+      const key = document.getElementById('displayLicenseKey').value;
+      navigator.clipboard.writeText(key).then(() => {
+        toast('Clave de licencia copiada al portapapeles');
+      });
+    }
+
+    async function toggleTenantStatus(slug, currentStatus) {
+      const newStatus = currentStatus === 'ACTIVA' ? 'SUSPENDIDA' : 'ACTIVA';
+      if (!confirm(`¿Estás seguro de cambiar el estado de "${slug}" a ${newStatus}?`)) return;
+
+      try {
+        const res = await fetch(`/api/superadmin/tenants/${slug}/status`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ estado: newStatus })
+        });
+        const json = await res.json();
+        if (json.success) {
+          toast(`Estado de ${slug} cambiado a ${newStatus}`);
+          loadTenants();
+        }
+      } catch (err) {
+        toast('Error al actualizar estado');
+      }
+    }
+
+    function escapeHtml(s) {
+      return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // Carga inicial
+    loadTenants();
+  </script>
+</body>
+</html>
