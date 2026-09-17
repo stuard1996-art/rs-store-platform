@@ -1568,7 +1568,17 @@
 
             <div>
               <label class="lbl">Ciudad / Cantón</label>
-              <input class="inp" id="chkCiudad" required placeholder="Ej. Guayaquil, Samborondón, Quito, Cuenca...">
+              <input class="inp" id="chkCiudad" required placeholder="Ej. Guayaquil, Samborondón, Quito, Cuenca..." oninput="recalculateShipping()">
+            </div>
+
+            <!-- Dynamic Servientrega Shipping Notice Pill -->
+            <div id="chkShippingNoticePill" style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;background:#fff;border:1px solid var(--line-strong);font-size:12px;margin-top:8px;">
+              <span id="chkShippingNoticeIcon" style="font-size:16px;">🚚</span>
+              <div style="flex:1;">
+                <span id="chkShippingNoticeText" style="font-weight:700;color:var(--ink);display:block;">Servientrega Local</span>
+                <span id="chkShippingNoticeOrigin" style="font-size:11px;color:var(--muted);display:block;">Calculando ruta...</span>
+              </div>
+              <b id="chkShippingNoticePrice" style="color:var(--accent-deep);font-size:14px;font-family:var(--mono);">$3.00</b>
             </div>
 
             <!-- Campos para Retiro en Agencia -->
@@ -2776,22 +2786,58 @@
         return;
       }
       btn.disabled = true;
-      statusEl.textContent = '⏳ Obteniendo coordenadas satelitales...';
+      statusEl.textContent = '⏳ Obteniendo coordenadas satelitales y ciudad...';
       statusEl.style.color = 'var(--accent-deep)';
 
       navigator.geolocation.getCurrentPosition(
-        (pos) => {
+        async (pos) => {
           btn.disabled = false;
           currentGpsLat = pos.coords.latitude;
           currentGpsLng = pos.coords.longitude;
           currentGpsMapsUrl = `https://maps.google.com/?q=${currentGpsLat},${currentGpsLng}`;
           statusEl.innerHTML = `✓ <b>Ubicación fijada:</b> Lat ${currentGpsLat.toFixed(5)}, Lng ${currentGpsLng.toFixed(5)} <a href="${currentGpsMapsUrl}" target="_blank" style="color:var(--accent-deep);text-decoration:underline;margin-left:4px;">Ver Mapa ↗</a>`;
           statusEl.style.color = 'var(--ok)';
-          toast('Ubicación GPS registrada');
+          toast('Ubicación GPS fijada');
+
+          // Auto-detección inteligente de Provincia y Ciudad por coordenadas
+          try {
+            const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${currentGpsLat}&lon=${currentGpsLng}&format=json&accept-language=es`);
+            if (geoRes.ok) {
+              const geoData = await geoRes.json();
+              if (geoData && geoData.address) {
+                const addr = geoData.address;
+                const detectedState = addr.state || addr.province || addr.region || '';
+                const detectedCity = addr.city || addr.town || addr.municipality || addr.village || addr.county || '';
+                
+                // Buscar coincidencia en el selector de provincias
+                const provSelect = document.getElementById('chkProvincia');
+                if (provSelect && detectedState) {
+                  const stateNorm = detectedState.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                  for (let opt of provSelect.options) {
+                    const optNorm = opt.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                    if (stateNorm.includes(optNorm) || optNorm.includes(stateNorm)) {
+                      provSelect.value = opt.value;
+                      break;
+                    }
+                  }
+                }
+                const cityInput = document.getElementById('chkCiudad');
+                if (cityInput && detectedCity && !cityInput.value) {
+                  cityInput.value = detectedCity;
+                }
+                recalculateShipping();
+                if (detectedCity || detectedState) {
+                  toast(`📍 Ciudad detectada: ${detectedCity ? detectedCity + ', ' : ''}${detectedState}`);
+                }
+              }
+            }
+          } catch (e) {
+            console.log('Reverse geocoding opcional omitido:', e);
+          }
         },
         (err) => {
           btn.disabled = false;
-          statusEl.textContent = '⚠️ No se pudo obtener GPS. Puedes ingresar la dirección en los campos.';
+          statusEl.textContent = '⚠️ No se pudo obtener GPS. Puedes ingresar la provincia y ciudad manualmente.';
           statusEl.style.color = 'var(--warn)';
         },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
@@ -2853,24 +2899,62 @@
     function recalculateShipping() {
       const subtotal = cart.reduce((s, x) => s + (x.price * x.qty), 0);
       const freeShippingLimit = parseFloat(storeSettings.envio_gratis_desde || '50.00');
-      const prov = document.getElementById('chkProvincia') ? document.getElementById('chkProvincia').value : 'Guayas';
-      const matrixProv = (storeSettings.ciudad_matriz || 'Guayas').trim().toLowerCase();
-      const currentProvNorm = (prov || '').trim().toLowerCase();
+
+      const provSelect = document.getElementById('chkProvincia');
+      const destProv = provSelect ? provSelect.value : 'Guayas';
+      const destCity = (document.getElementById('chkCiudad')?.value || '').trim();
+
+      const matrixProv = (storeSettings.provincia_matriz || 'Guayas').trim();
+      const matrixCity = (storeSettings.ciudad_matriz || 'Guayaquil').trim();
+      const localCitiesRaw = (storeSettings.ciudades_zona_local || 'Guayaquil, Samborondón, Durán, Daule');
 
       const localRate = parseFloat(storeSettings.tarifa_envio_local || '3.00');
       const nationalRate = parseFloat(storeSettings.tarifa_envio_nacional || '5.50');
       const specialRate = parseFloat(storeSettings.tarifa_envio_especial || '8.50');
 
-      const isSpecial = ['galápagos', 'galapagos', 'morona santiago', 'napo', 'orellana', 'pastaza', 'sucumbíos', 'sucumbios', 'zamora chinchipe'].includes(currentProvNorm);
+      const normalizeStr = (s) => (s || '').trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-      if (subtotal >= freeShippingLimit) {
+      const destProvNorm = normalizeStr(destProv);
+      const destCityNorm = normalizeStr(destCity);
+      const matrixProvNorm = normalizeStr(matrixProv);
+      const matrixCityNorm = normalizeStr(matrixCity);
+
+      const localCitiesList = localCitiesRaw.split(',').map(c => normalizeStr(c)).filter(Boolean);
+
+      // Comprobar si es Especial (Galápagos u Oriente)
+      const specialProvinces = ['galapagos', 'morona santiago', 'napo', 'orellana', 'pastaza', 'sucumbios', 'zamora chinchipe'];
+      const isSpecial = specialProvinces.some(sp => destProvNorm.includes(sp));
+
+      // Comprobar si es Local
+      // 1. Misma provincia que la matriz (ej. Guayas con Guayas)
+      // 2. O la ciudad está en la lista de ciudades de zona local (ej. Samborondón, Durán, Daule)
+      // 3. O la ciudad coincide con la ciudad matriz
+      const isLocalCityMatch = localCitiesList.some(lc => destCityNorm && (destCityNorm.includes(lc) || lc.includes(destCityNorm)));
+      const isLocal = (destProvNorm === matrixProvNorm) || isLocalCityMatch || (destCityNorm && destCityNorm === matrixCityNorm);
+
+      // Comprobar si es Retiro en Tienda
+      const paymentMethod = document.getElementById('chkPayment')?.value || '';
+      const isStorePickup = paymentMethod.toUpperCase().includes('RETIRAR EN TIENDA');
+
+      let shippingZoneDesc = '';
+      let isFreeByPromo = false;
+
+      if (isStorePickup) {
         currentShippingCost = 0.00;
-      } else if (currentProvNorm === matrixProv) {
-        currentShippingCost = localRate;
+        shippingZoneDesc = 'Retiro en Tienda Física';
+      } else if (subtotal >= freeShippingLimit && subtotal > 0) {
+        currentShippingCost = 0.00;
+        isFreeByPromo = true;
+        shippingZoneDesc = `Envío GRATIS (Supera $${freeShippingLimit.toFixed(2)})`;
       } else if (isSpecial) {
         currentShippingCost = specialRate;
+        shippingZoneDesc = `Servientrega Especial (${destProv})`;
+      } else if (isLocal) {
+        currentShippingCost = localRate;
+        shippingZoneDesc = `Servientrega Local (${destCity || matrixProv})`;
       } else {
         currentShippingCost = nationalRate;
+        shippingZoneDesc = `Servientrega Nacional (${destProv}${destCity ? ' - ' + destCity : ''})`;
       }
 
       // Descuento de cupón
@@ -2888,9 +2972,11 @@
       const total = Math.max(0, subtotal - discount + currentShippingCost);
 
       // Update UI in Drawer & Checkout Modal
-      document.getElementById('cartSubtotal').textContent = money(subtotal);
-      document.getElementById('cartShipping').textContent = currentShippingCost === 0 ? 'Gratis' : money(currentShippingCost);
-      document.getElementById('cartTotal').textContent = money(total);
+      if (document.getElementById('cartSubtotal')) document.getElementById('cartSubtotal').textContent = money(subtotal);
+      if (document.getElementById('cartShipping')) {
+        document.getElementById('cartShipping').textContent = currentShippingCost === 0 ? (isFreeByPromo ? 'Gratis (Promoción)' : 'Gratis') : money(currentShippingCost);
+      }
+      if (document.getElementById('cartTotal')) document.getElementById('cartTotal').textContent = money(total);
 
       const rowCartDisc = document.getElementById('rowCartDiscount');
       if (rowCartDisc) {
@@ -2916,9 +3002,29 @@
         }
       }
 
-      if (document.getElementById('chkShippingDisplay')) {
-        document.getElementById('chkShippingDisplay').textContent = currentShippingCost === 0 ? 'Gratis' : money(currentShippingCost);
+      if (document.getElementById('chkShippingLabel')) {
+        document.getElementById('chkShippingLabel').textContent = `Envío ${shippingZoneDesc}:`;
       }
+      if (document.getElementById('chkShippingDisplay')) {
+        document.getElementById('chkShippingDisplay').textContent = currentShippingCost === 0 ? 'Gratis ($0.00)' : money(currentShippingCost);
+      }
+
+      // Dynamic Notice Pill in Checkout Form
+      if (document.getElementById('chkShippingNoticeText')) {
+        document.getElementById('chkShippingNoticeText').textContent = shippingZoneDesc;
+      }
+      if (document.getElementById('chkShippingNoticeOrigin')) {
+        document.getElementById('chkShippingNoticeOrigin').textContent = isStorePickup 
+          ? `Retiro personal en local físico: ${matrixCity} (${matrixProv})`
+          : `Origen: Matriz ${matrixCity} (${matrixProv}) → Destino: ${destCity ? destCity + ', ' : ''}${destProv}`;
+      }
+      if (document.getElementById('chkShippingNoticePrice')) {
+        document.getElementById('chkShippingNoticePrice').textContent = currentShippingCost === 0 ? 'GRATIS' : money(currentShippingCost);
+      }
+      if (document.getElementById('chkShippingNoticeIcon')) {
+        document.getElementById('chkShippingNoticeIcon').textContent = isStorePickup ? '🏬' : (currentShippingCost === 0 ? '🎉' : '🚚');
+      }
+
       if (document.getElementById('chkIvaLabel')) {
         document.getElementById('chkIvaLabel').textContent = isRimpePopular ? 'IVA (0% - RIMPE Negocio Popular):' : 'IVA Estimado (15%):';
       }
@@ -3148,6 +3254,7 @@
           if (document.getElementById('bankOwnerDisplay')) document.getElementById('bankOwnerDisplay').textContent = storeSettings.banco_titular || 'RS STORE BOUTIQUE S.A.S.';
           if (document.getElementById('bankRucDisplay')) document.getElementById('bankRucDisplay').textContent = storeSettings.banco_identificacion || '0992345678001';
           if (document.getElementById('bankEmailDisplay')) document.getElementById('bankEmailDisplay').textContent = storeSettings.banco_email || 'pagos@rsstore.ec';
+          recalculateShipping();
         }
       } catch (e) {}
     }
@@ -3156,6 +3263,7 @@
       const isTransfer = e.target.value.includes('TRANSFERENCIA');
       const card = document.getElementById('bankTransferCard');
       if (card) card.style.display = isTransfer ? 'block' : 'none';
+      recalculateShipping();
     });
 
     document.getElementById('chkVoucherFile')?.addEventListener('change', (e) => {
