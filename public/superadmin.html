@@ -3,50 +3,59 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Superadmin Maestro · Gestión Multi-Empresa & Licencias SaaS</title>
+  <title>Superadmin Maestro · Antigravity Cloud SaaS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0B0F17;
-      --surface: #111827;
-      --surface-card: #182234;
+      --bg: #090D16;
+      --surface: #0F172A;
+      --surface-elevated: #1E293B;
+      --surface-hover: rgba(255, 255, 255, 0.04);
       --border: rgba(255, 255, 255, 0.08);
       --border-strong: rgba(255, 255, 255, 0.16);
-      --text: #F3F4F6;
-      --text-muted: #9CA3AF;
+      --text: #F8FAFC;
+      --text-muted: #94A3B8;
+      --text-sub: #64748B;
       --primary: #6366F1;
       --primary-hover: #4F46E5;
       --primary-glow: rgba(99, 102, 241, 0.25);
-      --accent: #EC4899;
-      --success: #10B981;
-      --warning: #F59E0B;
-      --danger: #EF4444;
-      --font-sans: 'Plus Jakarta Sans', sans-serif;
+      --accent: #8B5CF6;
+      --emerald: #10B981;
+      --emerald-bg: rgba(16, 185, 129, 0.12);
+      --amber: #F59E0B;
+      --amber-bg: rgba(245, 158, 11, 0.12);
+      --rose: #F43F5E;
+      --rose-bg: rgba(244, 63, 94, 0.12);
+      --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       background-color: var(--bg);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.06) 0px, transparent 50%);
       color: var(--text);
       font-family: var(--font-sans);
       min-height: 100vh;
       line-height: 1.5;
-      padding-bottom: 60px;
+      padding-bottom: 80px;
     }
 
     .wrap {
-      max-width: 1300px;
+      max-width: 1340px;
       margin: 0 auto;
       padding: 0 24px;
     }
 
     /* HEADER */
     header {
-      background: rgba(17, 24, 39, 0.85);
-      backdrop-filter: blur(16px);
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
       position: sticky;
       top: 0;
@@ -56,71 +65,87 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 72px;
+      height: 76px;
     }
     .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
       text-decoration: none;
       color: inherit;
     }
     .brand-badge {
-      background: linear-gradient(135deg, var(--primary), var(--accent));
+      background: linear-gradient(135deg, #4F46E5, #9333EA);
       color: #fff;
       font-weight: 800;
-      font-size: 14px;
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
+      font-size: 16px;
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 14px var(--primary-glow);
+      box-shadow: 0 0 24px var(--primary-glow);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
     .brand-text h1 {
       font-size: 17px;
       font-weight: 800;
-      letter-spacing: -0.01em;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand-text .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--emerald);
+      box-shadow: 0 0 8px var(--emerald);
+      display: inline-block;
     }
     .brand-text span {
-      font-size: 11px;
+      font-size: 11.5px;
       color: var(--text-muted);
       font-family: var(--font-mono);
       display: block;
-      margin-top: -2px;
+      margin-top: 1px;
     }
 
+    /* BUTTONS */
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 10px 18px;
+      padding: 9px 16px;
       border-radius: 10px;
       font-weight: 600;
-      font-size: 13.5px;
+      font-size: 13px;
       cursor: pointer;
       border: none;
-      transition: all 0.2s ease;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       text-decoration: none;
+      white-space: nowrap;
     }
     .btn-primary {
-      background: linear-gradient(135deg, var(--primary), #4F46E5);
+      background: linear-gradient(135deg, var(--primary), #4338CA);
       color: #fff;
       box-shadow: 0 4px 14px var(--primary-glow);
+      border: 1px solid rgba(255, 255, 255, 0.15);
     }
     .btn-primary:hover {
       transform: translateY(-1px);
       box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
     }
     .btn-secondary {
-      background: var(--surface-card);
-      border: 1px solid var(--border-strong);
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
       color: var(--text);
     }
     .btn-secondary:hover {
       background: rgba(255, 255, 255, 0.08);
+      border-color: var(--border-strong);
     }
     .btn-sm {
       padding: 6px 12px;
@@ -131,77 +156,102 @@
     /* KPI CARDS */
     .kpi-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 16px;
-      margin: 28px 0;
+      margin: 28px 0 24px;
     }
     .kpi-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 20px;
+      padding: 22px;
       display: flex;
       flex-direction: column;
       position: relative;
       overflow: hidden;
+      transition: border-color 0.2s ease, transform 0.2s ease;
     }
-    .kpi-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--primary), transparent);
+    .kpi-card:hover {
+      border-color: rgba(255, 255, 255, 0.16);
+      transform: translateY(-2px);
     }
-    .kpi-title {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 8px;
+    .kpi-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .kpi-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .kpi-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
     }
     .kpi-value {
-      font-size: 32px;
+      font-size: 34px;
       font-weight: 800;
       font-family: var(--font-mono);
       line-height: 1;
+      letter-spacing: -0.02em;
     }
     .kpi-sub {
-      font-size: 11.5px;
-      color: var(--text-muted);
-      margin-top: 6px;
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    /* TOOLBAR */
-    .toolbar {
+    /* TOOLBAR & FILTERS */
+    .toolbar-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .toolbar-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      margin-bottom: 20px;
       flex-wrap: wrap;
     }
-    .search-box {
+    .search-wrap {
       flex: 1;
-      max-width: 400px;
+      min-width: 280px;
+      max-width: 480px;
       position: relative;
     }
-    .search-box input {
+    .search-wrap input {
       width: 100%;
-      background: var(--surface);
+      background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--border-strong);
       border-radius: 10px;
       padding: 10px 14px 10px 38px;
       font-size: 13.5px;
       color: var(--text);
       outline: none;
+      transition: all 0.2s ease;
     }
-    .search-box input:focus {
+    .search-wrap input:focus {
+      background: rgba(255, 255, 255, 0.06);
       border-color: var(--primary);
       box-shadow: 0 0 0 3px var(--primary-glow);
     }
@@ -214,13 +264,47 @@
       font-size: 14px;
     }
 
+    /* RUBRO FILTER CHIPS */
+    .rubro-chips {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 12px;
+    }
+    .rubro-chip {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .rubro-chip:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+    }
+    .rubro-chip.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      box-shadow: 0 2px 10px var(--primary-glow);
+    }
+
     /* TABLE */
     .table-container {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      overflow: visible;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
     }
     table {
       width: 100%;
@@ -235,60 +319,206 @@
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: var(--text-muted);
+      color: var(--text-sub);
+      font-weight: 700;
     }
     td {
       padding: 16px 18px;
       border-bottom: 1px solid var(--border);
       vertical-align: middle;
+      position: relative;
     }
     tr:last-child td {
       border-bottom: none;
     }
     tr:hover td {
-      background: rgba(255, 255, 255, 0.015);
+      background: var(--surface-hover);
     }
 
+    /* SQUIRCLE AVATAR */
+    .squircle-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      flex-shrink: 0;
+    }
+
+    /* BADGES */
     .badge {
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      padding: 4px 9px;
-      border-radius: 999px;
+      padding: 3px 8px;
+      border-radius: 6px;
       font-size: 11px;
       font-weight: 700;
       font-family: var(--font-mono);
       text-transform: uppercase;
+      letter-spacing: 0.02em;
     }
     .badge-active {
-      background: rgba(16, 185, 129, 0.15);
-      color: var(--success);
+      background: var(--emerald-bg);
+      color: var(--emerald);
       border: 1px solid rgba(16, 185, 129, 0.3);
     }
     .badge-expired {
-      background: rgba(239, 68, 68, 0.15);
-      color: var(--danger);
-      border: 1px solid rgba(239, 68, 68, 0.3);
+      background: var(--rose-bg);
+      color: var(--rose);
+      border: 1px solid rgba(244, 63, 94, 0.3);
     }
     .badge-suspended {
-      background: rgba(245, 158, 11, 0.15);
-      color: var(--warning);
+      background: var(--amber-bg);
+      color: var(--amber);
       border: 1px solid rgba(245, 158, 11, 0.3);
     }
 
-    .actions {
+    /* ROW ACTIONS (CLEAN & ELEGANT) */
+    .row-actions {
       display: flex;
       align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+      position: relative;
+    }
+    .btn-action-admin {
+      background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(79,70,229,0.3));
+      color: #A5B4FC;
+      border: 1px solid rgba(99,102,241,0.35);
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+    }
+    .btn-action-admin:hover {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      transform: translateY(-1px);
+    }
+    .btn-action-wa {
+      background: rgba(16, 185, 129, 0.12);
+      color: #34D399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 7px 11px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+    }
+    .btn-action-wa:hover {
+      background: var(--emerald);
+      color: #fff;
+      border-color: var(--emerald);
+      transform: translateY(-1px);
+    }
+    .btn-action-more {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+    .btn-action-more:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      border-color: var(--border-strong);
+    }
+
+    /* DROPDOWN MENU */
+    .dropdown-container {
+      position: relative;
+    }
+    .dropdown-menu {
+      position: absolute;
+      right: 0;
+      top: 100%;
+      margin-top: 6px;
+      background: #182234;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px;
+      padding: 6px;
+      min-width: 220px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      z-index: 1000;
+      display: none;
+      flex-direction: column;
+      gap: 2px;
+      backdrop-filter: blur(12px);
+    }
+    .dropdown-menu.show {
+      display: flex;
+      animation: menuPop 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes menuPop {
+      from { opacity: 0; transform: scale(0.95) translateY(-6px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #CBD5E1;
+      text-decoration: none;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      width: 100%;
+      transition: all 0.12s ease;
+    }
+    .dropdown-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+    }
+    .dropdown-divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.08);
+      margin: 4px 0;
+    }
+    .dropdown-header {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--text-sub);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 4px 12px 2px;
     }
 
     /* MODAL */
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.75);
+      background: rgba(0, 0, 0, 0.8);
       backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       display: none;
       align-items: center;
       justify-content: center;
@@ -299,15 +529,15 @@
       display: flex;
     }
     .modal-card {
-      background: var(--surface);
+      background: #0F172A;
       border: 1px solid var(--border-strong);
       border-radius: 20px;
       width: 100%;
-      max-width: 600px;
+      max-width: 640px;
       max-height: 90vh;
       overflow-y: auto;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
-      animation: modalIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      animation: modalIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
     }
     @keyframes modalIn {
       from { opacity: 0; transform: scale(0.96) translateY(10px); }
@@ -330,7 +560,7 @@
     .modal-foot {
       padding: 16px 24px;
       border-top: 1px solid var(--border);
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(0, 0, 0, 0.25);
       display: flex;
       justify-content: flex-end;
       gap: 10px;
@@ -354,13 +584,14 @@
     }
     .f-input {
       width: 100%;
-      background: var(--surface-card);
+      background: var(--surface-elevated);
       border: 1px solid var(--border-strong);
       border-radius: 10px;
       padding: 10px 14px;
       font-size: 13.5px;
       color: var(--text);
       outline: none;
+      transition: all 0.2s ease;
     }
     .f-input:focus {
       border-color: var(--primary);
@@ -368,7 +599,7 @@
     }
     .f-help {
       font-size: 11px;
-      color: var(--text-muted);
+      color: var(--text-sub);
       margin-top: 4px;
     }
 
@@ -377,8 +608,8 @@
       position: fixed;
       bottom: 24px;
       right: 24px;
-      background: var(--surface-card);
-      border: 1px solid var(--border-strong);
+      background: #1E293B;
+      border: 1px solid rgba(255, 255, 255, 0.15);
       color: #fff;
       padding: 12px 20px;
       border-radius: 12px;
@@ -404,16 +635,19 @@
       <a href="/superadmin" class="brand">
         <div class="brand-badge">⚡</div>
         <div class="brand-text">
-          <h1>Antigravity SaaS Master</h1>
+          <h1>
+            Antigravity Cloud SaaS
+            <span class="status-dot" title="Sistema en línea"></span>
+          </h1>
           <span>PLATAFORMA MULTI-EMPRESA &amp; LICENCIAS SRI</span>
         </div>
       </a>
-      <div style="display:flex;align-items:center;gap:10px;">
-        <a href="/admin.html" target="_blank" class="btn btn-secondary btn-sm">
-          ⚙️ Ir al Panel RS Store
+      <div style="display:flex;align-items:center;gap:12px;">
+        <a href="/admin.html" target="_blank" class="btn btn-secondary btn-sm" style="display:flex;align-items:center;gap:6px;">
+          <span>🛍️</span> Tienda Matriz RS Store
         </a>
         <button type="button" class="btn btn-primary" onclick="openCreateModal()">
-          ➕ Crear Nueva Empresa
+          <span>➕</span> Nueva Empresa
         </button>
       </div>
     </div>
@@ -423,36 +657,78 @@
     <!-- METRICS -->
     <div class="kpi-grid">
       <div class="kpi-card">
-        <div class="kpi-title"><span>Empresas Registradas</span> <span>🏢</span></div>
+        <div class="kpi-top">
+          <span class="kpi-title">Empresas Registradas</span>
+          <div class="kpi-icon">🏢</div>
+        </div>
         <div class="kpi-value" id="kpiTotal">0</div>
         <div class="kpi-sub">Bases de datos independientes SQLite</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-title"><span>Licencias Activas</span> <span>🟢</span></div>
-        <div class="kpi-value" id="kpiActive" style="color:var(--success);">0</div>
-        <div class="kpi-sub">En operación normal</div>
+        <div class="kpi-top">
+          <span class="kpi-title">Licencias Activas</span>
+          <div class="kpi-icon" style="color:var(--emerald);">🟢</div>
+        </div>
+        <div class="kpi-value" id="kpiActive" style="color:var(--emerald);">0</div>
+        <div class="kpi-sub">Operación normal sin interrupciones</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-title"><span>Expiradas / Suspendidas</span> <span>⚠️</span></div>
-        <div class="kpi-value" id="kpiExpired" style="color:var(--danger);">0</div>
-        <div class="kpi-sub">Pendientes de renovación anual</div>
+        <div class="kpi-top">
+          <span class="kpi-title">Por Renovar / Pruebas</span>
+          <div class="kpi-icon" style="color:var(--amber);">⚠️</div>
+        </div>
+        <div class="kpi-value" id="kpiExpired" style="color:var(--amber);">0</div>
+        <div class="kpi-sub">Atención comercial requerida</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-title"><span>Almacenamiento Total</span> <span>💾</span></div>
+        <div class="kpi-top">
+          <span class="kpi-title">Almacenamiento Total</span>
+          <div class="kpi-icon">💾</div>
+        </div>
         <div class="kpi-value" id="kpiStorage">0 MB</div>
-        <div class="kpi-sub">Espacio en disco de bases de datos</div>
+        <div class="kpi-sub">Espacio físico ocupado en disco</div>
       </div>
     </div>
 
-    <!-- TOOLBAR -->
-    <div class="toolbar">
-      <div class="search-box">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="searchInput" placeholder="Buscar empresa por nombre, RUC, slug..." oninput="filterTenants()">
+    <!-- TOOLBAR & FILTERS -->
+    <div class="toolbar-box">
+      <div class="toolbar-top">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" placeholder="Buscar por nombre, RUC, slug o ciudad..." oninput="filterTenants()">
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-secondary btn-sm" onclick="loadTenants()">
+            🔄 Actualizar
+          </button>
+        </div>
       </div>
-      <div style="display:flex;gap:8px;">
-        <button class="btn btn-secondary btn-sm" onclick="loadTenants()">
-          🔄 Actualizar Lista
+
+      <!-- QUICK RUBRO PILLS -->
+      <div class="rubro-chips" id="rubroFilterChips">
+        <button type="button" class="rubro-chip active" data-rubro="ALL" onclick="selectRubroFilter('ALL', this)">
+          Todos (<span id="countAll">0</span>)
+        </button>
+        <button type="button" class="rubro-chip" data-rubro="JOYERIA" onclick="selectRubroFilter('JOYERIA', this)">
+          💎 Joyería
+        </button>
+        <button type="button" class="rubro-chip" data-rubro="TECNOLOGIA" onclick="selectRubroFilter('TECNOLOGIA', this)">
+          💻 Tecnología
+        </button>
+        <button type="button" class="rubro-chip" data-rubro="CALZADO" onclick="selectRubroFilter('CALZADO', this)">
+          👟 Calzado
+        </button>
+        <button type="button" class="rubro-chip" data-rubro="MODA" onclick="selectRubroFilter('MODA', this)">
+          👗 Moda
+        </button>
+        <button type="button" class="rubro-chip" data-rubro="BELLEZA" onclick="selectRubroFilter('BELLEZA', this)">
+          💄 Belleza
+        </button>
+        <button type="button" class="rubro-chip" data-rubro="ALIMENTOS" onclick="selectRubroFilter('ALIMENTOS', this)">
+          🍕 Gourmet
+        </button>
+        <button type="button" class="rubro-chip" data-rubro="GENERAL" onclick="selectRubroFilter('GENERAL', this)">
+          🛒 General
         </button>
       </div>
     </div>
@@ -462,17 +738,17 @@
       <table>
         <thead>
           <tr>
-            <th>Empresa / Negocio</th>
-            <th>RUC &amp; Sede Matriz</th>
-            <th>Rutas &amp; Dominio</th>
-            <th>Vigencia Licencia</th>
-            <th>Base de Datos</th>
-            <th style="text-align:right;">Acciones</th>
+            <th style="width:30%;">Empresa / Negocio</th>
+            <th style="width:18%;">RUC &amp; Sede Matriz</th>
+            <th style="width:18%;">Rutas &amp; Dominio</th>
+            <th style="width:18%;">Licencia &amp; Vigencia</th>
+            <th style="width:8%;">Base de Datos</th>
+            <th style="width:8%;text-align:right;">Acciones</th>
           </tr>
         </thead>
         <tbody id="tenantsTableBody">
           <tr>
-            <td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">
+            <td colspan="6" style="text-align:center;padding:50px;color:var(--text-muted);">
               ⏳ Cargando empresas registradas...
             </td>
           </tr>
@@ -663,7 +939,7 @@
         <div style="margin-top:16px;border-top:1px dashed var(--border);padding-top:14px;">
           <label class="f-label">Clave de Activación Criptográfica (Para enviar por WhatsApp al cliente)</label>
           <div style="display:flex;gap:8px;">
-            <input class="f-input" id="displayLicenseKey" readonly style="font-family:var(--font-mono);font-size:12px;color:var(--success);font-weight:700;">
+            <input class="f-input" id="displayLicenseKey" readonly style="font-family:var(--font-mono);font-size:12px;color:var(--emerald);font-weight:700;">
             <button type="button" class="btn btn-secondary" onclick="copyLicenseKey()">📋 Copiar</button>
           </div>
           <div class="f-help">Si el cliente tiene su propio servidor, envíale esta clave para que la ingrese en su pantalla de bloqueo.</div>
@@ -706,14 +982,48 @@
   <div id="toast"></div>
 
   <script>
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
     let tenantsList = [];
     let currentSelectedTenant = null;
+    let currentRubroFilter = 'ALL';
 
     function toast(msg) {
       const t = document.getElementById('toast');
+      if (!t) return;
       t.textContent = msg;
       t.classList.add('show');
       setTimeout(() => t.classList.remove('show'), 3500);
+    }
+
+    // Close any open dropdown on outside click
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.dropdown-container')) {
+        closeAllDropdowns();
+      }
+    });
+
+    function closeAllDropdowns() {
+      document.querySelectorAll('.dropdown-menu.show').forEach(m => m.classList.remove('show'));
+    }
+
+    function toggleRowMenu(e, slug) {
+      e.stopPropagation();
+      const menu = document.getElementById(`menu-${slug}`);
+      if (!menu) return;
+      const isShown = menu.classList.contains('show');
+      closeAllDropdowns();
+      if (!isShown) {
+        menu.classList.add('show');
+      }
     }
 
     async function loadTenants() {
@@ -726,19 +1036,22 @@
         if (presetsRes) {
           try {
             const pJson = await presetsRes.json();
-            if (pJson.success) window.RUBRO_PRESETS = pJson.data;
+            if (pJson && pJson.success) window.RUBRO_PRESETS = pJson.data;
           } catch(e) {}
         }
 
-        if (json.success) {
+        if (json && json.success && Array.isArray(json.data)) {
           tenantsList = json.data;
-          renderTenants(tenantsList);
+          const countEl = document.getElementById('countAll');
+          if (countEl) countEl.textContent = tenantsList.length;
+          applyCombinedFilter();
           updateKpis(tenantsList);
         } else {
           toast('Error cargando empresas');
         }
       } catch (err) {
-        toast('Error al conectar con la API de Superadmin');
+        console.error('Error in loadTenants:', err);
+        toast('Error al conectar con la API de Superadmin: ' + err.message);
       }
     }
 
@@ -761,22 +1074,65 @@
       GENERAL: '🛒'
     };
 
-    const rubroLabels = {
-      JOYERIA: '💎 Joyería',
-      TECNOLOGIA: '💻 Tecnología',
-      CALZADO: '👟 Calzado',
-      MODA: '👗 Ropa / Moda',
-      BELLEZA: '💄 Belleza',
-      ALIMENTOS: '🍕 Gourmet',
-      GENERAL: '🛒 General'
+    const rubroGradients = {
+      JOYERIA: 'linear-gradient(135deg, rgba(157,23,77,0.3), rgba(131,24,67,0.5))',
+      TECNOLOGIA: 'linear-gradient(135deg, rgba(37,99,235,0.3), rgba(29,78,216,0.5))',
+      CALZADO: 'linear-gradient(135deg, rgba(217,119,6,0.3), rgba(180,83,9,0.5))',
+      MODA: 'linear-gradient(135deg, rgba(168,50,78,0.3), rgba(123,17,58,0.5))',
+      BELLEZA: 'linear-gradient(135deg, rgba(219,39,119,0.3), rgba(190,24,93,0.5))',
+      ALIMENTOS: 'linear-gradient(135deg, rgba(234,88,12,0.3), rgba(194,65,12,0.5))',
+      GENERAL: 'linear-gradient(135deg, rgba(13,148,136,0.3), rgba(15,118,110,0.5))'
     };
+
+    const rubroLabels = {
+      JOYERIA: 'Joyería & Relojes',
+      TECNOLOGIA: 'Tecnología & Celulares',
+      CALZADO: 'Calzado & Sneakers',
+      MODA: 'Moda & Boutique',
+      BELLEZA: 'Belleza & Skincare',
+      ALIMENTOS: 'Alimentos & Gourmet',
+      GENERAL: 'Tienda General'
+    };
+
+    function selectRubroFilter(rubro, el) {
+      currentRubroFilter = rubro;
+      document.querySelectorAll('.rubro-chip').forEach(c => c.classList.remove('active'));
+      if (el) el.classList.add('active');
+      applyCombinedFilter();
+    }
+
+    function applyCombinedFilter() {
+      const q = (document.getElementById('searchInput') ? document.getElementById('searchInput').value : '').trim().toLowerCase();
+      let filtered = tenantsList;
+
+      if (currentRubroFilter !== 'ALL') {
+        filtered = filtered.filter(t => (t.rubro || 'GENERAL') === currentRubroFilter);
+      }
+
+      if (q) {
+        filtered = filtered.filter(t => 
+          (t.nombre_comercial || '').toLowerCase().includes(q) ||
+          (t.slug || '').toLowerCase().includes(q) ||
+          (t.ruc || '').toLowerCase().includes(q) ||
+          (t.ciudad_matriz || '').toLowerCase().includes(q)
+        );
+      }
+
+      renderTenants(filtered);
+    }
+
+    function filterTenants() {
+      applyCombinedFilter();
+    }
 
     function renderTenants(list) {
       const tbody = document.getElementById('tenantsTableBody');
       if (!list.length) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">No hay empresas encontradas.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:50px;color:var(--text-muted);font-size:14px;">No se encontraron empresas con los filtros aplicados.</td></tr>`;
         return;
       }
+
+      const now = new Date();
 
       tbody.innerHTML = list.map(t => {
         let badgeClass = 'badge-active';
@@ -786,85 +1142,148 @@
         const storeUrl = t.dominio_personalizado ? `https://${t.dominio_personalizado}` : `/t/${t.slug}`;
         const adminUrl = t.dominio_personalizado ? `https://${t.dominio_personalizado}/admin` : `/t/${t.slug}/admin`;
 
+        // Days remaining calculation
+        let countdownText = 'Vigencia Permanente';
+        if (t.licencia_tipo !== 'VITALICIA') {
+          if (t.licencia_fin) {
+            const finDate = new Date(t.licencia_fin);
+            if (!isNaN(finDate.getTime())) {
+              const diffDays = Math.ceil((finDate - now) / (1000 * 60 * 60 * 24));
+              if (diffDays > 0) {
+                countdownText = `Quedan ${diffDays} días (${t.licencia_fin})`;
+              } else {
+                countdownText = `Venció hace ${Math.abs(diffDays)} días`;
+              }
+            } else {
+              countdownText = `Vence: ${t.licencia_fin}`;
+            }
+          } else {
+            countdownText = 'Sin fecha';
+          }
+        }
+
+        const avatarGrad = rubroGradients[t.rubro] || 'linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))';
+        const rIcon = rubroIcons[t.rubro] || '🏢';
+
         return `
           <tr>
             <td>
-              <div style="display:flex;align-items:center;gap:10px;">
-                <div style="width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:20px;">
-                  ${rubroIcons[t.rubro] || '🏢'}
+              <div style="display:flex;align-items:center;gap:12px;">
+                <div class="squircle-avatar" style="background:${avatarGrad};">
+                  ${rIcon}
                 </div>
                 <div>
-                  <b style="font-size:14.5px;color:#fff;display:block;">${escapeHtml(t.nombre_comercial)}</b>
-                  <div style="display:flex;align-items:center;gap:6px;margin-top:2px;">
-                    <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">${t.slug}</span>
-                    <span class="badge" style="background:rgba(255,255,255,0.07);font-size:10px;color:#cbd5e1;padding:1px 6px;">
-                      ${rubroLabels[t.rubro] || t.rubro || 'General'}
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <b style="font-size:14.5px;color:#fff;letter-spacing:-0.01em;">${escapeHtml(t.nombre_comercial)}</b>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:6px;margin-top:3px;flex-wrap:wrap;">
+                    <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);background:rgba(255,255,255,0.04);padding:2px 6px;border-radius:4px;border:1px solid rgba(255,255,255,0.06);">
+                      /${t.slug}
+                    </span>
+                    <span style="font-size:11px;color:var(--text-sub);display:inline-flex;align-items:center;gap:3px;">
+                      • ${rubroLabels[t.rubro] || t.rubro || 'General'}
                     </span>
                   </div>
                 </div>
               </div>
             </td>
+
             <td>
-              <div style="font-family:var(--font-mono);font-size:12px;">${t.ruc || 'Sin RUC'}</div>
-              <div style="font-size:11.5px;color:var(--text-muted);">${escapeHtml(t.ciudad_matriz || 'Guayaquil')}, ${escapeHtml(t.provincia_matriz || 'Guayas')}</div>
+              <div style="font-family:var(--font-mono);font-size:12.5px;color:var(--text);font-weight:600;">
+                ${t.ruc || '<span style="color:var(--text-sub);">Sin RUC</span>'}
+              </div>
+              <div style="font-size:11.5px;color:var(--text-muted);margin-top:2px;display:flex;align-items:center;gap:4px;">
+                <span>📍</span> ${escapeHtml(t.ciudad_matriz || 'Guayaquil')}, ${escapeHtml(t.provincia_matriz || 'Guayas')}
+              </div>
             </td>
+
             <td>
               <div>
-                <a href="${storeUrl}" target="_blank" style="color:var(--primary);text-decoration:none;font-size:12.5px;font-weight:600;">
-                  🔗 ${storeUrl} ↗
+                <a href="${storeUrl}" target="_blank" style="color:var(--primary);text-decoration:none;font-size:12.5px;font-weight:600;display:inline-flex;align-items:center;gap:4px;">
+                  <span>🔗</span> ${t.slug} ↗
                 </a>
               </div>
-              ${t.dominio_personalizado ? `
-                <div style="font-size:11px;color:var(--success);margin-top:2px;">
-                  🌐 Dominio: <b>${escapeHtml(t.dominio_personalizado)}</b>
-                </div>
-              ` : `<span style="font-size:11px;color:var(--text-muted);">Subruta en plataforma</span>`}
+              <div style="margin-top:3px;">
+                ${t.dominio_personalizado ? `
+                  <span class="badge" style="background:rgba(16,185,129,0.1);color:var(--emerald);border:1px solid rgba(16,185,129,0.25);font-size:10px;">
+                    🌐 ${escapeHtml(t.dominio_personalizado)}
+                  </span>
+                ` : `<span style="font-size:11px;color:var(--text-sub);">Subruta en plataforma</span>`}
+              </div>
             </td>
+
             <td>
-              <div>
+              <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;">
                 <span class="badge ${badgeClass}">${t.computedStatus}</span>
-                ${t.licencia_tipo === 'PRUEBA' ? '<span class="badge" style="background:rgba(236,72,153,0.15);color:#EC4899;border:1px solid rgba(236,72,153,0.3);margin-left:4px;">🎁 PRUEBA 15D</span>' : ''}
-                ${t.licencia_tipo === 'MENSUAL' ? '<span class="badge" style="background:rgba(59,130,246,0.15);color:#3B82F6;border:1px solid rgba(59,130,246,0.3);margin-left:4px;">💳 MENSUAL</span>' : ''}
-                ${t.licencia_tipo === 'ANUAL' ? '<span class="badge" style="background:rgba(16,185,129,0.15);color:#10B981;border:1px solid rgba(16,185,129,0.3);margin-left:4px;">🏆 ANUAL</span>' : ''}
-                ${t.licencia_tipo === 'VITALICIA' ? '<span class="badge" style="background:rgba(245,158,11,0.15);color:#F59E0B;border:1px solid rgba(245,158,11,0.3);margin-left:4px;">👑 VITALICIA</span>' : ''}
+                ${t.licencia_tipo === 'PRUEBA' ? '<span class="badge" style="background:rgba(236,72,153,0.15);color:#EC4899;border:1px solid rgba(236,72,153,0.3);">PRUEBA 15D</span>' : ''}
+                ${t.licencia_tipo === 'MENSUAL' ? '<span class="badge" style="background:rgba(59,130,246,0.15);color:#3B82F6;border:1px solid rgba(59,130,246,0.3);">MENSUAL</span>' : ''}
+                ${t.licencia_tipo === 'ANUAL' ? '<span class="badge" style="background:rgba(16,185,129,0.15);color:#10B981;border:1px solid rgba(16,185,129,0.3);">ANUAL</span>' : ''}
+                ${t.licencia_tipo === 'VITALICIA' ? '<span class="badge" style="background:rgba(245,158,11,0.15);color:#F59E0B;border:1px solid rgba(245,158,11,0.3);">VITALICIA</span>' : ''}
               </div>
-              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;font-family:var(--font-mono);">
-                ${t.licencia_tipo === 'VITALICIA' ? 'Vigencia Permanente' : 'Vence: ' + t.licencia_fin}
+              <div style="font-size:11px;color:${t.isExpired ? 'var(--rose)' : 'var(--text-muted)'};margin-top:4px;font-family:var(--font-mono);">
+                ${countdownText}
               </div>
             </td>
+
             <td>
-              <div style="font-family:var(--font-mono);font-size:12px;font-weight:700;">${t.sizeFormatted}</div>
-              <span style="font-size:11px;color:var(--text-muted);">${t.slug}.sqlite</span>
+              <div style="font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--text);">
+                ${t.sizeFormatted}
+              </div>
+              <span style="font-size:10.5px;color:var(--text-sub);font-family:var(--font-mono);">${t.slug}.sqlite</span>
             </td>
+
             <td style="text-align:right;">
-              <div class="actions" style="justify-content:flex-end;gap:4px;">
-                <a href="${adminUrl}" target="_blank" class="btn btn-secondary btn-sm" title="Abrir Panel Administrativo del Cliente" style="color:#6366F1;font-weight:700;">
-                  ⚙️ Admin ↗
+              <div class="row-actions">
+                <!-- Acción Principal: Abrir Admin -->
+                <a href="${adminUrl}" target="_blank" class="btn-action-admin" title="Abrir Panel Admin del Cliente">
+                  <span>⚙️</span> Admin ↗
                 </a>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="copyAdminLink('${t.slug}', '${t.dominio_personalizado || ''}')" title="Copiar enlace del panel admin para el cliente">
-                  🔗 Link
+
+                <!-- Acción Rápida: WhatsApp Card -->
+                <button type="button" class="btn-action-wa" onclick="openWaCard('${t.slug}')" title="Tarjeta de bienvenida WhatsApp">
+                  <span>📲</span> WA
                 </button>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="openWaCard('${t.slug}')" title="Tarjeta de bienvenida para WhatsApp" style="color:#10B981;font-weight:700;">
-                  📲 WA
-                </button>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="quickRenew('${t.slug}', 15)" title="Dar 15 días de prueba">
-                  🎁 +15d
-                </button>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="quickRenew('${t.slug}', 30)" title="Renovar 1 mes">
-                  💳 +1 Mes
-                </button>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="quickRenew('${t.slug}', 365)" title="Renovar 1 año">
-                  🏆 +1 Año
-                </button>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="openLicenseModal('${t.slug}')" title="Clave y Gestión de Licencia">
-                  🔑 Clave
-                </button>
-                <a href="/api/superadmin/tenants/${t.slug}/backup" class="btn btn-secondary btn-sm" title="Descargar archivo físico .sqlite">
-                  📥 DB
-                </a>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="toggleTenantStatus('${t.slug}', '${t.estado}')" title="Activar/Pausar Empresa">
-                  ${t.estado === 'ACTIVA' ? '⏸️' : '▶️'}
-                </button>
+
+                <!-- Menú Desplegable '•••' (Opciones avanzadas limpias) -->
+                <div class="dropdown-container">
+                  <button type="button" class="btn-action-more" onclick="toggleRowMenu(event, '${t.slug}')" title="Más opciones de gestión">
+                    •••
+                  </button>
+
+                  <div class="dropdown-menu" id="menu-${t.slug}">
+                    <div class="dropdown-header">Enlaces Rápidos</div>
+                    <button type="button" class="dropdown-item" onclick="copyAdminLink('${t.slug}', '${t.dominio_personalizado || ''}')">
+                      <span>🔗</span> Copiar Enlace Admin
+                    </button>
+                    <a href="${storeUrl}" target="_blank" class="dropdown-item">
+                      <span>🛍️</span> Ver Tienda Pública
+                    </a>
+
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-header">Renovación de Licencia</div>
+                    <button type="button" class="dropdown-item" onclick="quickRenew('${t.slug}', 15)">
+                      <span>🎁</span> Extender Prueba (+15d)
+                    </button>
+                    <button type="button" class="dropdown-item" onclick="quickRenew('${t.slug}', 30)">
+                      <span>💳</span> Renovar Mensualidad (+1m)
+                    </button>
+                    <button type="button" class="dropdown-item" onclick="quickRenew('${t.slug}', 365)">
+                      <span>🏆</span> Renovar Anualidad (+1a)
+                    </button>
+                    <button type="button" class="dropdown-item" onclick="openLicenseModal('${t.slug}')">
+                      <span>🔑</span> Gestionar Clave Offline
+                    </button>
+
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-header">Mantenimiento</div>
+                    <a href="/api/superadmin/tenants/${t.slug}/backup" class="dropdown-item">
+                      <span>💾</span> Descargar BD (.sqlite)
+                    </a>
+                    <button type="button" class="dropdown-item" onclick="toggleTenantStatus('${t.slug}', '${t.estado}')">
+                      <span>${t.estado === 'ACTIVA' ? '⏸️' : '▶️'}</span> ${t.estado === 'ACTIVA' ? 'Pausar Empresa' : 'Reactivar Empresa'}
+                    </button>
+                  </div>
+                </div>
               </div>
             </td>
           </tr>
@@ -873,14 +1292,16 @@
     }
 
     function copyAdminLink(slug, customDomain) {
+      closeAllDropdowns();
       const origin = window.location.origin;
       const adminUrl = customDomain ? `https://${customDomain}/admin` : `${origin}/t/${slug}/admin`;
       navigator.clipboard.writeText(adminUrl).then(() => {
-        toast(`¡Enlace del panel admin copiado al portapapeles! (${adminUrl})`);
+        toast(`¡Enlace del panel admin copiado! (${adminUrl})`);
       });
     }
 
     function openWaCard(slug, rawPass) {
+      closeAllDropdowns();
       const tenant = tenantsList.find(t => t.slug === slug);
       if (!tenant) return;
 
@@ -945,22 +1366,6 @@ _En tu panel administrativo puedes subir tus productos, inventario, gestionar cl
       document.getElementById('newColorHex').value = p.color_primario || '#0D9488';
     }
 
-    function filterTenants() {
-      const q = document.getElementById('searchInput').value.trim().toLowerCase();
-      if (!q) {
-        renderTenants(tenantsList);
-        return;
-      }
-      const filtered = tenantsList.filter(t => 
-        (t.nombre_comercial || '').toLowerCase().includes(q) ||
-        (t.slug || '').toLowerCase().includes(q) ||
-        (t.ruc || '').toLowerCase().includes(q) ||
-        (t.rubro || '').toLowerCase().includes(q) ||
-        (t.ciudad_matriz || '').toLowerCase().includes(q)
-      );
-      renderTenants(filtered);
-    }
-
     function autoSlug() {
       const name = document.getElementById('newNombre').value;
       const slugInput = document.getElementById('newSlug');
@@ -1002,18 +1407,18 @@ _En tu panel administrativo puedes subir tus productos, inventario, gestionar cl
         slug: document.getElementById('newSlug').value.trim(),
         razon_social: document.getElementById('newRazonSocial').value.trim(),
         ruc: document.getElementById('newRuc').value.trim(),
+        dominio_personalizado: document.getElementById('newDominio').value.trim(),
         provincia_matriz: document.getElementById('newProvincia').value,
         ciudad_matriz: document.getElementById('newCiudad').value.trim(),
-        dominio_personalizado: document.getElementById('newDominio').value.trim(),
-        rubro: document.getElementById('newRubro').value,
-        color_primario: document.getElementById('newColorHex').value.trim(),
-        slogan: document.getElementById('newSlogan').value.trim(),
-        hero_titulo: document.getElementById('newHeroTitulo').value.trim(),
-        hero_subtitulo: document.getElementById('newHeroSubtitulo').value.trim(),
         licencia_tipo: document.getElementById('newLicenciaTipo').value,
         duracion_dias: document.getElementById('newDuracionDias').value,
         admin_user: document.getElementById('newAdminUser').value.trim(),
-        admin_pass: document.getElementById('newAdminPass').value.trim()
+        admin_pass: document.getElementById('newAdminPass').value.trim(),
+        rubro: document.getElementById('newRubro').value,
+        slogan: document.getElementById('newSlogan').value.trim(),
+        color_primario: document.getElementById('newColorHex').value.trim(),
+        hero_titulo: document.getElementById('newHeroTitulo').value.trim(),
+        hero_subtitulo: document.getElementById('newHeroSubtitulo').value.trim()
       };
 
       try {
@@ -1022,45 +1427,109 @@ _En tu panel administrativo puedes subir tus productos, inventario, gestionar cl
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
-        const json = await res.json();
-        btn.disabled = false;
-        btn.textContent = '🚀 Crear Empresa & Base de Datos';
-
-        if (json.success) {
+        const data = await res.json();
+        if (data.success) {
+          toast(`¡Empresa "${data.data.nombre_comercial}" creada con éxito!`);
           closeCreateModal();
-          toast(`¡Empresa "${payload.nombre_comercial}" creada con éxito!`);
           await loadTenants();
-          openWaCard(payload.slug, payload.admin_pass);
+          openWaCard(data.data.slug, payload.admin_pass);
         } else {
-          alert('Error: ' + (json.error || 'No se pudo crear la empresa'));
+          alert('Error: ' + (data.error || 'No se pudo crear la empresa'));
         }
       } catch (err) {
+        alert('Error de red al crear empresa');
+      } finally {
         btn.disabled = false;
         btn.textContent = '🚀 Crear Empresa & Base de Datos';
-        alert('Error de conexión al crear empresa');
+      }
+    }
+
+    async function quickRenew(slug, days) {
+      closeAllDropdowns();
+      let label = `${days} días`;
+      if (days === 15) label = '15 días (Prueba)';
+      else if (days === 30) label = '30 días (1 Mes)';
+      else if (days === 365) label = '1 Año completo';
+
+      if (!confirm(`¿Confirmas extender la licencia de "${slug}" por ${label}?`)) return;
+
+      try {
+        const res = await fetch(`/api/superadmin/tenants/${slug}/renew`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ duracion_dias: days })
+        });
+        const data = await res.json();
+        if (data.success) {
+          toast(`¡Licencia extendida con éxito hasta ${data.data.newFinDate}!`);
+          loadTenants();
+        } else {
+          alert('Error: ' + data.error);
+        }
+      } catch (e) {
+        alert('Error conectando con el servidor');
+      }
+    }
+
+    async function toggleTenantStatus(slug, currentStatus) {
+      closeAllDropdowns();
+      const newStatus = currentStatus === 'ACTIVA' ? 'SUSPENDIDA' : 'ACTIVA';
+      const verb = newStatus === 'ACTIVA' ? 'reactivar' : 'pausar/suspender';
+      if (!confirm(`¿Deseas ${verb} el acceso para la empresa "${slug}"?`)) return;
+
+      try {
+        const res = await fetch(`/api/superadmin/tenants/${slug}/status`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ estado: newStatus })
+        });
+        const data = await res.json();
+        if (data.success) {
+          toast(`Estado de "${slug}" cambiado a ${newStatus}`);
+          loadTenants();
+        } else {
+          alert('Error: ' + data.error);
+        }
+      } catch(e) {
+        alert('Error en la petición');
       }
     }
 
     function openLicenseModal(slug) {
+      closeAllDropdowns();
       const tenant = tenantsList.find(t => t.slug === slug);
       if (!tenant) return;
       currentSelectedTenant = tenant;
 
       document.getElementById('licenseModalTitle').textContent = `🔑 Licencia: ${tenant.nombre_comercial}`;
-      document.getElementById('displayLicenseKey').value = tenant.licencia_clave || 'Generando...';
-
-      document.getElementById('licenseDetailsBox').innerHTML = `
-        <div><b>Empresa:</b> ${escapeHtml(tenant.nombre_comercial)} (<code>${tenant.slug}</code>)</div>
-        <div><b>Estado:</b> <span class="badge ${tenant.computedStatus === 'ACTIVA' ? 'badge-active' : 'badge-expired'}">${tenant.computedStatus}</span></div>
-        <div><b>Tipo de Licencia:</b> ${tenant.licencia_tipo}</div>
-        <div><b>Fecha de Vencimiento:</b> <b style="color:var(--primary);">${tenant.licencia_fin}</b></div>
-        <div style="margin-top:4px;font-size:11.5px;color:var(--text-muted);">Base de datos física: <code>database/tenants/${tenant.slug}.sqlite</code></div>
+      
+      const box = document.getElementById('licenseDetailsBox');
+      box.innerHTML = `
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+          <span style="color:var(--text-muted);">Empresa / Slug:</span>
+          <b>${escapeHtml(tenant.nombre_comercial)} (<code>${tenant.slug}</code>)</b>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+          <span style="color:var(--text-muted);">Tipo de Licencia:</span>
+          <span class="badge badge-active">${tenant.licencia_tipo}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+          <span style="color:var(--text-muted);">Vencimiento Actual:</span>
+          <b style="font-family:var(--font-mono);">${tenant.licencia_fin}</b>
+        </div>
+        <div style="display:flex;justify-content:space-between;">
+          <span style="color:var(--text-muted);">Estado del Sistema:</span>
+          <span class="badge ${tenant.computedStatus === 'ACTIVA' ? 'badge-active' : 'badge-expired'}">${tenant.computedStatus}</span>
+        </div>
       `;
 
+      document.getElementById('displayLicenseKey').value = tenant.licencia_clave || 'Calculando...';
       document.getElementById('licenseModal').classList.add('show');
     }
+
     function closeLicenseModal() {
       document.getElementById('licenseModal').classList.remove('show');
+      currentSelectedTenant = null;
     }
 
     async function executeRenew() {
@@ -1069,77 +1538,31 @@ _En tu panel administrativo puedes subir tus productos, inventario, gestionar cl
 
       try {
         const res = await fetch(`/api/superadmin/tenants/${currentSelectedTenant.slug}/renew`, {
-          method: 'PUT',
+          method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ duracion_dias: days })
         });
-        const json = await res.json();
-        if (json.success) {
-          toast(`¡Licencia de ${currentSelectedTenant.nombre_comercial} renovada hasta ${json.data.newFinDate}!`);
-          document.getElementById('displayLicenseKey').value = json.data.newKey;
-          loadTenants();
-          openLicenseModal(currentSelectedTenant.slug);
-        } else {
-          alert('Error renovando licencia: ' + json.error);
-        }
-      } catch (err) {
-        alert('Error al conectar con servidor');
-      }
-    }
-
-    async function quickRenew(slug, days) {
-      const label = days === 15 ? '15 días de prueba' : (days === 30 ? '1 mes' : '1 año');
-      if (!confirm(`¿Extender la licencia de "${slug}" por ${label}?`)) return;
-      try {
-        const res = await fetch(`/api/superadmin/tenants/${slug}/renew`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ duracion_dias: days })
-        });
-        const json = await res.json();
-        if (json.success) {
-          toast(`¡Licencia extendida por ${label} hasta ${json.data.newFinDate}!`);
+        const data = await res.json();
+        if (data.success) {
+          toast(`¡Licencia renovada con éxito! Nueva fecha: ${data.data.newFinDate}`);
+          document.getElementById('displayLicenseKey').value = data.data.newKey;
           loadTenants();
         } else {
-          alert('Error: ' + json.error);
+          alert('Error: ' + data.error);
         }
-      } catch(e) {
-        alert('Error al renovar licencia');
+      } catch (e) {
+        alert('Error al procesar renovación');
       }
     }
 
     function copyLicenseKey() {
-      const key = document.getElementById('displayLicenseKey').value;
-      navigator.clipboard.writeText(key).then(() => {
-        toast('Clave de licencia copiada al portapapeles');
+      const keyInput = document.getElementById('displayLicenseKey');
+      navigator.clipboard.writeText(keyInput.value).then(() => {
+        toast('¡Clave de licencia criptográfica copiada!');
       });
     }
 
-    async function toggleTenantStatus(slug, currentStatus) {
-      const newStatus = currentStatus === 'ACTIVA' ? 'SUSPENDIDA' : 'ACTIVA';
-      if (!confirm(`¿Estás seguro de cambiar el estado de "${slug}" a ${newStatus}?`)) return;
-
-      try {
-        const res = await fetch(`/api/superadmin/tenants/${slug}/status`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ estado: newStatus })
-        });
-        const json = await res.json();
-        if (json.success) {
-          toast(`Estado de ${slug} cambiado a ${newStatus}`);
-          loadTenants();
-        }
-      } catch (err) {
-        toast('Error al actualizar estado');
-      }
-    }
-
-    function escapeHtml(s) {
-      return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-    }
-
-    // Carga inicial
+    // Initialize
     loadTenants();
   </script>
 </body>
